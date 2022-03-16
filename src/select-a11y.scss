@@ -2,7 +2,9 @@
 // ==========================================================
 /* if you use Scampi (https://gitlab.com/pidila/scampi),
 you don't need this first part */
-$gray-base:                   #42434e;
+@use "sass:math";
+
+$gray-base:                   #42434e; 
 
 $gray-1:                      darken($gray-base, 5%) !default;
 $gray-2:                      $gray-base !default;
@@ -147,7 +149,7 @@ $a11y-suggestion-border:      $gray-3 !default;
   }
 
   .a11y-suggestion {
-    padding: 0 (8em/16) 0 (26em/16);
+    padding: 0 math.div(8em, 16) 0 math.div(26em, 16);
     color: $a11y-suggestion-color;
     cursor: pointer;
     text-align: left;
@@ -172,7 +174,7 @@ $a11y-suggestion-border:      $gray-3 !default;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        left: (8em/16);
+        left: math.div(8em, 16);
       }
     }
   }
