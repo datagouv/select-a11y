@@ -3,7 +3,7 @@ packages:
 - nodejs
 - npm
 secrets:
-- 46f739e5-4538-45dd-a79f-bf173b7a2ed9
+- 7e6c4383-99ec-4063-bb75-04e5afad30d0
 
 sources:
 - git@git.sr.ht:~nicolaskempf57/select-a11y
