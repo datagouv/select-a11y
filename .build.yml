@@ -17,10 +17,12 @@ tasks:
     npm run build
 - publish: |
     cd ~/select-a11y
+    set +x
     echo _auth=$(< ~/NPM_TOKEN) >> .npmrc
     echo email=nicolas@conciergerie.dev >> .npmrc
     echo always-auth=true >> .npmrc
     echo scope=conciergerie-dev >> .npmrc
+    set -x
     npm version --no-git-tag-version $(npm view <yourProject>@latest version)
     npm version --no-git-tag-version prerelease
     npm publish
