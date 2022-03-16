@@ -18,8 +18,9 @@ tasks:
 - publish: |
     cd ~/select-a11y
     echo _auth=$(< ~/NPM_TOKEN) >> .npmrc
-    echo email=contact@conciergerie.dev >> .npmrc
+    echo email=nicolas@conciergerie.dev >> .npmrc
     echo always-auth=true >> .npmrc
+    echo scope=conciergerie-dev >> .npmrc
     npm version --no-git-tag-version $(npm view <yourProject>@latest version)
     npm version --no-git-tag-version prerelease
     npm publish
