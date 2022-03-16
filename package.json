@@ -4,7 +4,6 @@
   "description": "Module de select multiple accessible",
   "main": "dist/main.js",
   "module": "dist/module.js",
-  "nomodule": "dist/nomodule.js",
   "css": "dist/select-a11y.css",
   "test": "public/assets/scripts/index.js",
   "test-css": "public/assets/css/style.css",
@@ -13,10 +12,6 @@
       "source": "src/select-a11y.js"
     },
     "module": {
-      "source": "src/select-a11y.js"
-    },
-    "nomodule": {
-      "outputFormat": "global",
       "source": "src/select-a11y.js"
     },
     "css": {
@@ -35,6 +30,7 @@
   },
   "scripts": {
     "build": "parcel build",
+    "prepublish": "npm run build",
     "test": "tape tests/index.js | tap-diff"
   },
   "author": "Nicolas KEMPF - conciergerie.dev",

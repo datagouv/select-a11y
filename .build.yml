@@ -1,0 +1,26 @@
+image: alpine/edge
+packages:
+  - nodejs
+  - npm
+secrets:
+  - 46f739e5-4538-45dd-a79f-bf173b7a2ed9
+
+sources:
+  - git@git.sr.ht:~nicolaskempf57/select-a11y
+
+tasks:
+  - build: |
+    cd ~/select-a11y
+    node --version
+    npm --version
+    npm ci
+    gulp build
+    npm test
+  - publish: |
+    cd ~/select-a11y
+    echo _auth=$(< ~/NPM_TOKEN) >> .npmrc
+    echo email=contact@conciergerie.dev >> .npmrc
+    echo always-auth=true >> .npmrc
+    npm version --no-git-tag-version $(npm view <yourProject>@latest version)
+    npm version --no-git-tag-version prerelease
+    npm publish
