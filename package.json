@@ -1,36 +1,49 @@
 {
-  "name": "select-a11y",
+  "name": "@conciergerie.dev/select-a11y",
   "version": "1.4.0",
   "description": "Module de select multiple accessible",
-  "main": "index.js",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "nomodule": "dist/nomodule.js",
+  "css": "dist/select-a11y.css",
+  "test": "public/assets/scripts/index.js",
+  "test-css": "public/assets/css/style.css",
+  "targets": {
+    "main": {
+      "source": "src/select-a11y.js"
+    },
+    "module": {
+      "source": "src/select-a11y.js"
+    },
+    "nomodule": {
+      "outputFormat": "global",
+      "source": "src/select-a11y.js"
+    },
+    "css": {
+      "source": "src/select-a11y.scss"
+    },
+    "test": {
+      "source": "public/assets/scripts/main.js"
+    },
+    "test-css": {
+      "source": "public/assets/scss/style.scss"
+    }
+  },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/pidila/select-a11y.git"
+    "url": "https://git.sr.ht/~nicolaskempf57/select-a11y"
   },
   "scripts": {
+    "build": "parcel build",
     "test": "tape tests/index.js | tap-diff"
   },
-  "author": "DILA - PiDILA",
-  "license": "(MIT OR CeCILL-B)",
+  "author": "Nicolas KEMPF - conciergerie.dev",
+  "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-transform-object-assign": "^7.2.0",
-    "@babel/preset-env": "^7.4.3",
+    "@parcel/transformer-sass": "^2.3.2",
     "@pidila/scampi": "gitlab:pidila/scampi",
-    "browser-sync": "^2.26.7",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^6.0.0",
-    "gulp-rename": "^1.4.0",
-    "gulp-sass": "^3.1.0",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-watch": "^5.0.1",
-    "puppeteer": "^1.14.0",
-    "rollup": "^1.10.1",
-    "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-node-resolve": "^4.2.3",
-    "rollup-plugin-uglify": "^6.0.2",
-    "run-sequence": "^2.2.1",
+    "parcel": "^2.3.2",
+    "puppeteer": "^13.5.1",
     "tap-diff": "^0.1.1",
     "tape": "^4.10.1"
   }
