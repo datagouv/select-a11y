@@ -15,7 +15,6 @@ tasks:
     npm --version
     npm ci
     npm run build
-    npm test
 - publish: |
     cd ~/select-a11y
     echo _auth=$(< ~/NPM_TOKEN) >> .npmrc
