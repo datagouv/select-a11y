@@ -14,7 +14,7 @@ tasks:
     node --version
     npm --version
     npm ci
-    gulp build
+    npm run build
     npm test
   - publish: |
     cd ~/select-a11y

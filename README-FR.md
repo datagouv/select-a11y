@@ -145,4 +145,4 @@ Développement et revue : Alain Batifol, Thomas Beduneau, Nicolas Bovorasmy, Ann
 
 ## License
 
-**select-a11y** est distribué sous une double licence MIT et [CeCILL-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html). select-a11y peut être réutilisé avec l'une ou l'autre licence.
+Le projet original **select-a11y** est distribué sous une double licence MIT et [CeCILL-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html). select-a11y peut être réutilisé avec l'une ou l'autre licence.
