@@ -19,6 +19,7 @@ tasks:
     cd ~/select-a11y
     set +x
     echo _auth=$(< ~/NPM_TOKEN) >> .npmrc
+    echo _authToken=$(< ~/NPM_TOKEN) >> .npmrc
     echo email=nicolas@conciergerie.dev >> .npmrc
     echo always-auth=true >> .npmrc
     echo scope=conciergerie-dev >> .npmrc
