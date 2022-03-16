@@ -343,7 +343,7 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
 
   await page.keyboard.press('Space');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const spacePressed = await page.evaluate(() => {
     const button = document.querySelector('.form-group button');
@@ -373,7 +373,7 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
 
   await page.keyboard.press('Enter');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const enterPressed = await page.evaluate(() => {
     const button = document.querySelector('.form-group button');
@@ -409,7 +409,7 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
 
   await page.keyboard.press('Space');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const spacePressed = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
@@ -431,7 +431,7 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
 
   await page.keyboard.press('Enter');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const enterPressed = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
@@ -526,7 +526,7 @@ test( 'Gestion de la liste au blur', async t => {
   await page.keyboard.press('Tab');
   await page.keyboard.up('Shift');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const buttonBlurTopExpanded = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
@@ -545,7 +545,7 @@ test( 'Gestion de la liste au blur', async t => {
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const select = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
@@ -561,11 +561,11 @@ test( 'Gestion de la liste au blur', async t => {
 
   await page.click('.multiple button');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   await page.click('body')
 
-  await page.waitFor(20);
+  await page.waitForTimeout(20);
 
   const focused = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
@@ -587,7 +587,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
 
   await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const clickStatus = await page.evaluate(() => {
     const activeElement = document.activeElement;
@@ -608,7 +608,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
   await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
   await page.keyboard.up('Meta');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const metaClickStatus = await page.evaluate(() => {
     const activeElement = document.activeElement;
@@ -635,7 +635,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
 
   await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const clickStatus = await page.evaluate(() => {
     const activeElement = document.activeElement;
@@ -656,7 +656,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
   await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
   await page.keyboard.up('Meta');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const metaClickStatus = await page.evaluate(() => {
     const activeElement = document.activeElement;
@@ -738,17 +738,17 @@ test( 'Reset du forumlaire', async t => {
 
   await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   await page.click('.multiple button');
 
   await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   await page.click('[type="reset"]');
 
-  await page.waitFor(10);
+  await page.waitForTimeout(10);
 
   const [singleState, multipleState] = await page.evaluate(() => {
     const singleSelect = document.querySelector('select[data-select-a11y]:not([multiple])');
