@@ -24,6 +24,6 @@ tasks:
     echo always-auth=true >> .npmrc
     echo scope=conciergerie-dev >> .npmrc
     set -x
-    npm version --no-git-tag-version $(npm view  @conciergerie-dev/select-a11y@latest version)
+    npm version --no-git-tag-version $(npm view @conciergerie-dev/select-a11y@latest version)
     npm version --no-git-tag-version prerelease
     npm publish
