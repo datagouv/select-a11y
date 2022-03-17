@@ -1,6 +1,6 @@
 {
   "name": "@conciergerie-dev/select-a11y",
-  "version": "1.4.1-2",
+  "version": "1.5.0",
   "description": "Module de select multiple accessible",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.sr.ht/~nicolaskempf57/select-a11y.git"
+    "url": "https://git.sr.ht/~nicolaskempf57/select-a11y"
   },
   "scripts": {
     "build": "parcel build",
@@ -38,8 +38,11 @@
   "devDependencies": {
     "@parcel/transformer-sass": "^2.3.2",
     "@pidila/scampi": "gitlab:pidila/scampi",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
     "parcel": "^2.3.2",
     "puppeteer": "^13.5.1",
+    "semantic-release": "^19.0.2",
     "tap-diff": "^0.1.1",
     "tape": "^4.10.1"
   },
