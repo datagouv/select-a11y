@@ -103,7 +103,7 @@ class $21b19656d700fd08$var$Select {
         container.innerHTML = `
       <p id="a11y-usage-${this.id}-js" class="sr-only">${this._options.text.help}</p>
       <label for="a11y-${this.id}-js" class="sr-only">${this._options.text.placeholder}</label>
-      <input type="text" id="a11y-${this.id}-js" class="${this.el.className}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${this._options.text.placeholder}" aria-describedby="a11y-usage-${this.id}-js">
+      <input type="search" id="a11y-${this.id}-js" class="${this.el.className}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${this._options.text.placeholder}" aria-describedby="a11y-usage-${this.id}-js">
     `;
         container.appendChild(suggestions);
         this.list = suggestions;
