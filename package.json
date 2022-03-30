@@ -31,19 +31,16 @@
   "scripts": {
     "build": "parcel build",
     "prepublishOnly": "npm run build",
-    "test": "tape tests/index.js | tap-diff"
+    "test": "tape tests/index.js"
   },
   "author": "Nicolas KEMPF - conciergerie.dev",
   "license": "MIT",
   "devDependencies": {
     "@parcel/transformer-sass": "^2.3.2",
     "@pidila/scampi": "gitlab:pidila/scampi",
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/git": "^10.0.1",
-    "parcel": "^2.3.2",
+    "parcel": "^2.4.0",
     "puppeteer": "^13.5.1",
-    "tap-diff": "^0.1.1",
-    "tape": "^4.10.1"
+    "tape": "^5.5.2"
   },
   "bugs": {
     "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y"
