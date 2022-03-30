@@ -36,8 +36,7 @@ class $21b19656d700fd08$var$Select {
         this.search = '';
         this.suggestions = [];
         this.focusIndex = null;
-        const passedOptions = Object.assign({
-        }, options);
+        const passedOptions = Object.assign({}, options);
         const textOptions = Object.assign($21b19656d700fd08$var$text, passedOptions.text);
         delete passedOptions.text;
         this._options = Object.assign({

@@ -36,8 +36,7 @@
   "author": "Nicolas KEMPF - conciergerie.dev",
   "license": "MIT",
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.3.2",
-    "@pidila/scampi": "gitlab:pidila/scampi",
+    "@parcel/transformer-sass": "^2.4.0",
     "parcel": "^2.4.0",
     "puppeteer": "^13.5.1",
     "tape": "^5.5.2"

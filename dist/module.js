@@ -26,8 +26,7 @@ class $5a3b80354f588438$var$Select {
         this.search = '';
         this.suggestions = [];
         this.focusIndex = null;
-        const passedOptions = Object.assign({
-        }, options);
+        const passedOptions = Object.assign({}, options);
         const textOptions = Object.assign($5a3b80354f588438$var$text, passedOptions.text);
         delete passedOptions.text;
         this._options = Object.assign({
