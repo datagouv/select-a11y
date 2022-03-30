@@ -431,7 +431,7 @@ class Select{
     else {
       this.el.selectedIndex = optionIndex;
     }
-
+    this.el.dispatchEvent(new Event('change'));
     this.suggestions.forEach(function(suggestion){
       const index = parseInt(suggestion.getAttribute('data-index'), 10);
 
