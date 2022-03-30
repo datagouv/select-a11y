@@ -764,7 +764,7 @@ test( 'Navigation au clavier', async t => {
   t.end();
 });
 
-test( 'Reset du forumlaire', async t => {
+test( 'Reset du formulaire', async t => {
   const { browser, page } = await createBrowser();
 
   await page.click('.form-group button');
