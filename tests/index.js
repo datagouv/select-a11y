@@ -12,11 +12,11 @@ const createBrowser = async () => {
 
   await page.goto( path );
 
-  return [ browser, page ];
+  return { browser, page };
 };
 
 test( 'Creation du select-a11y simple', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   const {label, select} = await page.evaluate(() => {
     const wrapper = document.querySelector('.form-group');
@@ -78,7 +78,7 @@ test( 'Creation du select-a11y simple', async t => {
 });
 
 test( 'Creation du select-a11y multiple', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   const {select} = await page.evaluate(() => {
     const wrapper = document.querySelector('.form-group');
@@ -133,7 +133,7 @@ test( 'Creation du select-a11y multiple', async t => {
 });
 
 test( 'État par défaut', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   const selects = await page.evaluate(() => {
     const selects = Array.from(document.querySelectorAll('select'));
@@ -182,7 +182,7 @@ test( 'État par défaut', async t => {
 });
 
 test( 'Création de la liste lors de l’ouverture du select simple', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.form-group button');
 
@@ -235,7 +235,7 @@ test( 'Création de la liste lors de l’ouverture du select simple', async t =>
 });
 
 test( 'Création de la liste lors de l’ouverture du select multiple', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.multiple button');
 
@@ -288,7 +288,7 @@ test( 'Création de la liste lors de l’ouverture du select multiple', async t 
 });
 
 test( 'Gestion du champ de recherche', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.multiple button');
 
@@ -304,12 +304,17 @@ test( 'Gestion du champ de recherche', async t => {
     const input = document.getElementById('a11y-select-element-js');
     const activeElement = document.activeElement;
     const options = document.querySelectorAll('.multiple [role="option"]')
-
+    if(input instanceof HTMLInputElement) {
+      return {
+        focused: input === activeElement,
+        selectionStart: input.selectionStart,
+        selectionEnd: input.selectionEnd,
+        length: input.value.length,
+        displayedOptions: options.length
+      }
+    }
     return {
       focused: input === activeElement,
-      selectionStart: input.selectionStart,
-      selectionEnd: input.selectionEnd,
-      length: input.value.length,
       displayedOptions: options.length
     }
   });
@@ -333,7 +338,7 @@ test( 'Gestion du champ de recherche', async t => {
 });
 
 test( 'Gestion de la selection au clavier d’un select', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.focus('.form-group button');
   await page.keyboard.press('Enter');
@@ -350,11 +355,18 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
     const select = document.querySelector('.form-group select');
     const activeElement = document.activeElement;
 
+    if(select instanceof HTMLSelectElement) {
+      return {
+        closed: button.getAttribute('aria-expanded') === 'false',
+        focus: activeElement === button,
+        selectedLabel: [button.firstElementChild.textContent.trim()],
+        selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
+      }
+    }
     return {
       closed: button.getAttribute('aria-expanded') === 'false',
       focus: activeElement === button,
       selectedLabel: [button.firstElementChild.textContent.trim()],
-      selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
     }
   });
 
@@ -380,12 +392,20 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
     const select = document.querySelector('.form-group select');
     const activeElement = document.activeElement;
 
+    if(select instanceof HTMLSelectElement) {
+      return {
+        closed: button.getAttribute('aria-expanded') === 'false',
+        focus: activeElement === button,
+        active: activeElement.tagName,
+        selectedLabel: [button.firstElementChild.textContent.trim()],
+        selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
+      }
+    }
     return {
       closed: button.getAttribute('aria-expanded') === 'false',
       focus: activeElement === button,
       active: activeElement.tagName,
       selectedLabel: [button.firstElementChild.textContent.trim()],
-      selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
     }
   });
 
@@ -400,7 +420,7 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
 });
 
 test( 'Gestion de la selection au clavier d’un select multiple', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.focus('.form-group.multiple button');
   await page.keyboard.press('Enter');
@@ -416,10 +436,16 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
     const select = document.querySelector('.multiple select');
     const activeElement = document.activeElement;
 
+    if(select instanceof HTMLSelectElement) {
+      return {
+        open: button.getAttribute('aria-expanded') === 'true',
+        selected: activeElement.getAttribute('aria-selected') === 'true',
+        selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
+      }
+    }
     return {
       open: button.getAttribute('aria-expanded') === 'true',
       selected: activeElement.getAttribute('aria-selected') === 'true',
-      selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
     }
   });
 
@@ -439,11 +465,18 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
     const activeElement = document.activeElement;
     const list = Array.from(document.querySelectorAll('.multiple .list-selected li'));
 
+    if(select instanceof HTMLSelectElement) {
+      return {
+        closed: button.getAttribute('aria-expanded') === 'false',
+        focus: activeElement === button,
+        selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
+        selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
+      }
+    }
     return {
       closed: button.getAttribute('aria-expanded') === 'false',
       focus: activeElement === button,
       selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
-      selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
     }
   });
 
@@ -458,7 +491,7 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
 });
 
 test( 'Suppression des options via la liste des options sélectionnées', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.multiple button');
 
@@ -503,7 +536,7 @@ test( 'Suppression des options via la liste des options sélectionnées', async 
 });
 
 test( 'Gestion de la liste au blur', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.multiple button');
 
@@ -581,7 +614,7 @@ test( 'Gestion de la liste au blur', async t => {
 });
 
 test( 'Gestion de la liste du select simple au clic', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.form-group button');
 
@@ -629,7 +662,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
 });
 
 test( 'Gestion de la liste du select multiple au clic', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.multiple button');
 
@@ -678,7 +711,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
 });
 
 test( 'Navigation au clavier', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.focus('.form-group button');
 
@@ -732,7 +765,7 @@ test( 'Navigation au clavier', async t => {
 });
 
 test( 'Reset du forumlaire', async t => {
-  const [ browser, page ] = await createBrowser();
+  const { browser, page } = await createBrowser();
 
   await page.click('.form-group button');
 
@@ -755,13 +788,25 @@ test( 'Reset du forumlaire', async t => {
     const multipleSelect = document.querySelector('select[data-select-a11y][multiple]');
     const list = Array.from(document.querySelectorAll('.multiple .list-selected li'));
 
+    if(singleSelect instanceof HTMLSelectElement && multipleSelect instanceof HTMLSelectElement) {
+      return [
+        {
+          selectedValue: singleSelect.value,
+          label: document.querySelector('.form-group button span').textContent.trim(),
+        },
+        {
+          selectedOptions: Array.from(multipleSelect.selectedOptions).map(option => option.value),
+          selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
+        }
+      ]
+    }
     return [
       {
-        selectedValue: singleSelect.value,
+        selectedValue: null,
         label: document.querySelector('.form-group button span').textContent.trim(),
       },
       {
-        selectedOptions: Array.from(multipleSelect.selectedOptions).map(option => option.value),
+        selectedOptions: null,
         selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
       }
     ]
