@@ -1,37 +1,36 @@
 # Select-a11y
 
-* ******************************************** *
-* [English version of this page](readme-en.md) *
-* ******************************************** *
+**select-a11y** transforms selects (multiple or not) into suggestions list with search input. It is compliant with [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/intro/wcag) and [General Accessibility Framework for Administrations](https://disic.github.io/rgaa_referentiel_en/introduction-RGAA.html) (Référentiel général d'accessibilité pour les administrations - RGAA).
 
-## Présentation
+This fork is based on the original select-a11y from Pidila.
 
-**select-a11y** est un script javascript associé à des css qui transforme un select (multiple ou non) en liste de suggestions avec champ de recherche à l'intérieur de cette liste. Il est conforme aux [Web Content Accessibility Guidelines (WCAG) (en)](https://www.w3.org/WAI/intro/wcag) et au [Référentiel général d'accessibilité pour les administrations (RGAA)](https://references.modernisation.gouv.fr/rgaa-accessibilite/).
+To see the demo, three solutions are available:
+*  view the [online demo](http://pidila.gitlab.io/select-a11y/) ;
+* download or clone this repository, then open the file /public/index.html ;
+* install locally by cloning the repository, and then running the commands `$ npm install` then `$ gulp dev`.
 
-Pour voir la démo, trois solutions sont offertes :
+**select-a11y** is part of the DILA’s accessible and responsive UI components library [Scampi (fr)](https://gitlab.com/pidila/scampi). It was primarily developed and is currently used in production on service-public.fr, official website of the french administration. See filter boxes on [this page (fr)](https://www.service-public.fr/demarches-silence-vaut-accord/recherche).
 
-* consulter la [démo en ligne](http://pidila.gitlab.io/select-a11y/) ;
-* télécharger ou cloner ce dépôt et ouvrir le fichier public/index.html ;
-* installer en local en clonant ce dépôt puis en lançant les commandes `$ npm install` puis `$ gulp dev`.
-
-**select-a11y** fait partie de [Scampi](https://gitlab.com/pidila/scampi), la bibliothèque de composants accessibles développée par le Pôle intégration html de la Direction de l'information légale et administrative (DILA). Il a été initialement développé pour le site service-public.fr, le site officiel de l'administration française. On peut le voir en action sur les filtres de recherche de [cette page](https://www.service-public.fr/demarches-silence-vaut-accord/recherche).
-
-### Références
+## References
 
 - https://select2.github.io/examples.html
 - https://a11y.nicolas-hoffmann.net/autocomplet-list/
 
-## Mise en oeuvre
+## Use
 
-Les fichiers source sont dans le répertoire src/.
+All you need is ~~love~~ the files in the public/ directory.
 
-Les fichiers nécessaires à la mise en œuvre sont placés dans le répertoire public/assets/scripts/. 
+The source files are in the src/ directory.
 
-* Le script select-a11y.js doit être appelé en pied de page, juste avant le tag de fermeture du body, ou compilé avec vos autres scripts.
-* Les styles scss dans vos fichiers de style ; pour récupérer une version déjà compilée, prendre le fichier public/assets/css/select-a11y.css.
+* Call the select-a11y.js script in the bottom of your page, just before the body closing tag, or compile it with your others scripts.
 
-Pour être pris en compte et transformé par le script select-a11y.js, le plus simple est d'ajouter un attribut (par exemple ```data-select-a11y```) dans la balise ```select``` qu'on veut transformer.
+* Add the css or scss in your style files.
+You can retrieve select-a11y.css, an already compiled version, in public/assets/css/
 
+To be transformed by select-a11y.js, the fastest way is to add the ```data-select-a11y``` attribute on the `select` tag you want to transform.
+
+
+### Code sample
 
 ```html
 <!-- select simple -->
@@ -47,18 +46,18 @@ Pour être pris en compte et transformé par le script select-a11y.js, le plus s
 
 <!-- select multiple -->
 <div class="form-group">
-  <label for="select-element">Que voulez-vous faire aujourd'hui ?</label>
-  <select class="form-control" id="select-element" multiple data-select-a11y data-placeholder="Chercher dans la liste">
-      <option>Dormir</option>
-      <option>Grimper aux arbres</option>
-      <option>Tricoter</option>
-      <option selected>Danser avec les licornes</option>
-      <option>Rêver</option>
+  <label for="select-element">What do you want to do today?</label>
+  <select class="form-control" id="select-element" multiple data-select-a11y data-placeholder="Search in list">
+      <option>Sleeping</option>
+      <option>Climbing trees</option>
+      <option>Knitting</option>
+      <option selected>Dancing with unicorns</option>
+      <option>Dreaming</option>
   </select>
 </div>
 ```
 
-On ajoute ensuite le code javascript suivant dans le fichier javascript du projet (impérativement après le script select-a11y) :
+Then, add the following JavaScript code in one of your file (that must be after select-a11y script):
 
 ```js
 var selects = document.querySelectorAll('select[data-select-a11y]');
@@ -68,7 +67,7 @@ var selectA11ys = Array.prototype.map.call(selects, function(select){
 });
 ```
 
-Il est possible de changer les textes des libellés d'aide du composant. Pour cela on ajoute un second paramètre à  `new Select` contenant uniquement les textes à modifier comme dans l'exemple ci-dessous :
+The default texts used for accessibility can be changed. When creating a new select a11y, you can pass an object containing the `text` property as a second parameter:
 
 ```js
 var selects = document.querySelectorAll('select[data-select-a11y]');
@@ -82,67 +81,67 @@ var selectA11ys = Array.prototype.map.call(selects, function(select){
       results: '{x} suggestion(s) disponibles',
       deleteItem: 'Supprimer {t}',
       delete: 'Supprimer'
-   }
+    }
   })
 });
 ```
 
-Les textes ci-dessus sont les textes utilisés par défaut.
-
+The texts in the example are the default texts used in the script.
 
 ## Contribute
 
-Ce projet est développé en Test Driven Development avec tape.
+This project is under Test Driven Development with tape.
 
-Prérequis : nodejs 10.x, npm et gulp 3.x installé en global.
+Requisite: Node.js 10.x, npm, npm gulp 3.x globally installed.
 
-### Installation et développement
+### Installation and development
 
-Après avoir cloné ce dépôt, installer les dépendances :
+After cloning this repository, install dependencies:
 
 ```bash
 $ npm install
 ```
 
-#### Afficher en local (localhost:3000)
+#### Display locally (localhost:3000)
 
 ```bash
 $ gulp
 ```
 
-Cette tâche enchaîne les tâches `gulp build` (compilation des sources et envoi vers le répertoire de démo) et `gulp dev` (lancement du serveur pour afficher la page en local et recompilation des sources à la volée si modifiées).
+This task is a combination of the `gulp build` (compilation of sources and sending to the demo directory) and `gulp dev` (launching the server to display the page locally and recompiling sources on the fly if modified) tasks.
 
-#### Lancer les tests :
+#### Run tests
 
 ```bash
 $ npm test
 ```
 
-## Contenu du dépôt
+## Content of the repository
 
-* public/ : page de démonstration et ses assets
-  * assets/css les css compilées
-  * assets/img les images (seulement utilisées pour la démo)
-  * assets/scripts : le script select-a11y.js et l'instanciation pour la démo dans main.js
-  * assets/scss/ : sources sass pour la page de démo (style.scss importe les styles dédiés à select-a11y + les styles spécifiques à la démo)
-  * index.html : source html de la page de démonstration
-* src/ : fichiers source (js et sass)
-* tests/ : index.js pour faire tourner les tests
+* public/ : demo page and its assets
+  * assets/css : the compiled css
+  * assets/img : the images (only used for demo)
+  * assets/scripts : the select-a11y.js script and instantiation for the demo in main.js
+  * assets/scss : sass sources for the demo page (style.scss imports styles dedicated to select-a11y + demo specific styles)
+  * index.html : html source of the demo page
+* src/ : source files (js and sass)
+* tests/ : index.js to run the tests
 
-***Note importante :*** ne pas modifier directement le fichier assets/scripts/select-a11y.js ni les fichiers contenus dans assets/css/ : ils sont générés par les tâches de build.
+***Important note:*** do not directly modify the assets/scripts/select-a11y.js file or the assets/css/select-a11y.css file : they are generated by the build tasks.
 
-### Comment puis-je aider ?
+### What can I do to help?
 
-- fermer des tickets
-- tester et signaler des bugs
-- proposer des améliorations
-- traduire ou relire la doc en anglais
-- améliorer la documentation (en anglais ou en français)
+- close issues
+- testing and report issues
+- suggest enhancement
+- translate documentation in english
+- enhance documentation in english or in french
+- say thank you if you use it :)
 
-## Auteurs
+## Authors
 
-Développement et revue : Alain Batifol, Thomas Beduneau, Nicolas Bovorasmy, Anne Cavalier, Benoît Dequick, Laurent Dutheil, Lucile Houdinet, Aurélien Lévy, Hugues Moreno, Damien Petton - Pour la DILA, Direction de l'information légale et administrative.
+Developpers and reviewers: Alain Batifol, Thomas Beduneau, Nicolas Bovorasmy, Anne Cavalier, Laurent Dutheil, Lucile Houdinet, Aurélien Lévy, Hugues Moreno - For the DILA, Direction de l'information légale et administrative.
 
 ## License
 
-Le projet original **select-a11y** est distribué sous une double licence MIT et [CeCILL-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html). select-a11y peut être réutilisé avec l'une ou l'autre licence.
+MIT and [CeCILL-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html). Feel free to use it with one or the other.
