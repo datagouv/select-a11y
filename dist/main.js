@@ -42,7 +42,8 @@ class $21b19656d700fd08$var$Select {
         delete passedOptions.text;
         this._options = Object.assign({
             text: textOptions,
-            showSelected: true
+            showSelected: true,
+            enableTextFilter: true
         }, passedOptions);
         this._handleFocus = this._handleFocus.bind(this);
         this._handleInput = this._handleInput.bind(this);
@@ -125,7 +126,7 @@ class $21b19656d700fd08$var$Select {
             const text = option.label || option.value;
             const formatedText = text.toLowerCase();
             // test if search text match the current option
-            if (formatedText.indexOf(search) === -1) return;
+            if (this._options.enableTextFilter && formatedText.indexOf(search) === -1) return;
             // create the option
             const suggestion = document.createElement('div');
             suggestion.setAttribute('role', 'option');
@@ -293,6 +294,7 @@ class $21b19656d700fd08$var$Select {
         const option = this.el.item(optionIndex);
         if (this.multiple) this.el.item(optionIndex).selected = !this.el.item(optionIndex).selected;
         else this.el.selectedIndex = optionIndex;
+        this.el.dispatchEvent(new Event('change'));
         this.suggestions.forEach((function(suggestion) {
             const index = parseInt(suggestion.getAttribute('data-index'), 10);
             if (this.el.item(index).selected) suggestion.setAttribute('aria-selected', 'true');
