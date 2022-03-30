@@ -2,32 +2,31 @@
 
 **select-a11y** transforms selects (multiple or not) into suggestions list with search input. It is compliant with [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/intro/wcag) and [General Accessibility Framework for Administrations](https://disic.github.io/rgaa_referentiel_en/introduction-RGAA.html) (Référentiel général d'accessibilité pour les administrations - RGAA).
 
-This fork is based on the original select-a11y from Pidila.
+This fork is based on the [original select-a11y from Pidila](http://pidila.gitlab.io/select-a11y/).
 
 To see the demo, three solutions are available:
-*  view the [online demo](http://pidila.gitlab.io/select-a11y/) ;
+*  view the [Pidila online demo](http://pidila.gitlab.io/select-a11y/) ;
 * download or clone this repository, then open the file /public/index.html ;
 * install locally by cloning the repository, and then running the commands `$ npm install` then `$ gulp dev`.
-
-**select-a11y** is part of the DILA’s accessible and responsive UI components library [Scampi (fr)](https://gitlab.com/pidila/scampi). It was primarily developed and is currently used in production on service-public.fr, official website of the french administration. See filter boxes on [this page (fr)](https://www.service-public.fr/demarches-silence-vaut-accord/recherche).
 
 ## References
 
 - https://select2.github.io/examples.html
 - https://a11y.nicolas-hoffmann.net/autocomplet-list/
+- http://pidila.gitlab.io/select-a11y/
 
 ## Use
 
-All you need is ~~love~~ the files in the public/ directory.
+All you need is the files in the `dist/` directory.
 
-The source files are in the src/ directory.
+The source files are in the `src/` directory.
 
-* Call the select-a11y.js script in the bottom of your page, just before the body closing tag, or compile it with your others scripts.
+- Call the `dist/main.js` script in the bottom of your page, just before the body closing tag, or compile the `dist/module.js` with your others scripts.
 
-* Add the css or scss in your style files.
-You can retrieve select-a11y.css, an already compiled version, in public/assets/css/
+- Add the css or scss in your style files.
+You can retrieve `dist/select-a11y.css`, an already compiled version.
 
-To be transformed by select-a11y.js, the fastest way is to add the ```data-select-a11y``` attribute on the `select` tag you want to transform.
+To be transformed by select-a11y, the fastest way is to add the `data-select-a11y` attribute on the `select` tag you want to transform.
 
 
 ### Code sample
