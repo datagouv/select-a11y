@@ -39,7 +39,8 @@ class Select{
 
     this._options = Object.assign({
       text: textOptions,
-      showSelected: true
+      showSelected: true,
+      enableTextFilter: true,
     }, passedOptions );
 
     this._handleFocus = this._handleFocus.bind(this);
@@ -154,7 +155,7 @@ class Select{
       const formatedText = text.toLowerCase();
 
       // test if search text match the current option
-      if(formatedText.indexOf(search) === -1){
+      if(this._options.enableTextFilter && formatedText.indexOf(search) === -1){
         return;
       }
 
