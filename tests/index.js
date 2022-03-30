@@ -66,11 +66,11 @@ test( 'Creation du select-a11y simple', async t => {
   t.true( tagHidden.isHidden, 'Le conteneur du select original est caché au lecteurs d’écran');
 
   t.true( live.exists, 'L‘élément de restitution vocal est créé');
-  t.true( live.isPolite, 'L‘élément de restitution vocal est paramétré à « polite »');
+  t.true( live.isPolite, 'L‘élément de restitution vocal est paramétré à « polite »');
 
   t.true( button.exists, 'Le bouton permettant d’ouvrir le select est créé');
   t.true( button.isClosed, 'Le bouton permettant d’ouvrir le select est paramétré comme fermé par défaut');
-  t.true( button.labelledby.includes( label.id ), 'Le bouton est lié au label via l’attribut « aria-labelledby »');
+  t.true( button.labelledby.includes( label.id ), 'Le bouton est lié au label via l’attribut « aria-labelledby »');
 
   await browser.close();
 
@@ -122,7 +122,7 @@ test( 'Creation du select-a11y multiple', async t => {
   t.true( tagHidden.isHidden, 'Le conteneur du select original est caché au lecteurs d’écran');
 
   t.true( live.exists, 'L‘élément de restitution vocal est créé');
-  t.true( live.isPolite, 'L‘élément de restitution vocal est paramétré à « polite »');
+  t.true( live.isPolite, 'L‘élément de restitution vocal est paramétré à « polite »');
 
   t.true( button.exists, 'Le bouton permettant d’ouvrir le select est créé');
   t.true( button.isClosed, 'Le bouton permettant d’ouvrir le select est paramétré comme fermé par défaut');
@@ -723,7 +723,7 @@ test( 'Navigation au clavier', async t => {
     return document.activeElement === document.querySelector('.select-a11y [role=option]:nth-child(1)');
   });
 
-  t.true(firstElementSelected, 'La touche « flèche bas » déplace le focus sur le premier élément de la liste');
+  t.true(firstElementSelected, 'La touche « flèche bas » déplace le focus sur le premier élément de la liste');
 
   await page.keyboard.press('ArrowUp');
 
@@ -731,7 +731,7 @@ test( 'Navigation au clavier', async t => {
     return document.activeElement === document.querySelector('.select-a11y [role=option]:nth-child(4)');
   });
 
-  t.true(lastElementSelected, 'La touche « flèche haut » déplace le focus sur le dernier élément de la liste lorsque le premier élément à le focus');
+  t.true(lastElementSelected, 'La touche « flèche haut » déplace le focus sur le dernier élément de la liste lorsque le premier élément à le focus');
 
   await page.keyboard.press('ArrowDown');
 
@@ -739,7 +739,7 @@ test( 'Navigation au clavier', async t => {
     return document.activeElement === document.querySelector('.select-a11y [role=option]:nth-child(1)');
   });
 
-  t.true(backToFirstElementSelected, 'La touche « flèche bas » déplace le focus sur le premier élément de la liste lorsque le dernier élément à le focus');
+  t.true(backToFirstElementSelected, 'La touche « flèche bas » déplace le focus sur le premier élément de la liste lorsque le dernier élément à le focus');
 
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowDown');
@@ -748,7 +748,7 @@ test( 'Navigation au clavier', async t => {
     return document.activeElement === document.querySelector('.select-a11y [role=option]:nth-child(3)');
   });
 
-  t.true(nextElement, 'La touche « flèche bas » déplace le focus sur l’élement suivant');
+  t.true(nextElement, 'La touche « flèche bas » déplace le focus sur l’élement suivant');
 
   await page.keyboard.press('ArrowUp');
   await page.keyboard.press('ArrowUp');
@@ -757,7 +757,7 @@ test( 'Navigation au clavier', async t => {
     return document.activeElement === document.querySelector('.select-a11y [role=option]:nth-child(1)');
   });
 
-  t.true(previous, 'La touche « flèche haut » déplace le focus sur l’élement précédent');
+  t.true(previous, 'La touche « flèche haut » déplace le focus sur l’élement précédent');
 
   await browser.close();
 
