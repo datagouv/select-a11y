@@ -42,7 +42,8 @@
     "tape": "^5.5.2"
   },
   "bugs": {
-    "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y"
+    "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y",
+    "email": "~nicolaskempf57/select-a11y-discuss@lists.sr.ht"
   },
   "homepage": "https://git.sr.ht/~nicolaskempf57/select-a11y#readme",
   "directories": {
