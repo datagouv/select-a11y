@@ -27,7 +27,7 @@ class $5a3b80354f588438$var$Select {
         this.suggestions = [];
         this.focusIndex = null;
         const passedOptions = Object.assign({}, options);
-        const textOptions = Object.assign($5a3b80354f588438$var$text, passedOptions.text);
+        const textOptions = Object.assign({}, $5a3b80354f588438$var$text, passedOptions.text);
         delete passedOptions.text;
         this._options = Object.assign({
             text: textOptions,
@@ -62,10 +62,10 @@ class $5a3b80354f588438$var$Select {
         this.el.form.addEventListener('reset', this._handleReset);
     }
     /**
+   * Update texts with new texts
    * @param {object} newText
    */ setText(newText) {
-        const textOptions = Object.assign($5a3b80354f588438$var$text, newText);
-        this._options.text = textOptions;
+        Object.assign(this._options.text, newText);
     }
     _createButton() {
         const button = document.createElement('button');
