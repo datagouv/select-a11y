@@ -51,6 +51,7 @@ class Select{
     this._handleSuggestionClick = this._handleSuggestionClick.bind(this);
     this._positionCursor = this._positionCursor.bind(this);
     this._removeOption = this._removeOption.bind(this);
+    this.setText = this.setText.bind(this);
 
     this._disable();
 
@@ -74,6 +75,14 @@ class Select{
     document.addEventListener('blur', this._handleFocus, true);
 
     this.el.form.addEventListener('reset', this._handleReset);
+  }
+
+  /**
+   * @param {object} newText
+   */
+  setText(newText) {
+    const textOptions = Object.assign(text, newText);
+    this._options.text = textOptions;
   }
 
   _createButton(){
