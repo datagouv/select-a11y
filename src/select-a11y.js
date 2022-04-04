@@ -34,7 +34,7 @@ class Select{
     this.focusIndex = null;
 
     const passedOptions = Object.assign({}, options);
-    const textOptions = Object.assign(text, passedOptions.text);
+    const textOptions = Object.assign({}, text, passedOptions.text);
     delete passedOptions.text;
 
     this._options = Object.assign({
@@ -78,11 +78,11 @@ class Select{
   }
 
   /**
+   * Update texts with new texts
    * @param {object} newText
    */
   setText(newText) {
-    const textOptions = Object.assign(text, newText);
-    this._options.text = textOptions;
+    Object.assign(this._options.text, newText);
   }
 
   _createButton(){
