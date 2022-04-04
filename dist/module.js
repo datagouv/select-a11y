@@ -42,6 +42,7 @@ class $5a3b80354f588438$var$Select {
         this._handleSuggestionClick = this._handleSuggestionClick.bind(this);
         this._positionCursor = this._positionCursor.bind(this);
         this._removeOption = this._removeOption.bind(this);
+        this.setText = this.setText.bind(this);
         this._disable();
         this.button = this._createButton();
         this.liveZone = this._createLiveZone();
@@ -59,6 +60,12 @@ class $5a3b80354f588438$var$Select {
         this.wrap.addEventListener('keydown', this._handleKeyboard);
         document.addEventListener('blur', this._handleFocus, true);
         this.el.form.addEventListener('reset', this._handleReset);
+    }
+    /**
+   * @param {object} newText
+   */ setText(newText) {
+        const textOptions = Object.assign($5a3b80354f588438$var$text, newText);
+        this._options.text = textOptions;
     }
     _createButton() {
         const button = document.createElement('button');
