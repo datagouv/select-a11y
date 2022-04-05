@@ -74,7 +74,9 @@ class Select{
     this.wrap.addEventListener('keydown', this._handleKeyboard);
     document.addEventListener('blur', this._handleFocus, true);
 
-    this.el.form.addEventListener('reset', this._handleReset);
+    if (this.el.form) {
+      this.el.form.addEventListener('reset', this._handleReset);
+    }
   }
 
   /**
