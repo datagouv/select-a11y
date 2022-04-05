@@ -149,10 +149,12 @@ $a11y-suggestion-border:      $gray-3 !default;
   }
 
   .a11y-suggestion {
-    padding: 0 math.div(8em, 16) 0 math.div(26em, 16);
+    padding: 0.25rem 0.5rem 0.25rem 1.5rem;
     color: $a11y-suggestion-color;
     cursor: pointer;
     text-align: left;
+    display: flex;
+    align-items: center;
 
     &:focus,
     &:hover {
@@ -184,9 +186,6 @@ $a11y-suggestion-border:      $gray-3 !default;
     height: 50px;
     object-fit: cover;
     object-position: center;
-    vertical-align: middle;
-    margin: 8px;
-    margin-left: 0;
   }
 
   .a11y-no-suggestion {
