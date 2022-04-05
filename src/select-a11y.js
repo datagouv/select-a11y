@@ -25,6 +25,7 @@ if (!closest) {
 class Select{
   constructor( el, options ){
     this.el = el;
+    /** @type {HTMLLabelElement} */
     this.label = document.querySelector(`label[for=${el.id}]`);
     this.id = el.id;
     this.open = false;
@@ -141,6 +142,7 @@ class Select{
     container.appendChild(suggestions);
 
     this.list = suggestions;
+    /** @type {HTMLInputElement} */
     this.input = container.querySelector('input');
 
     return container;
@@ -173,16 +175,24 @@ class Select{
       // create the option
       const suggestion = document.createElement('div');
       suggestion.setAttribute('role', 'option');
-      suggestion.setAttribute('tabindex', 0);
-      suggestion.setAttribute('data-index', index)
+      suggestion.setAttribute('tabindex', '0');
+      suggestion.setAttribute('data-index', index);
       suggestion.classList.add('a11y-suggestion');
 
       // check if the option is selected
-      if(option.selected){
+      if (option.selected) {
         suggestion.setAttribute('aria-selected', 'true');
       }
 
       suggestion.innerText = option.label || option.value;
+
+      if (option.dataset.image) {
+        const image = document.createElement('img');
+        image.setAttribute('src', option.dataset.image);
+        image.setAttribute('alt', option.dataset.alt ? option.dataset.alt : '');
+        image.classList.add('a11y-img');
+        suggestion.prepend(image);
+      }
 
       return suggestion;
     }.bind(this)).filter(Boolean);
@@ -345,10 +355,11 @@ class Select{
     this.suggestions[this.focusIndex].focus();
   }
 
-  _positionCursor(){
-    setTimeout(function(){
-      this.input.selectionStart = this.input.selectionEnd = this.input.value.length;
-    }.bind(this))
+  _positionCursor() {
+    setTimeout(() => {
+      const endOfInput = this.input.value.length;
+      this.input.setSelectionRange(endOfInput, endOfInput);
+    });
   }
 
   _removeOption(event){
@@ -369,7 +380,7 @@ class Select{
     if(this.selectedList.parentElement){
       const buttons = this.selectedList.querySelectorAll('button');
 
-      // loock for the bouton before the one clicked
+      // look for the bouton before the one clicked
       if(buttons[buttonPreviousIndex]){
         buttons[buttonPreviousIndex].focus();
       }
@@ -504,7 +515,7 @@ class Select{
 
     const tagHidden = document.createElement('div');
     tagHidden.classList.add('tag-hidden');
-    tagHidden.setAttribute('aria-hidden', true);
+    tagHidden.setAttribute('aria-hidden', 'true');
 
     if(this.multiple){
       tagHidden.appendChild(this.label);

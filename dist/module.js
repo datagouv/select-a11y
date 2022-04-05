@@ -19,7 +19,7 @@ if (!$5a3b80354f588438$var$closest) $5a3b80354f588438$var$closest = function(s) 
 class $5a3b80354f588438$var$Select {
     constructor(el, options){
         this.el = el;
-        this.label = document.querySelector(`label[for=${el.id}]`);
+        /** @type {HTMLLabelElement} */ this.label = document.querySelector(`label[for=${el.id}]`);
         this.id = el.id;
         this.open = false;
         this.multiple = this.el.multiple;
@@ -59,7 +59,7 @@ class $5a3b80354f588438$var$Select {
         this.list.addEventListener('click', this._handleSuggestionClick);
         this.wrap.addEventListener('keydown', this._handleKeyboard);
         document.addEventListener('blur', this._handleFocus, true);
-        this.el.form.addEventListener('reset', this._handleReset);
+        if (this.el.form) this.el.form.addEventListener('reset', this._handleReset);
     }
     /**
    * Update texts with new texts
@@ -104,7 +104,7 @@ class $5a3b80354f588438$var$Select {
     `;
         container.appendChild(suggestions);
         this.list = suggestions;
-        this.input = container.querySelector('input');
+        /** @type {HTMLInputElement} */ this.input = container.querySelector('input');
         return container;
     }
     _createSelectedList() {
@@ -126,12 +126,19 @@ class $5a3b80354f588438$var$Select {
             // create the option
             const suggestion = document.createElement('div');
             suggestion.setAttribute('role', 'option');
-            suggestion.setAttribute('tabindex', 0);
+            suggestion.setAttribute('tabindex', '0');
             suggestion.setAttribute('data-index', index);
             suggestion.classList.add('a11y-suggestion');
             // check if the option is selected
             if (option.selected) suggestion.setAttribute('aria-selected', 'true');
             suggestion.innerText = option.label || option.value;
+            if (option.dataset.image) {
+                const image = document.createElement('img');
+                image.setAttribute('src', option.dataset.image);
+                image.setAttribute('alt', option.dataset.alt ? option.dataset.alt : '');
+                image.classList.add('a11y-img');
+                suggestion.prepend(image);
+            }
             return suggestion;
         }).bind(this)).filter(Boolean);
         if (!this.suggestions.length) this.list.innerHTML = `<p class="a11y-no-suggestion">${this._options.text.noResult}</p>`;
@@ -232,9 +239,10 @@ class $5a3b80354f588438$var$Select {
         this.suggestions[this.focusIndex].focus();
     }
     _positionCursor() {
-        setTimeout((function() {
-            this.input.selectionStart = this.input.selectionEnd = this.input.value.length;
-        }).bind(this));
+        setTimeout(()=>{
+            const endOfInput = this.input.value.length;
+            this.input.setSelectionRange(endOfInput, endOfInput);
+        });
     }
     _removeOption(event) {
         const button = $5a3b80354f588438$var$closest.call(event.target, 'button');
@@ -247,7 +255,7 @@ class $5a3b80354f588438$var$Select {
         // manage the focus if there's still the selected list
         if (this.selectedList.parentElement) {
             const buttons = this.selectedList.querySelectorAll('button');
-            // loock for the bouton before the one clicked
+            // look for the bouton before the one clicked
             if (buttons[buttonPreviousIndex]) buttons[buttonPreviousIndex].focus();
             else buttons[0].focus();
         } else this.button.focus();
@@ -324,7 +332,7 @@ class $5a3b80354f588438$var$Select {
         this.el.parentElement.appendChild(wrapper);
         const tagHidden = document.createElement('div');
         tagHidden.classList.add('tag-hidden');
-        tagHidden.setAttribute('aria-hidden', true);
+        tagHidden.setAttribute('aria-hidden', 'true');
         if (this.multiple) tagHidden.appendChild(this.label);
         tagHidden.appendChild(this.el);
         wrapper.appendChild(tagHidden);

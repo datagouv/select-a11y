@@ -1,7 +1,7 @@
-import Select from "../../../dist/main"
+import Select from "../../../dist/module";
 var selects = document.querySelectorAll('select[data-select-a11y]');
 
-var selectA11ys = Array.prototype.map.call(selects, function(select){
+Array.from(selects).map(function(select) {
   return new Select(select);
 });
 
@@ -18,7 +18,7 @@ var selectA11ys = Array.prototype.map.call(selects, function(select){
       results: '{x} suggestion(s) disponibles',
       deleteItem: 'Supprimer {t}',
       delete: 'Supprimer'
-   }
+    }
   })
 });
 */

@@ -92,7 +92,7 @@ test( 'Creation du select-a11y multiple', async t => {
   t.true( select, 'Le conteneur de select-a11y est créé' );
 
   const { tagHidden, live, button} = await page.evaluate(() => {
-    const selectA11y = document.querySelectorAll('.form-group > .select-a11y')[1];
+    const selectA11y = document.querySelector('.form-group.multiple > .select-a11y');
     const tagHidden = selectA11y.querySelector('.tag-hidden');
     const live = selectA11y.querySelector('[aria-live]');
     const button = selectA11y.querySelector('button[aria-expanded]');
@@ -287,6 +287,69 @@ test( 'Création de la liste lors de l’ouverture du select multiple', async t 
   t.end();
 });
 
+test( 'Création de la liste lors de l’ouverture du select avec image', async t => {
+  const { browser, page } = await createBrowser();
+
+  await page.click('.images button');
+
+  const data = await page.evaluate(() => {
+    const wrapper = document.querySelector('.images .select-a11y');
+    const select = wrapper.querySelector('select');
+    const container = document.querySelector('.images .a11y-container');
+    const help = container.firstElementChild;
+    const label = container.querySelector('label');
+    const input = container.querySelector('input');
+    const options = container.querySelectorAll('[role="option"]');
+
+    const listBox = container.querySelector('[role="listbox"]');
+
+    return {
+      hasContainer: wrapper.contains(container),
+      help: {
+        isParagraph: help.tagName === 'P',
+        id: help.id
+      },
+      label: {
+        for: label.getAttribute('for')
+      },
+      input: {
+        id: input.id,
+        describedby: input.getAttribute('aria-describedby')
+      },
+      list: {
+        length: options.length,
+        lengthWithImage: Array.from(options).filter(option => option.querySelector('img')).length,
+        lengthWithAlt: Array.from(options).filter(option => {
+          const img = option.querySelector('img');
+          const alt = img?.getAttribute('alt');
+          return img && alt && alt !== '';
+        }).length,
+      },
+      options: {
+        length: select.options.length,
+        lengthWithImage: Array.from(select.options).filter(option => option.dataset.image).length,
+        lengthWithAlt: Array.from(select.options).filter(option => option.dataset.image && option.dataset.alt).length,
+      },
+      listBox: {
+        multiple: listBox.getAttribute('aria-multiselectable')
+      },
+    }
+  });
+
+  t.true(data.hasContainer, 'La liste est créée lors de l’activation du bouton');
+  t.true(data.help.isParagraph, 'Le texte explicatif est présent');
+  t.same(data.help.id, data.input.describedby, 'Le texte explicatif est lié au champ de recherche via l’attribut « aria-describedby »');
+  t.same(data.label.for, data.input.id, 'Le label est lié au champ de recherche via l’attribut « for »');
+  t.same(data.list.length, data.options.length, 'La liste crée contient le même nombre d’options que le select');
+  t.same(data.listBox.multiple, 'true', 'La liste pour le select contient l’attribut « aria-multiselectable »');
+  t.same(data.list.lengthWithImage, data.options.lengthWithImage, 'La liste crée contient des images si les options contiennent un data-image');
+  t.same(data.list.lengthWithAlt, data.options.lengthWithAlt, 'La liste crée contient des images avec attribut alt si les options contiennent un data-image et un data-alt');
+
+  await browser.close();
+
+  t.end();
+});
+
 test( 'Gestion du champ de recherche', async t => {
   const { browser, page } = await createBrowser();
 
@@ -299,6 +362,7 @@ test( 'Gestion du champ de recherche', async t => {
   await page.keyboard.down('Shift');
   await page.keyboard.press('Tab');
   await page.keyboard.up('Shift');
+  await page.waitForTimeout(10);
 
   const data = await page.evaluate(() => {
     const input = document.getElementById('a11y-select-element-js');
@@ -320,7 +384,7 @@ test( 'Gestion du champ de recherche', async t => {
   });
 
   t.true(data.focused, 'Le focus est dans le champ');
-  t.same(data.selectionStart, data.selectionEnd, 'Le focus ne sélectionne pas tout le texte du champ');
+  t.same(data.selectionStart, data.selectionEnd, 'Le focus ne sélectionne pas le texte du champ');
   t.same(data.selectionStart, data.length, 'Le curseur est positionné en fin de texte');
   t.same(data.displayedOptions, 2, 'La liste des options est filtrée lorsque qu’un texte est saisi dans le champ');
 
