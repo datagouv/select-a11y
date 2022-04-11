@@ -132,7 +132,7 @@ test( 'Creation du select-a11y multiple', async t => {
   t.end();
 });
 
-test( 'État par défaut', async t => {
+test('État par défaut', async t => {
   const { browser, page } = await createBrowser();
 
   const selects = await page.evaluate(() => {
@@ -188,7 +188,7 @@ test( 'État par défaut', async t => {
   t.end();
 });
 
-test( 'Création de la liste lors de l’ouverture du select simple', async t => {
+test('Création de la liste lors de l’ouverture du select simple', async t => {
   const { browser, page } = await createBrowser();
 
   await page.click('.form-group button');
@@ -254,7 +254,6 @@ test('Création de la liste lors de l’ouverture du select simple avec affichag
     const label = container.querySelector('label');
     const input = container.querySelector('input');
     const options = container.querySelectorAll('[role="option"]');
-
     const listBox = container.querySelector('[role="listbox"]');
 
     return {

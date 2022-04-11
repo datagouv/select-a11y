@@ -6,6 +6,9 @@ Array.from(selects).map(function(select) {
   let options = {};
   if(select.dataset.hasOwnProperty("selectA11yLabel")) {
     options.useLabelAsButton = true;
+    if(!select.querySelector('option[selected]')) {
+      select.value = null;
+    }
   }
   return new Select(select, options);
 });

@@ -27,7 +27,21 @@ if (!$21b19656d700fd08$var$closest) $21b19656d700fd08$var$closest = function(s) 
     return null;
 };
 class $21b19656d700fd08$var$Select {
-    constructor(el, options){
+    /**
+   * @param {HTMLSelectElement} el - Select HTML element
+   * @param {object} [options] - options to control select-a11y behavior
+   * @param {object} [options.text] - texts used in the class
+   * @param {object} [options.text.help] - helper text used for assistive technologies
+   * @param {object} [options.text.placeholder] - search input placeholder
+   * @param {object} [options.text.noResult] - text shown when there is no option
+   * @param {object} [options.text.results] - text to show the number of results available for assistive technologies
+   * @param {object} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
+   * @param {object} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
+   * @param {boolean} [options.showSelected=true] - show selected options for multiple select
+   * @param {boolean} [options.enableTextFilter=true] - filtrer options based on search input content
+   * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select. 
+   * Only work if select value is set to `null` otherwise its value defaults to first option.
+   */ constructor(el, options){
         /** @type {HTMLSelectElement} */ this.el = el;
         /** @type {HTMLLabelElement} */ this.label = document.querySelector(`label[for=${el.id}]`);
         this.id = el.id;
@@ -86,7 +100,9 @@ class $21b19656d700fd08$var$Select {
         const text = document.createElement('span');
         if (this.multiple) text.innerText = this.label.innerText;
         else {
-            if (this._options.useLabelAsButton) {
+            const hasSelectedElement = Array.from(this.el.options).some((option)=>option.selected
+            );
+            if (this._options.useLabelAsButton && !hasSelectedElement) {
                 const option = document.createElement('option');
                 option.innerText = this.label.innerText;
                 option.setAttribute('value', '');
