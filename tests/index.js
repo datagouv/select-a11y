@@ -241,6 +241,59 @@ test( 'Création de la liste lors de l’ouverture du select simple', async t =>
   t.end();
 });
 
+test('Création de la liste lors de l’ouverture du select simple avec affichage du label dans le bouton', async t => {
+  const { browser, page } = await createBrowser();
+
+  await page.click('.label button');
+
+  const data = await page.evaluate(() => {
+    const wrapper = document.querySelector('.label .select-a11y');
+    const select = wrapper.querySelector('select');
+    const container = document.querySelector('.a11y-container');
+    const help = container.firstElementChild;
+    const label = container.querySelector('label');
+    const input = container.querySelector('input');
+    const options = container.querySelectorAll('[role="option"]');
+
+    const listBox = container.querySelector('[role="listbox"]');
+
+    return {
+      hasContainer: wrapper.contains(container),
+      help: {
+        isParagraph: help.tagName === 'P',
+        id: help.id
+      },
+      label: {
+        for: label.getAttribute('for')
+      },
+      input: {
+        id: input.id,
+        describedby: input.getAttribute('aria-describedby')
+      },
+      list: {
+        length: options.length
+      },
+      options: {
+        length: select.options.length
+      },
+      listBox: {
+        multiple: listBox.hasAttribute('aria-multiselectable')
+      },
+    }
+  });
+
+  t.true(data.hasContainer, 'La liste est créée lors de l’activation du bouton');
+  t.true(data.help.isParagraph, 'Le texte explicatif est présent');
+  t.same(data.help.id, data.input.describedby, 'Le texte explicatif est lié au champ de recherche via l’attribut « aria-describedby »');
+  t.same(data.label.for, data.input.id, 'Le label est lié au champ de recherche via l’attribut « for »');
+  t.same(data.list.length, data.options.length - 1, 'La liste crée contient une option de moins que le select, celle ajoutée par select-a11y');
+  t.false(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »');
+
+  await browser.close();
+
+  t.end();
+});
+
 test( 'Création de la liste lors de l’ouverture du select multiple', async t => {
   const { browser, page } = await createBrowser();
 

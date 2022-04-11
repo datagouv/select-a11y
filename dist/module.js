@@ -128,7 +128,8 @@ class $5a3b80354f588438$var$Select {
     _fillSuggestions() {
         const search = this.search.toLowerCase();
         // loop over the
-        this.suggestions = Array.prototype.map.call(this.el.options, (function(option, index) {
+        this.suggestions = Array.from(this.el.options).map((option, index)=>{
+            if (option.hidden) return;
             const text = option.label || option.value;
             const formatedText = text.toLowerCase();
             // test if search text match the current option
@@ -150,7 +151,7 @@ class $5a3b80354f588438$var$Select {
                 suggestion.prepend(image);
             }
             return suggestion;
-        }).bind(this)).filter(Boolean);
+        }).filter(Boolean);
         if (!this.suggestions.length) this.list.innerHTML = `<p class="a11y-no-suggestion">${this._options.text.noResult}</p>`;
         else {
             const listBox = document.createElement('div');
