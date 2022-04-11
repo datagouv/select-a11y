@@ -18,7 +18,7 @@ if (!$5a3b80354f588438$var$closest) $5a3b80354f588438$var$closest = function(s) 
 };
 class $5a3b80354f588438$var$Select {
     constructor(el, options){
-        this.el = el;
+        /** @type {HTMLSelectElement} */ this.el = el;
         /** @type {HTMLLabelElement} */ this.label = document.querySelector(`label[for=${el.id}]`);
         this.id = el.id;
         this.open = false;
@@ -32,7 +32,8 @@ class $5a3b80354f588438$var$Select {
         this._options = Object.assign({
             text: textOptions,
             showSelected: true,
-            enableTextFilter: true
+            enableTextFilter: true,
+            useLabelAsButton: false
         }, passedOptions);
         this._handleFocus = this._handleFocus.bind(this);
         this._handleInput = this._handleInput.bind(this);
@@ -75,6 +76,15 @@ class $5a3b80354f588438$var$Select {
         const text = document.createElement('span');
         if (this.multiple) text.innerText = this.label.innerText;
         else {
+            if (this._options.useLabelAsButton) {
+                const option = document.createElement('option');
+                option.innerText = this.label.innerText;
+                option.setAttribute('value', '');
+                option.setAttribute('selected', 'selected');
+                option.setAttribute('disabled', 'disabled');
+                option.setAttribute('hidden', 'hidden');
+                this.el.options.add(option, 0);
+            }
             const selectedOption = this.el.item(this.el.selectedIndex);
             text.innerText = selectedOption.label || selectedOption.value;
             if (!this.label.id) this.label.id = `${this.el.id}-label`;
@@ -333,7 +343,7 @@ class $5a3b80354f588438$var$Select {
         const tagHidden = document.createElement('div');
         tagHidden.classList.add('tag-hidden');
         tagHidden.setAttribute('aria-hidden', 'true');
-        if (this.multiple) tagHidden.appendChild(this.label);
+        if (this.multiple || this._options.useLabelAsButton) tagHidden.appendChild(this.label);
         tagHidden.appendChild(this.el);
         wrapper.appendChild(tagHidden);
         wrapper.appendChild(this.liveZone);

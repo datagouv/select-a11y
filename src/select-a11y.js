@@ -24,6 +24,7 @@ if (!closest) {
 
 class Select{
   constructor( el, options ){
+    /** @type {HTMLSelectElement} */
     this.el = el;
     /** @type {HTMLLabelElement} */
     this.label = document.querySelector(`label[for=${el.id}]`);
@@ -42,6 +43,7 @@ class Select{
       text: textOptions,
       showSelected: true,
       enableTextFilter: true,
+      useLabelAsButton: false,
     }, passedOptions );
 
     this._handleFocus = this._handleFocus.bind(this);
@@ -100,6 +102,15 @@ class Select{
       text.innerText = this.label.innerText;
     }
     else {
+      if(this._options.useLabelAsButton) {
+        const option = document.createElement('option');
+        option.innerText = this.label.innerText;
+        option.setAttribute('value', '');
+        option.setAttribute('selected', 'selected');
+        option.setAttribute('disabled', 'disabled');
+        option.setAttribute('hidden', 'hidden');
+        this.el.options.add(option, 0);
+      }
       const selectedOption = this.el.item(this.el.selectedIndex);
       text.innerText = selectedOption.label || selectedOption.value;
 
@@ -207,7 +218,6 @@ class Select{
       if(this.multiple){
         listBox.setAttribute('aria-multiselectable', 'true');
       }
-
 
       this.suggestions.forEach(function(suggestion){
         listBox.appendChild(suggestion);
@@ -517,7 +527,7 @@ class Select{
     tagHidden.classList.add('tag-hidden');
     tagHidden.setAttribute('aria-hidden', 'true');
 
-    if(this.multiple){
+    if(this.multiple || this._options.useLabelAsButton){
       tagHidden.appendChild(this.label);
     }
     tagHidden.appendChild(this.el);

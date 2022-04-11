@@ -1,8 +1,13 @@
 import Select from "../../../dist/module";
+/** @type NodeListOf<HTMLSelectElement> */
 var selects = document.querySelectorAll('select[data-select-a11y]');
 
 Array.from(selects).map(function(select) {
-  return new Select(select);
+  let options = {};
+  if(select.dataset.hasOwnProperty("selectA11yLabel")) {
+    options.useLabelAsButton = true;
+  }
+  return new Select(select, options);
 });
 
 // Exemple d'instanciation avec le paramètre "text" des libellés d'aide du composant

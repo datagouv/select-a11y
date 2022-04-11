@@ -159,6 +159,8 @@ test( 'État par défaut', async t => {
       else {
         return {
           multiple: false,
+          useLabelAsButton: select.dataset.hasOwnProperty("selectA11yLabel"),
+          label: label.textContent.trim(),
           buttonLabel: button.textContent.trim(),
           value: select.value,
         }
@@ -167,13 +169,18 @@ test( 'État par défaut', async t => {
   });
 
   selects.forEach(select => {
-    if(select.multiple){
+    if(select.multiple) {
       t.same(select.label, select.buttonLabel, 'Le select multiple affiche le label dans le bouton d’ouverture');
       t.same(select.listItems, select.values, 'Le select multiple affiche une liste des éléments sélectionnés par défaut');
     }
     else {
-      t.same(select.buttonLabel, select.value, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ourerture');
+      if(select.useLabelAsButton && !select.value) {
+        t.same(select.label, select.buttonLabel, 'Le select multiple affiche le label dans le bouton d’ouverture');
+      } else {
+        t.same(select.buttonLabel, select.value, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ourerture');
+      }
     }
+
   });
 
   await browser.close();
