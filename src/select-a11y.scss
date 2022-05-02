@@ -40,94 +40,27 @@ select {
 
 /* select-a11y
 ------------------------------------------------------ */
-$btn-select-a11y-bg:          $gray-9 !default;
-$btn-select-a11y-symbol:      "\25BC" !default; // ▼
+$select-a11y-button-bg:          $gray-9 !default;
+$select-a11y-button-symbol:      "\25BC" !default; // ▼
 
-$tag-item-border:             $gray-7 !default;
-$tag-item-supp-symbol:        "\2715" !default; // X
-$tag-item-supp-symbol-color:  red !default;
-$tag-item-supp-border:        red !default;
+$select-a11y__selected-item-border:             $gray-7 !default;
+$select-a11y-delete-symbol:        "\2715" !default; // X
+$select-a11y-delete-symbol-color:  red !default;
+$select-a11y-delete-border:        red !default;
 
-$a11y-suggestions-bg:         $gray-10 !default;
-$a11y-suggestion-color:       $gray-3 !default;
-$a11y-suggestion-color-hover: $gray-1 !default;
-$a11y-suggestion-bg-hover:    $gray-9 !default;
-$a11y-suggestion-bg-selected: $gray-7 !default;
-$a11y-suggestion-border:      $gray-3 !default;
+$select-a11y-suggestions-bg:         $gray-10 !default;
+$select-a11y-suggestion-color:       $gray-3 !default;
+$select-a11y-suggestion-color-hover: $gray-1 !default;
+$select-a11y-suggestion-bg-hover:    $gray-9 !default;
+$select-a11y-suggestion-bg-selected: $gray-7 !default;
+$select-a11y-suggestion-border:      $gray-3 !default;
+
 
 .select-a11y {
   position: relative;
 
-  .btn-select-a11y {
-    position: relative;
-    width: 100%;
-    text-align: left;
-    background-color: $btn-select-a11y-bg;
-
-    .icon-select {
-      position: absolute;
-      background-color: red;
-      top:50%;
-      right: 0.5em;
-      line-height: 0;
-
-      &::before {
-        content :$btn-select-a11y-symbol;
-      }
-    }
-
-    &[aria-expanded="true"]{
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-
-      .icon-select {
-        transform: rotate(180deg);
-      }
-    }
-  }
-
-  .tag-item {
-    border: 1px solid $tag-item-border;
-    padding: .2em .1em .2em 0.5em;
-  }
-
-  .tag-item-supp {
-    background-color: transparent;
-    border: 1px solid transparent;
-
-    .icon-delete:before {
-      content: $tag-item-supp-symbol;
-      color: $tag-item-supp-symbol-color;
-      line-height: 1;
-    }
-
-    &:focus{
-      outline: 1px solid $tag-item-supp-border;
-      color: $tag-item-supp-border;
-    }
-
-    &:hover {
-      color: $tag-item-supp-border;
-      border-color: $tag-item-supp-border;
-    }
-  }
-
-  .tag-hidden {
-    display: none;
-  }
-
-  &.is-open .a11y-container {
+  &.is-open .select-a11y__overlay {
     display: block;
-  }
-
-  .a11y-container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    padding: 0.5em;
-    background: $a11y-suggestions-bg;
-    z-index: 10;
-    border: 1px solid $btn-select-a11y-bg;
   }
 
   // fix safari pour cacher l'autocompletion native
@@ -139,78 +72,169 @@ $a11y-suggestion-border:      $gray-3 !default;
     position: absolute;
     right: 0;
   }
+}
 
-  .a11y-suggestions {
-    max-height: 10em;
-    overflow-y: auto;
-    border: 1px solid $a11y-suggestion-border;
-    margin-top: 0.5em;
-    background-color: #fff;
-  }
+.select-a11y-button {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background-color: $select-a11y-button-bg;
 
-  .a11y-suggestion {
-    padding: 0.25rem 0.5rem 0.25rem 1.5rem;
-    color: $a11y-suggestion-color;
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    align-items: center;
+  &[aria-expanded="true"] {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 
-    &:focus,
-    &:hover {
-      color: $a11y-suggestion-color-hover;
-      background-color: $a11y-suggestion-bg-hover;
-    }
-    &:focus {
-      outline: 1px dotted $a11y-suggestion-color-hover !important;
-      outline-offset: -1px;
-    }
-
-    &[aria-selected="true"]{
-      background-color: $a11y-suggestion-bg-selected;
-      color: $a11y-suggestion-color-hover;
-      position: relative;
-
-      &:before{
-        content: '▸';
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: math.div(8em, 16);
-      }
+    .select-a11y-button__icon {
+      transform: rotate(180deg);
     }
   }
+}
 
-  .a11y-img {
-    width: 3rem;
-    height: 3rem;
-    object-fit: cover;
-    object-position: center;
-    margin-right: 0.5rem;
+.select-a11y-button__clear {
+  position: absolute;
+  top: 0;
+  right: 2rem;
+  bottom: 0;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  border: none;
+  background: none;
+  &::before {
+    content: '✕';
+  }
+  
+  .select-a11y-button.select-a11y-button--no-selected-option + & {
+    display: none;
+  }
+}
+
+.select-a11y-button__text {
+  padding-right: 2.5rem;
+}
+
+.select-a11y-button__icon {
+  position: absolute;
+  top:50%;
+  right: 0.5em;
+  line-height: 0;
+
+  &::before {
+    content :$select-a11y-button-symbol;
+  }
+}
+
+.select-a11y__selected-item {
+  border: 1px solid $select-a11y__selected-item-border;
+  padding: .2em .1em .2em 0.5em;
+}
+
+.select-a11y-delete__icon:before {
+  content: $select-a11y-delete-symbol;
+  color: $select-a11y-delete-symbol-color;
+  line-height: 1;
+}
+
+.select-a11y-delete {
+  background-color: transparent;
+  border: 1px solid transparent;
+
+  &:focus{
+    outline: 1px solid $select-a11y-delete-border;
+    color: $select-a11y-delete-border;
   }
 
-  .a11y-no-suggestion {
-    padding: 0 0.5em;
-    color: $a11y-suggestion-color;
-    text-align: left;
-    margin: 0;
+  &:hover {
+    color: $select-a11y-delete-border;
+    border-color: $select-a11y-delete-border;
+  }
+}
+
+.select-a11y__hidden {
+  display: none;
+}
+
+.select-a11y__overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 0.5em;
+  background: $select-a11y-suggestions-bg;
+  z-index: 10;
+  border: 1px solid $select-a11y-button-bg;
+}
+
+.select-a11y-suggestions {
+  max-height: 10em;
+  overflow-y: auto;
+  border: 1px solid $select-a11y-suggestion-border;
+  margin-top: 0.5em;
+  background-color: #fff;
+}
+
+.select-a11y-suggestion {
+  padding: 0.25rem 0.5rem 0.25rem 1.5rem;
+  color: $select-a11y-suggestion-color;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+
+  &:focus,
+  &:hover {
+    color: $select-a11y-suggestion-color-hover;
+    background-color: $select-a11y-suggestion-bg-hover;
+  }
+  &:focus {
+    outline: 1px dotted $select-a11y-suggestion-color-hover !important;
+    outline-offset: -1px;
   }
 
-  .list-selected {
-    padding: 0.5em 0;
-    margin: 0;
+  &[aria-selected="true"] {
+    background-color: $select-a11y-suggestion-bg-selected;
+    color: $select-a11y-suggestion-color-hover;
+    position: relative;
 
-    li {
-      margin: 0 0.3em 0.3em 0;
-
-      &:before {
-        content:"";
-      }
-
-      span {
-        display: inline-block;
-      }
+    &:before {
+      content: '▸';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: math.div(8em, 16);
     }
   }
+}
 
+
+.select-a11y-suggestion__image {
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  object-position: center;
+  margin-right: 0.5rem;
+}
+
+.select-a11y__no-suggestion {
+  padding: 0 0.5em;
+  color: $select-a11y-suggestion-color;
+  text-align: left;
+  margin: 0;
+}
+
+.select-a11y__selected-list {
+  padding: 0.5em 0;
+  margin: 0;
+
+  li {
+    margin: 0 0.3em 0.3em 0;
+
+    &:before {
+      content:"";
+    }
+
+    span {
+      display: inline-block;
+    }
+  }
 }

@@ -140,23 +140,13 @@
     text-align: right;
   }
 
-  .btn {
-    box-shadow: 3px 3px 4px 0 rgba(0,0,0,.1);
-
-    &:hover,
-    &:focus {
-      box-shadow: none;
-    }
-
-  }
-
-  .btn-select-a11y{
+  .select-a11y-button{
     &:focus{
       box-shadow: 0 0 5px 0 $code-color;
     }
   }
 
-  .icon-select::before {
+  .select-a11y-button__icon::before {
     color: $primary-color;
   }
 }

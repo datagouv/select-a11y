@@ -37,7 +37,7 @@ test( 'Creation du select-a11y simple', async t => {
 
   const { tagHidden, live, button } = await page.evaluate(() => {
     const selectA11y = document.querySelector('.form-group > .select-a11y');
-    const tagHidden = selectA11y.querySelector('.tag-hidden');
+    const tagHidden = selectA11y.querySelector('.select-a11y__hidden');
     const live = selectA11y.querySelector('[aria-live]');
     const button = selectA11y.querySelector('button[aria-expanded]');
     const label = selectA11y.querySelector('label');
@@ -93,7 +93,7 @@ test( 'Creation du select-a11y multiple', async t => {
 
   const { tagHidden, live, button} = await page.evaluate(() => {
     const selectA11y = document.querySelector('.form-group.multiple > .select-a11y');
-    const tagHidden = selectA11y.querySelector('.tag-hidden');
+    const tagHidden = selectA11y.querySelector('.select-a11y__hidden');
     const live = selectA11y.querySelector('[aria-live]');
     const button = selectA11y.querySelector('button[aria-expanded]');
 
@@ -146,7 +146,7 @@ test('État par défaut', async t => {
 
       if(select.multiple){
         const selectedValues = Array.from(select.selectedOptions).map(option => option.value);
-        const listItems = Array.from(wrapper.querySelectorAll('.tag-item')).map(item => item.firstElementChild.textContent.trim());
+        const listItems = Array.from(wrapper.querySelectorAll('.select-a11y__selected-item')).map(item => item.firstElementChild.textContent.trim());
 
         return {
           multiple: true,
@@ -163,6 +163,7 @@ test('État par défaut', async t => {
           label: label.textContent.trim(),
           buttonLabel: button.textContent.trim(),
           value: select.value,
+          option: select.item(select.selectedIndex).text,
         }
       }
     });
@@ -177,7 +178,7 @@ test('État par défaut', async t => {
       if(select.useLabelAsButton && !select.value) {
         t.same(select.label, select.buttonLabel, 'Le select multiple affiche le label dans le bouton d’ouverture');
       } else {
-        t.same(select.buttonLabel, select.value, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ourerture');
+        t.same(select.buttonLabel, select.option, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ourerture');
       }
     }
 
@@ -196,7 +197,7 @@ test('Création de la liste lors de l’ouverture du select simple', async t => 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.select-a11y');
     const select = wrapper.querySelector('select');
-    const container = document.querySelector('.a11y-container');
+    const container = document.querySelector('.select-a11y__overlay');
     const help = container.firstElementChild;
     const label = container.querySelector('label');
     const input = container.querySelector('input');
@@ -249,7 +250,7 @@ test('Création de la liste lors de l’ouverture du select simple avec affichag
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.label .select-a11y');
     const select = wrapper.querySelector('select');
-    const container = document.querySelector('.a11y-container');
+    const container = document.querySelector('.select-a11y__overlay');
     const help = container.firstElementChild;
     const label = container.querySelector('label');
     const input = container.querySelector('input');
@@ -301,7 +302,7 @@ test( 'Création de la liste lors de l’ouverture du select multiple', async t 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.multiple .select-a11y');
     const select = wrapper.querySelector('select');
-    const container = document.querySelector('.multiple .a11y-container');
+    const container = document.querySelector('.multiple .select-a11y__overlay');
     const help = container.firstElementChild;
     const label = container.querySelector('label');
     const input = container.querySelector('input');
@@ -354,7 +355,7 @@ test( 'Création de la liste lors de l’ouverture du select avec image', async 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.images .select-a11y');
     const select = wrapper.querySelector('select');
-    const container = document.querySelector('.images .a11y-container');
+    const container = document.querySelector('.images .select-a11y__overlay');
     const help = container.firstElementChild;
     const label = container.querySelector('label');
     const input = container.querySelector('input');
@@ -450,7 +451,7 @@ test( 'Gestion du champ de recherche', async t => {
   await page.type('#a11y-select-element-js', 'eee');
 
   const noResult = await page.evaluate(() => {
-    return document.querySelectorAll('.multiple .a11y-no-suggestion') !== undefined
+    return document.querySelectorAll('.multiple .select-a11y__no-suggestion') !== undefined
   });
 
   t.true(noResult, 'La liste affiche un message d’erreur lorsqu’il n’y a pas d’option s’approchant du texte saisi dans le champ');
@@ -586,7 +587,7 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
     const button = document.querySelector('.multiple button');
     const select = document.querySelector('.multiple select');
     const activeElement = document.activeElement;
-    const list = Array.from(document.querySelectorAll('.multiple .list-selected li'));
+    const list = Array.from(document.querySelectorAll('.multiple .select-a11y__selected-list li'));
 
     if(select instanceof HTMLSelectElement) {
       return {
@@ -626,20 +627,20 @@ test( 'Suppression des options via la liste des options sélectionnées', async 
   await page.keyboard.press('Space');
   await page.keyboard.press('Enter');
 
-  await page.focus('.list-selected .tag-item:nth-child(3) button');
+  await page.focus('.select-a11y__selected-list .select-a11y__selected-item:nth-child(3) button');
   await page.keyboard.press('Enter');
 
   const secondButtonFocused = await page.evaluate(() => {
-    return document.activeElement === document.querySelector('.list-selected .tag-item:nth-child(2) button');
+    return document.activeElement === document.querySelector('.select-a11y__selected-list .select-a11y__selected-item:nth-child(2) button');
   });
 
   t.true(secondButtonFocused, 'Le focus est placé sur le bouton précédant dans l’ordre du document lors de la suppression');
 
-  await page.focus('.list-selected .tag-item:nth-child(1) button');
+  await page.focus('.select-a11y__selected-list .select-a11y__selected-item:nth-child(1) button');
   await page.keyboard.press('Enter');
 
   const firstButtonFocused = await page.evaluate(() => {
-    return document.activeElement === document.querySelector('.list-selected .tag-item:nth-child(1) button');
+    return document.activeElement === document.querySelector('.select-a11y__selected-list .select-a11y__selected-item:nth-child(1) button');
   });
 
   t.true(firstButtonFocused, 'Le focus est placé sur le premier bouton dans l’ordre du document lors de la suppression du premier bouton');
@@ -705,7 +706,7 @@ test( 'Gestion de la liste au blur', async t => {
 
   const select = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
-    const selected = document.querySelector('.multiple .tag-item button');
+    const selected = document.querySelector('.multiple .select-a11y__selected-item button');
 
     return {
       expanded: button.getAttribute('aria-expanded'),
@@ -741,7 +742,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
 
   await page.click('.form-group button');
 
-  await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
+  await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
   await page.waitForTimeout(10);
 
@@ -761,7 +762,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
   await page.click('.form-group button');
 
   await page.keyboard.down('Meta');
-  await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
+  await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
   await page.keyboard.up('Meta');
 
   await page.waitForTimeout(10);
@@ -789,7 +790,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
 
   await page.click('.multiple button');
 
-  await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
+  await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
   await page.waitForTimeout(10);
 
@@ -809,7 +810,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
   await page.click('.multiple button');
 
   await page.keyboard.down('Meta');
-  await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
+  await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
   await page.keyboard.up('Meta');
 
   await page.waitForTimeout(10);
@@ -817,7 +818,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
   const metaClickStatus = await page.evaluate(() => {
     const activeElement = document.activeElement;
     const opener = document.querySelector('.form-group button');
-    const option = document.querySelector('.a11y-suggestions [role="option"]:nth-child(2')
+    const option = document.querySelector('.select-a11y-suggestions [role="option"]:nth-child(2')
 
     return {
       expanded: opener.getAttribute('aria-expanded'),
@@ -892,13 +893,13 @@ test( 'Reset du formulaire', async t => {
 
   await page.click('.form-group button');
 
-  await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
+  await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
   await page.waitForTimeout(10);
 
   await page.click('.multiple button');
 
-  await page.click('.a11y-suggestions [role="option"]:nth-child(2)');
+  await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
   await page.waitForTimeout(10);
 
@@ -906,36 +907,25 @@ test( 'Reset du formulaire', async t => {
 
   await page.waitForTimeout(10);
 
-  const [singleState, multipleState] = await page.evaluate(() => {
+  const {singleState, multipleState} = await page.evaluate(() => {
     const singleSelect = document.querySelector('select[data-select-a11y]:not([multiple])');
     const multipleSelect = document.querySelector('select[data-select-a11y][multiple]');
-    const list = Array.from(document.querySelectorAll('.multiple .list-selected li'));
-
-    if(singleSelect instanceof HTMLSelectElement && multipleSelect instanceof HTMLSelectElement) {
-      return [
-        {
-          selectedValue: singleSelect.value,
-          label: document.querySelector('.form-group button span').textContent.trim(),
-        },
-        {
-          selectedOptions: Array.from(multipleSelect.selectedOptions).map(option => option.value),
-          selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
-        }
-      ]
+    const list = Array.from(document.querySelectorAll('.multiple .select-a11y__selected-list li'));
+    const singleState = {};
+    const multipleState = {};
+    if(singleSelect instanceof HTMLSelectElement) {
+      singleState.selectedValue = singleSelect.value;
+      singleState.selectedOption = singleSelect.item(singleSelect.selectedIndex).text;
+      singleState.label = document.querySelector('.form-group button div').textContent.trim();
     }
-    return [
-      {
-        selectedValue: null,
-        label: document.querySelector('.form-group button span').textContent.trim(),
-      },
-      {
-        selectedOptions: null,
-        selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
-      }
-    ]
+    if(multipleSelect instanceof HTMLSelectElement) {
+      multipleState.selectedOptions = Array.from(multipleSelect.selectedOptions).map(option => option.value);
+      multipleState.selectedItems = list.map(item => item.firstElementChild.textContent.trim());
+    }
+    return {singleState, multipleState};
   });
 
-  t.same(singleState.selectedValue, singleState.label, 'Le reset de formulaire change le texte du bouton d’ouverture')
+  t.same(singleState.selectedOption, singleState.label, 'Le reset de formulaire change le texte du bouton d’ouverture')
 
   const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) =>{
     return option === multipleState.selectedItems[index];

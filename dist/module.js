@@ -4,9 +4,10 @@ const $5a3b80354f588438$var$text = {
     noResult: 'Aucun résultat',
     results: '{x} suggestion(s) disponibles',
     deleteItem: 'Supprimer {t}',
-    delete: 'Supprimer'
+    delete: 'Supprimer',
+    clear: 'Vider'
 };
-const $5a3b80354f588438$var$matches = Element.prototype.matches || Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+const $5a3b80354f588438$var$matches = Element.prototype.matches;
 let $5a3b80354f588438$var$closest = Element.prototype.closest;
 if (!$5a3b80354f588438$var$closest) $5a3b80354f588438$var$closest = function(s) {
     var el = this;
@@ -27,10 +28,13 @@ class $5a3b80354f588438$var$Select {
    * @param {object} [options.text.results] - text to show the number of results available for assistive technologies
    * @param {object} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
    * @param {object} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
-   * @param {boolean} [options.showSelected=true] - show selected options for multiple select
+   * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
    * @param {boolean} [options.enableTextFilter=true] - filtrer options based on search input content
+   * @param {boolean} [options.showSelected=true] - show selected options for multiple select
    * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select. 
    * Only work if select value is set to `null` otherwise its value defaults to first option.
+   * @param {boolean} [options.clearable=false] - show clear icon for single select. 
+   * Only work if select value is set. It resets it to `null`.
    */ constructor(el, options){
         /** @type {HTMLSelectElement} */ this.el = el;
         /** @type {HTMLLabelElement} */ this.label = document.querySelector(`label[for=${el.id}]`);
@@ -47,19 +51,24 @@ class $5a3b80354f588438$var$Select {
             text: textOptions,
             showSelected: true,
             enableTextFilter: true,
-            useLabelAsButton: false
+            useLabelAsButton: false,
+            clearable: false
         }, passedOptions);
         this._handleFocus = this._handleFocus.bind(this);
         this._handleInput = this._handleInput.bind(this);
         this._handleKeyboard = this._handleKeyboard.bind(this);
         this._handleOpener = this._handleOpener.bind(this);
+        this._handleClear = this._handleClear.bind(this);
         this._handleReset = this._handleReset.bind(this);
         this._handleSuggestionClick = this._handleSuggestionClick.bind(this);
         this._positionCursor = this._positionCursor.bind(this);
         this._removeOption = this._removeOption.bind(this);
         this.setText = this.setText.bind(this);
+        this._setButtonText = this._setButtonText.bind(this);
         this._disable();
         this.button = this._createButton();
+        this._setButtonText();
+        this.clearButton = this._createClearButton();
         this.liveZone = this._createLiveZone();
         this.overlay = this._createOverlay();
         this.wrap = this._wrap();
@@ -69,6 +78,7 @@ class $5a3b80354f588438$var$Select {
             this.selectedList.addEventListener('click', this._removeOption);
         }
         this.button.addEventListener('click', this._handleOpener);
+        this.clearButton.addEventListener('click', this._handleClear);
         this.input.addEventListener('input', this._handleInput);
         this.input.addEventListener('focus', this._positionCursor, true);
         this.list.addEventListener('click', this._handleSuggestionClick);
@@ -86,13 +96,14 @@ class $5a3b80354f588438$var$Select {
         const button = document.createElement('button');
         button.setAttribute('type', 'button');
         button.setAttribute('aria-expanded', this.open);
-        button.className = 'btn btn-select-a11y';
-        const text = document.createElement('span');
+        button.className = 'select-a11y-button';
+        const text = document.createElement('div');
+        text.className = 'select-a11y-button__text';
         if (this.multiple) text.innerText = this.label.innerText;
         else {
-            const hasSelectedElement = Array.from(this.el.options).some((option)=>option.selected
+            const hasSelectedOption = Array.from(this.el.options).some((option)=>option.selected
             );
-            if (this._options.useLabelAsButton && !hasSelectedElement) {
+            if (this._options.useLabelAsButton && !hasSelectedOption) {
                 const option = document.createElement('option');
                 option.innerText = this.label.innerText;
                 option.setAttribute('value', '');
@@ -101,15 +112,20 @@ class $5a3b80354f588438$var$Select {
                 option.setAttribute('hidden', 'hidden');
                 this.el.options.add(option, 0);
             }
-            const selectedOption = this.el.item(this.el.selectedIndex);
-            text.innerText = selectedOption.label || selectedOption.value;
             if (!this.label.id) this.label.id = `${this.el.id}-label`;
             button.setAttribute('id', this.el.id + '-button');
             button.setAttribute('aria-labelledby', this.label.id + ' ' + button.id);
         }
         button.appendChild(text);
-        button.insertAdjacentHTML('beforeend', '<span class="icon-select" aria-hidden="true"></span>');
+        button.insertAdjacentHTML('beforeend', '<span class="select-a11y-button__icon" aria-hidden="true"></span>');
         return button;
+    }
+    _createClearButton() {
+        const clear = document.createElement('button');
+        clear.setAttribute('type', 'button');
+        clear.setAttribute('aria-label', this._options.text.clear);
+        clear.className = 'select-a11y-button__clear';
+        return clear;
     }
     _createLiveZone() {
         const live = document.createElement('p');
@@ -119,9 +135,9 @@ class $5a3b80354f588438$var$Select {
     }
     _createOverlay() {
         const container = document.createElement('div');
-        container.classList.add('a11y-container');
+        container.classList.add('select-a11y__overlay');
         const suggestions = document.createElement('div');
-        suggestions.classList.add('a11y-suggestions');
+        suggestions.classList.add('select-a11y-suggestions');
         suggestions.id = `a11y-${this.id}-suggestions`;
         container.innerHTML = `
       <p id="a11y-usage-${this.id}-js" class="sr-only">${this._options.text.help}</p>
@@ -135,11 +151,11 @@ class $5a3b80354f588438$var$Select {
     }
     _createSelectedList() {
         const list = document.createElement('ul');
-        list.className = 'list-inline list-selected';
+        list.className = 'select-a11y__selected-list';
         return list;
     }
     _disable() {
-        this.el.setAttribute('tabindex', -1);
+        this.el.setAttribute('tabindex', '-1');
     }
     _fillSuggestions() {
         const search = this.search.toLowerCase();
@@ -155,7 +171,7 @@ class $5a3b80354f588438$var$Select {
             suggestion.setAttribute('role', 'option');
             suggestion.setAttribute('tabindex', '0');
             suggestion.setAttribute('data-index', index);
-            suggestion.classList.add('a11y-suggestion');
+            suggestion.classList.add('select-a11y-suggestion');
             // check if the option is selected
             if (option.selected) suggestion.setAttribute('aria-selected', 'true');
             suggestion.innerText = option.label || option.value;
@@ -163,12 +179,12 @@ class $5a3b80354f588438$var$Select {
                 const image = document.createElement('img');
                 image.setAttribute('src', option.dataset.image);
                 image.setAttribute('alt', option.dataset.alt ? option.dataset.alt : '');
-                image.classList.add('a11y-img');
+                image.classList.add('select-a11y-suggestion__image');
                 suggestion.prepend(image);
             }
             return suggestion;
         }).filter(Boolean);
-        if (!this.suggestions.length) this.list.innerHTML = `<p class="a11y-no-suggestion">${this._options.text.noResult}</p>`;
+        if (!this.suggestions.length) this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
         else {
             const listBox = document.createElement('div');
             listBox.setAttribute('role', 'listbox');
@@ -187,7 +203,7 @@ class $5a3b80354f588438$var$Select {
     _handleFocus() {
         if (!this.open) return;
         clearTimeout(this._focusTimeout);
-        this._focusTimeout = setTimeout((function() {
+        this._focusTimeout = setTimeout(()=>{
             if (!this.overlay.contains(document.activeElement) && this.button !== document.activeElement) this._toggleOverlay(false, document.activeElement === document.body);
             else if (document.activeElement === this.input) // reset the focus index
             this.focusIndex = null;
@@ -195,17 +211,18 @@ class $5a3b80354f588438$var$Select {
                 const optionIndex = this.suggestions.indexOf(document.activeElement);
                 if (optionIndex !== -1) this.focusIndex = optionIndex;
             }
-        }).bind(this), 10);
+        }, 10);
+    }
+    _handleClear() {
+        this.el.value = "";
+        this._handleReset();
     }
     _handleReset() {
         clearTimeout(this._resetTimeout);
         this._resetTimeout = setTimeout((function() {
             this._fillSuggestions();
             if (this.multiple && this._options.showSelected) this._updateSelectedList();
-            else if (!this.multiple) {
-                const option = this.el.item(this.el.selectedIndex);
-                this._setButtonText(option.label || option.value);
-            }
+            this._setButtonText();
         }).bind(this), 10);
     }
     _handleSuggestionClick(event) {
@@ -287,8 +304,14 @@ class $5a3b80354f588438$var$Select {
             else buttons[0].focus();
         } else this.button.focus();
     }
-    _setButtonText(text) {
-        this.button.firstElementChild.innerText = text;
+    _setButtonText() {
+        if (!this.multiple) {
+            const selectedOption = this.el.item(this.el.selectedIndex);
+            if (selectedOption && selectedOption.value) this.button.classList.remove('select-a11y-button--no-selected-option');
+            else this.button.classList.add('select-a11y-button--no-selected-option');
+            const child = this.button.firstElementChild;
+            if (child instanceof HTMLElement) child.innerText = selectedOption.label || selectedOption.value;
+        }
     }
     _setLiveZone() {
         const suggestions = this.suggestions.length;
@@ -331,8 +354,8 @@ class $5a3b80354f588438$var$Select {
             if (this.el.item(index).selected) suggestion.setAttribute('aria-selected', 'true');
             else suggestion.removeAttribute('aria-selected');
         }).bind(this));
-        if (!this.multiple) this._setButtonText(option.label || option.value);
-        else if (this._options.showSelected) this._updateSelectedList();
+        this._setButtonText();
+        if (this.multiple && this._options.showSelected) this._updateSelectedList();
         if (close && this.open) this._toggleOverlay();
     }
     _updateSelectedList() {
@@ -340,11 +363,11 @@ class $5a3b80354f588438$var$Select {
             if (!option.selected) return;
             const text = option.label || option.value;
             return `
-        <li class="tag-item">
+        <li class="select-a11y__selected-item">
           <span>${text}</span>
-          <button class="tag-item-supp" title="${this._options.text.deleteItem.replace('{t}', text)}" type="button" data-index="${index}">
+          <button class="select-a11y-delete" title="${this._options.text.deleteItem.replace('{t}', text)}" type="button" data-index="${index}">
             <span class="sr-only">${this._options.text.delete}</span>
-            <span class="icon-delete" aria-hidden="true"></span>
+            <span class="select-a11y-delete__icon" aria-hidden="true"></span>
           </button>
         </li>`;
         }).bind(this)).filter(Boolean);
@@ -358,13 +381,14 @@ class $5a3b80354f588438$var$Select {
         wrapper.classList.add('select-a11y');
         this.el.parentElement.appendChild(wrapper);
         const tagHidden = document.createElement('div');
-        tagHidden.classList.add('tag-hidden');
+        tagHidden.classList.add('select-a11y__hidden');
         tagHidden.setAttribute('aria-hidden', 'true');
         if (this.multiple || this._options.useLabelAsButton) tagHidden.appendChild(this.label);
         tagHidden.appendChild(this.el);
         wrapper.appendChild(tagHidden);
         wrapper.appendChild(this.liveZone);
         wrapper.appendChild(this.button);
+        if (this._options.clearable) wrapper.appendChild(this.clearButton);
         return wrapper;
     }
 }

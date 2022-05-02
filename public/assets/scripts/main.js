@@ -10,6 +10,9 @@ Array.from(selects).map(function(select) {
       select.value = null;
     }
   }
+  if(select.dataset.hasOwnProperty("selectA11yClearable")) {
+    options.clearable = true;
+  }
   return new Select(select, options);
 });
 
