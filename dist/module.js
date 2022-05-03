@@ -219,11 +219,12 @@ class $5a3b80354f588438$var$Select {
     }
     _handleReset() {
         clearTimeout(this._resetTimeout);
-        this._resetTimeout = setTimeout((function() {
+        this._resetTimeout = setTimeout(()=>{
             this._fillSuggestions();
             if (this.multiple && this._options.showSelected) this._updateSelectedList();
             this._setButtonText();
-        }).bind(this), 10);
+            this.el.dispatchEvent(new Event('change'));
+        }, 10);
     }
     _handleSuggestionClick(event) {
         const option = $5a3b80354f588438$var$closest.call(event.target, '[role="option"]');
