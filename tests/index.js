@@ -77,6 +77,31 @@ test( 'Creation du select-a11y simple', async t => {
   t.end();
 });
 
+test( 'Programmatically assign value to select-a11y', async t => {
+  const { browser, page } = await createBrowser();
+
+  const {selectedOption, value} = await page.evaluate(() => {
+    var select = document.querySelector('.form-group select[data-select-a11y]');
+    if(select instanceof HTMLSelectElement) {
+      const selectA11y = window.selectA11ys.shift();
+      const button = document.querySelector('.form-group button');
+      const item = select.options.item(2);
+      selectA11y.selectOption(item.value);
+
+      return {
+        selectedOption: item.label,
+        value: button.firstElementChild.textContent.trim()
+      }
+    }
+  });
+
+  t.same(selectedOption, value, 'Programmatically selecting an option updates <select> value');
+
+  await browser.close();
+
+  t.end();
+});
+
 test( 'Creation du select-a11y multiple', async t => {
   const { browser, page } = await createBrowser();
 

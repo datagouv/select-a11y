@@ -115,7 +115,21 @@ class Select {
     Object.assign(this._options.text, newText);
   }
 
-  _createButton(){
+  /**
+   * Select new value
+   * @param {*} value option value
+   */
+  selectOption(value) {
+    const optionIndex = Array.from(this.el.options).findIndex(option => option.value === value);
+    if(optionIndex === -1) {
+      return;
+    }
+    const shouldClose = this.multiple ? false : true;
+    this._toggleSelection(optionIndex, shouldClose);
+  }
+
+
+  _createButton() {
     const button = document.createElement('button');
     button.setAttribute('type', 'button');
     button.setAttribute('aria-expanded', this.open);
@@ -165,7 +179,7 @@ class Select {
     return live;
   }
 
-  _createOverlay(){
+  _createOverlay() {
     const container = document.createElement('div');
     container.classList.add('select-a11y__overlay');
 
@@ -199,7 +213,7 @@ class Select {
     this.el.setAttribute('tabindex', '-1');
   }
 
-  _fillSuggestions(){
+  _fillSuggestions() {
     const search = this.search.toLowerCase();
 
     // loop over the

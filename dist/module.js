@@ -92,6 +92,16 @@ class $5a3b80354f588438$var$Select {
    */ setText(newText) {
         Object.assign(this._options.text, newText);
     }
+    /**
+   * Select new value
+   * @param {*} value option value
+   */ selectOption(value) {
+        const optionIndex = Array.from(this.el.options).findIndex((option)=>option.value === value
+        );
+        if (optionIndex === -1) return;
+        const shouldClose = this.multiple ? false : true;
+        this._toggleSelection(optionIndex, shouldClose);
+    }
     _createButton() {
         const button = document.createElement('button');
         button.setAttribute('type', 'button');
