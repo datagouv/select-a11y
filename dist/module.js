@@ -356,15 +356,16 @@ class $5a3b80354f588438$var$Select {
         }
     }
     _toggleSelection(optionIndex, close = true) {
-        const option = this.el.item(optionIndex);
+        const option1 = this.el.item(optionIndex);
         if (this.multiple) this.el.item(optionIndex).selected = !this.el.item(optionIndex).selected;
         else this.el.selectedIndex = optionIndex;
         this.el.dispatchEvent(new Event('change'));
-        this.suggestions.forEach((function(suggestion) {
+        this.suggestions.forEach((suggestion)=>{
             const index = parseInt(suggestion.getAttribute('data-index'), 10);
-            if (this.el.item(index).selected) suggestion.setAttribute('aria-selected', 'true');
+            const option = this.el.item(index);
+            if (option && option.selected) suggestion.setAttribute('aria-selected', 'true');
             else suggestion.removeAttribute('aria-selected');
-        }).bind(this));
+        });
         this._setButtonText();
         if (this.multiple && this._options.showSelected) this._updateSelectedList();
         if (close && this.open) this._toggleOverlay();
