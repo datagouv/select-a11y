@@ -524,16 +524,16 @@ class Select {
       this.el.selectedIndex = optionIndex;
     }
     this.el.dispatchEvent(new Event('change'));
-    this.suggestions.forEach(function(suggestion){
+    this.suggestions.forEach((suggestion) => {
       const index = parseInt(suggestion.getAttribute('data-index'), 10);
-
-      if(this.el.item(index).selected){
+      const option = this.el.item(index);
+      if(option && option.selected) {
         suggestion.setAttribute('aria-selected', 'true');
       }
       else{
         suggestion.removeAttribute('aria-selected');
       }
-    }.bind(this));
+    });
 
     this._setButtonText();
     if(this.multiple && this._options.showSelected) {
