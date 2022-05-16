@@ -12,7 +12,7 @@ const matches = Element.prototype.matches;
 let closest = Element.prototype.closest;
 
 if (!closest) {
-  closest = function(s) {
+  closest = function (s) {
     var el = this;
 
     do {
@@ -21,6 +21,18 @@ if (!closest) {
     } while (el !== null && el.nodeType === 1);
     return null;
   };
+}
+
+const DEEP_CLONE = true;
+
+/**
+ * Deep copy of an {@link Iterable} as {@link Array}
+ * @template {HTMLElement} T
+ * @param {Iterable<T>} array 
+ * @returns {Array<T>}
+ */
+function deepCopy (array) {
+  return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
 }
 
 class Select {
@@ -35,14 +47,14 @@ class Select {
    * @param {object} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
    * @param {object} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
    * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
-   * @param {boolean} [options.enableTextFilter=true] - filtrer options based on search input content
+   * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
    * @param {boolean} [options.showSelected=true] - show selected options for multiple select
    * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select. 
    * Only work if select value is set to `null` otherwise its value defaults to first option.
    * @param {boolean} [options.clearable=false] - show clear icon for single select. 
    * Only work if select value is set. It resets it to `null`.
    */
-  constructor( el, options ){
+  constructor(el, options) {
     /** @type {HTMLSelectElement} */
     this.el = el;
     /** @type {HTMLLabelElement} */
@@ -51,20 +63,22 @@ class Select {
     this.open = false;
     this.multiple = this.el.multiple;
     this.search = '';
+    /** @type {Array<HTMLElement>} */
     this.suggestions = [];
     this.focusIndex = null;
 
     const passedOptions = Object.assign({}, options);
     const textOptions = Object.assign({}, text, passedOptions.text);
     delete passedOptions.text;
+    this._defaultSearch = this._defaultSearch.bind(this);
 
     this._options = Object.assign({
       text: textOptions,
       showSelected: true,
-      enableTextFilter: true,
+      fillSuggestions: this._defaultSearch,
       useLabelAsButton: false,
       clearable: false,
-    }, passedOptions );
+    }, passedOptions);
 
     this._handleFocus = this._handleFocus.bind(this);
     this._handleInput = this._handleInput.bind(this);
@@ -78,6 +92,41 @@ class Select {
     this.setText = this.setText.bind(this);
     this._setButtonText = this._setButtonText.bind(this);
 
+    if(!this.multiple) {
+      const hasSelectedOption = Array.from(this.el.options).some(option => option.selected);
+      if (this._options.useLabelAsButton && !hasSelectedOption) {
+        const option = document.createElement('option');
+        option.innerText = this.label.innerText;
+        option.setAttribute('value', '');
+        option.setAttribute('selected', 'selected');
+        option.setAttribute('disabled', 'disabled');
+        option.setAttribute('hidden', 'hidden');
+        this.el.options.add(option, 0);
+      }
+    }
+    
+    /** 
+     * Select original options at initialization of the component.
+     * They are never modified and are used to handle reset.
+     * @type {Array<HTMLOptionElement>} 
+     */
+    this.originalOptions =  deepCopy(this.el.options);
+
+    /** 
+     * Select original options at initialization of the component.
+     * They are updated based on select / unselect of options but no options are added or removed to it.
+     * This is the set of options passed to {@link FillSuggestions} callback.
+     * @type {Array<HTMLOptionElement>}
+     */
+    this.updatedOriginalOptions = Array.from(this.el.options);
+
+    /** 
+     * Select current options. These can be completely differents options than {@link originalOptions} 
+     * if the provided promise fetches some from an API.
+     * @type {Array<HTMLOptionElement>} 
+     */
+    this.currentOptions = Array.from(this.el.options);
+
     this._disable();
 
     this.button = this._createButton();
@@ -87,7 +136,7 @@ class Select {
     this.overlay = this._createOverlay();
     this.wrap = this._wrap();
 
-    if(this.multiple && this._options.showSelected) {
+    if (this.multiple && this._options.showSelected) {
       this.selectedList = this._createSelectedList();
       this._updateSelectedList();
 
@@ -120,8 +169,8 @@ class Select {
    * @param {*} value option value
    */
   selectOption(value) {
-    const optionIndex = Array.from(this.el.options).findIndex(option => option.value === value);
-    if(optionIndex === -1) {
+    const optionIndex = this.currentOptions.findIndex(option => option.value === value);
+    if (optionIndex === -1) {
       return;
     }
     const shouldClose = this.multiple ? false : true;
@@ -137,25 +186,15 @@ class Select {
     const text = document.createElement('div');
     text.className = 'select-a11y-button__text';
 
-    if(this.multiple){
+    if (this.multiple) {
       text.innerText = this.label.innerText;
     }
     else {
-      const hasSelectedOption = Array.from(this.el.options).some(option => option.selected);
-      if (this._options.useLabelAsButton && !hasSelectedOption) {
-          const option = document.createElement('option');
-          option.innerText = this.label.innerText;
-          option.setAttribute('value', '');
-          option.setAttribute('selected', 'selected');
-          option.setAttribute('disabled', 'disabled');
-          option.setAttribute('hidden', 'hidden');
-          this.el.options.add(option, 0);
-      }
-      if(!this.label.id){
+      if (!this.label.id) {
         this.label.id = `${this.el.id}-label`;
       }
-      button.setAttribute('id',this.el.id+'-button');
-      button.setAttribute('aria-labelledby', this.label.id+' '+button.id);
+      button.setAttribute('id', this.el.id + '-button');
+      button.setAttribute('aria-labelledby', this.label.id + ' ' + button.id);
     }
 
     button.appendChild(text);
@@ -213,92 +252,162 @@ class Select {
     this.el.setAttribute('tabindex', '-1');
   }
 
-  _fillSuggestions() {
+  /**
+   * 
+   * @typedef Suggestion
+   * @property {boolean} hidden - if suggestion is hidden
+   * @property {boolean} disabled - if suggestion is disabled
+   * @property {boolean} selected - if suggestion is selected
+   * @property {string} label - label shown
+   * @property {any} value - suggestion value
+   * @property {string} [image] - suggestion image
+   * @property {string} [alt] - suggestion image alt
+   */
+
+  /**
+   * 
+   * @param {HTMLOptionElement} option 
+   * @returns {Suggestion} - a suggestion
+   */
+  _mapToSuggestion(option) {
+    return {
+      hidden: option.hidden,
+      disabled: option.disabled,
+      selected: option.hasAttribute('selected'),
+      label: option.label,
+      value: option.value,
+      image: option.dataset.image,
+      alt: option.dataset.alt,
+    }
+  }
+
+  /**
+   * 
+   * @param {Suggestion} suggestion 
+   * @returns {HTMLOptionElement} - an option
+   */
+  _mapToOption(suggestion) {
+    const option = document.createElement('option');
+    option.label = suggestion.label;
+    option.value = suggestion.value;
+    if(suggestion.hidden) {
+      option.setAttribute('hidden', 'hidden');
+    }
+    if(suggestion.disabled) {
+      option.setAttribute('disabled', 'disabled');
+    }
+    if(suggestion.selected) {
+      option.setAttribute('selected', 'selected');
+    }
+    if(suggestion.image) {
+      option.dataset.image = suggestion.image;
+    }
+    if(suggestion.alt) {
+      option.dataset.alt = suggestion.alt;
+    }
+    return option;
+  }
+
+  /**
+   * @callback FillSuggestions
+   * @param {string} search - searched term
+   * @param {Array<HTMLOptionElement>} options - original select options
+   * @returns {Promise<Array<Suggestion>>} suggestions
+   */
+
+  /**
+   * 
+   * @type {FillSuggestions} 
+   */
+  _defaultSearch(search, options) {
+    const newOptions = options.filter(option => {
+      const text = option.label || option.value;
+      return text.toLocaleLowerCase().indexOf(search) !== -1;
+    }).map(this._mapToSuggestion);
+    return Promise.resolve(newOptions);
+  }
+
+  /**
+   * 
+   * @returns {Promise<Array<Suggestion>>}
+   */
+  async _fillSuggestions() {
     const search = this.search.toLowerCase();
 
     // loop over the
-    this.suggestions = Array.from(this.el.options).map((option, index) => {
-      if(option.hidden) {
+    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
+    this.currentOptions = suggestions.map(this._mapToOption);
+    this.el.replaceChildren(...this.currentOptions);
+    const suggestionElements = suggestions.map((suggestion, index) => {
+      if (suggestion.hidden || suggestion.disabled) {
         return;
       }
-      const text = option.label || option.value;
-      const formatedText = text.toLowerCase();
-
-      // test if search text match the current option
-      if(this._options.enableTextFilter && formatedText.indexOf(search) === -1) {
-        return;
-      }
-
-      // create the option
-      const suggestion = document.createElement('div');
-      suggestion.setAttribute('role', 'option');
-      suggestion.setAttribute('tabindex', '0');
-      suggestion.setAttribute('data-index', index);
-      suggestion.classList.add('select-a11y-suggestion');
-
+      const suggestionElement = document.createElement('div');
+      suggestionElement.setAttribute('role', 'option');
+      suggestionElement.setAttribute('tabindex', '0');
+      suggestionElement.setAttribute('data-index', index.toString());
+      suggestionElement.classList.add('select-a11y-suggestion');
+      suggestionElement.innerText = suggestion.label || suggestion.value;
       // check if the option is selected
-      if (option.selected) {
-        suggestion.setAttribute('aria-selected', 'true');
+      if (suggestion.selected) {
+        suggestionElement.setAttribute('aria-selected', 'true');
       }
-
-      suggestion.innerText = option.label || option.value;
-
-      if (option.dataset.image) {
+      if (suggestion.image) {
         const image = document.createElement('img');
-        image.setAttribute('src', option.dataset.image);
-        image.setAttribute('alt', option.dataset.alt ? option.dataset.alt : '');
+        image.setAttribute('src', suggestion.image);
+        image.setAttribute('alt', suggestion.alt ? suggestion.alt : '');
         image.classList.add('select-a11y-suggestion__image');
-        suggestion.prepend(image);
+        suggestionElement.prepend(image);
       }
 
-      return suggestion;
+      return suggestionElement;
     }).filter(Boolean);
-
-    if(!this.suggestions.length){
+    this.suggestions = suggestionElements;
+    if (!suggestionElements.length) {
       this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
     }
     else {
       const listBox = document.createElement('div');
       listBox.setAttribute('role', 'listbox');
 
-      if(this.multiple){
+      if (this.multiple) {
         listBox.setAttribute('aria-multiselectable', 'true');
       }
 
-      this.suggestions.forEach(function(suggestion){
-        listBox.appendChild(suggestion);
-      }.bind(this));
+      suggestionElements.forEach((suggestionElement) => {
+        listBox.appendChild(suggestionElement);
+      });
 
       this.list.innerHTML = '';
       this.list.appendChild(listBox);
     }
-
     this._setLiveZone();
+    return suggestions;
   }
 
-  _handleOpener(event){
+  _handleOpener(event) {
     this._toggleOverlay();
   }
 
-  _handleFocus(){
-    if(!this.open){
+  _handleFocus() {
+    if (!this.open) {
       return;
     }
 
     clearTimeout(this._focusTimeout);
 
     this._focusTimeout = setTimeout(() => {
-      if(!this.overlay.contains(document.activeElement) && this.button !== document.activeElement){
-        this._toggleOverlay( false, document.activeElement === document.body);
+      if (!this.overlay.contains(document.activeElement) && this.button !== document.activeElement) {
+        this._toggleOverlay(false, document.activeElement === document.body);
       }
-      else if(document.activeElement === this.input){
+      else if (document.activeElement === this.input) {
         // reset the focus index
-        this.focusIndex =  null;
+        this.focusIndex = null;
       }
       else {
-        const optionIndex = this.suggestions.indexOf(document.activeElement);
+        const optionIndex = this.suggestions.indexOf(/** @type HTMLElement */ (document.activeElement));
 
-        if(optionIndex !== -1){
+        if (optionIndex !== -1) {
           this.focusIndex = optionIndex;
         }
       }
@@ -313,20 +422,23 @@ class Select {
   _handleReset() {
     clearTimeout(this._resetTimeout);
 
-    this._resetTimeout = setTimeout(() => {
-      this._fillSuggestions();
-      if(this.multiple && this._options.showSelected){
+    this._resetTimeout = setTimeout(async () => {
+      this.search = '';
+      this.updatedOriginalOptions = deepCopy(this.originalOptions);
+      this.currentOptions = deepCopy(this.originalOptions);
+      await this._fillSuggestions();
+      this.el.dispatchEvent(new Event('change'));
+      this._setButtonText();
+      if (this.multiple && this._options.showSelected) {
         this._updateSelectedList();
       }
-      this._setButtonText();
-      this.el.dispatchEvent(new Event('change'));
     }, 10);
   }
 
-  _handleSuggestionClick(event){
+  _handleSuggestionClick(event) {
     const option = closest.call(event.target, '[role="option"]');
 
-    if(!option){
+    if (!option) {
       return;
     }
 
@@ -336,9 +448,9 @@ class Select {
     this._toggleSelection(optionIndex, shouldClose);
   }
 
-  _handleInput(){
+  _handleInput() {
     // prevent event fireing on focus and blur
-    if( this.search === this.input.value ){
+    if (this.search === this.input.value) {
       return;
     }
 
@@ -346,64 +458,64 @@ class Select {
     this._fillSuggestions();
   }
 
-  _handleKeyboard(event){
+  _handleKeyboard(event) {
     const option = closest.call(event.target, '[role="option"]');
     const input = closest.call(event.target, 'input');
 
-    if(event.keyCode === 27){
+    if (event.keyCode === 27) {
       this._toggleOverlay();
       return;
     }
 
-    if(input && event.keyCode === 13){
+    if (input && event.keyCode === 13) {
       event.preventDefault();
       return;
     }
 
-    if(event.keyCode === 40){
+    if (event.keyCode === 40) {
       event.preventDefault();
       this._moveIndex(1);
       return
     }
 
-    if(!option){
+    if (!option) {
       return;
     }
 
-    if(event.keyCode === 39){
+    if (event.keyCode === 39) {
       event.preventDefault();
       this._moveIndex(1);
       return
     }
 
-    if(event.keyCode === 37 || event.keyCode === 38){
+    if (event.keyCode === 37 || event.keyCode === 38) {
       event.preventDefault();
       this._moveIndex(-1);
       return;
     }
 
-    if(( !this.multiple && event.keyCode === 13 ) || event.keyCode === 32){
+    if ((!this.multiple && event.keyCode === 13) || event.keyCode === 32) {
       event.preventDefault();
       this._toggleSelection(parseInt(option.getAttribute('data-index'), 10), this.multiple ? false : true);
     }
 
-    if(this.multiple && event.keyCode === 13){
+    if (this.multiple && event.keyCode === 13) {
       this._toggleOverlay();
     }
   }
 
-  _moveIndex(step){
-    if(this.focusIndex === null){
+  _moveIndex(step) {
+    if (this.focusIndex === null) {
       this.focusIndex = 0;
     }
     else {
       const nextIndex = this.focusIndex + step;
       const selectionItems = this.suggestions.length - 1;
 
-      if(nextIndex > selectionItems){
+      if (nextIndex > selectionItems) {
         this.focusIndex = 0;
       }
-      else if(nextIndex < 0){
+      else if (nextIndex < 0) {
         this.focusIndex = selectionItems;
       }
       else {
@@ -424,23 +536,23 @@ class Select {
   _removeOption(event) {
     const button = closest.call(event.target, 'button');
 
-    if(!button) {
+    if (!button) {
       return;
     }
 
     const currentButtons = this.selectedList.querySelectorAll('button');
     const buttonPreviousIndex = Array.prototype.indexOf.call(currentButtons, button) - 1;
-    const optionIndex = parseInt( button.getAttribute('data-index'), 10);
+    const optionIndex = parseInt(button.getAttribute('data-index'), 10);
 
     // disable the option
     this._toggleSelection(optionIndex);
 
     // manage the focus if there's still the selected list
-    if(this.selectedList.parentElement) {
+    if (this.selectedList.parentElement) {
       const buttons = this.selectedList.querySelectorAll('button');
 
       // look for the bouton before the one clicked
-      if(buttons[buttonPreviousIndex]){
+      if (buttons[buttonPreviousIndex]) {
         buttons[buttonPreviousIndex].focus();
       }
       // fallback to the first button in the list if there's none
@@ -453,26 +565,26 @@ class Select {
   }
 
   _setButtonText() {
-    if(!this.multiple) {
+    if (!this.multiple) {
       const selectedOption = this.el.item(this.el.selectedIndex);
-      if(selectedOption && selectedOption.value) {
+      if (selectedOption && selectedOption.value) {
         this.button.classList.remove('select-a11y-button--no-selected-option');
       } else {
         this.button.classList.add('select-a11y-button--no-selected-option');
       }
       const child = this.button.firstElementChild;
-      if(child instanceof HTMLElement) {
+      if (child instanceof HTMLElement) {
         child.innerText = selectedOption.label || selectedOption.value;
       }
     }
   }
 
-  _setLiveZone(){
+  _setLiveZone() {
     const suggestions = this.suggestions.length;
     let text = '';
 
-    if(this.open){
-      if(!suggestions){
+    if (this.open) {
+      if (!suggestions) {
         text = this._options.text.noResult;
       }
       else {
@@ -483,20 +595,20 @@ class Select {
     this.liveZone.innerText = text;
   }
 
-  _toggleOverlay(state, focusBack){
+  _toggleOverlay(state, focusBack) {
     this.open = state !== undefined ? state : !this.open;
     this.button.setAttribute('aria-expanded', this.open);
 
-    if(this.open){
+    if (this.open) {
       this._fillSuggestions();
       this.button.insertAdjacentElement('afterend', this.overlay);
       this.input.focus();
     }
-    else if(this.wrap.contains(this.overlay)){
+    else if (this.wrap.contains(this.overlay)) {
       this.wrap.removeChild(this.overlay);
 
       // reset the focus index
-      this.focusIndex =  null;
+      this.focusIndex = null;
 
       // reset search values
       this.input.value = '';
@@ -505,52 +617,68 @@ class Select {
 
       // reset aria-live
       this._setLiveZone();
-      if(state === undefined || focusBack){
+      if (state === undefined || focusBack) {
         // fix bug that will trigger a click on the button when focusing directly
-        setTimeout(function(){
+        setTimeout(() => {
           this.button.focus();
-        }.bind(this))
+        });
       }
     }
   }
 
-  _toggleSelection(optionIndex, close = true){
-    const option = this.el.item(optionIndex);
-
-    if(this.multiple){
-      this.el.item(optionIndex).selected = !this.el.item(optionIndex).selected;
+  _toggleSelection(optionIndex, close = true) {
+    const toggledOption = this.el.item(optionIndex);
+    if (this.multiple) {
+      if(toggledOption.hasAttribute('selected')) {
+        toggledOption.removeAttribute('selected');
+      } else {
+        toggledOption.setAttribute('selected', 'selected');
+      }
     }
     else {
+      toggledOption.setAttribute('selected', 'selected');
       this.el.selectedIndex = optionIndex;
     }
-    this.el.dispatchEvent(new Event('change'));
-    this.suggestions.forEach((suggestion) => {
+    this.updatedOriginalOptions = this.updatedOriginalOptions.map(option => {
+      if(option.value === toggledOption.value) {
+        if(toggledOption.hasAttribute('selected')) {
+          option.setAttribute('selected', 'selected');
+        } else {
+          option.removeAttribute('selected');
+        }
+      }
+      if(!this.multiple && option.value !== toggledOption.value) {
+        option.removeAttribute('selected');
+      }
+      return option;
+    });
+    this.suggestions = this.suggestions.map((suggestion) => {
       const index = parseInt(suggestion.getAttribute('data-index'), 10);
       const option = this.el.item(index);
-      if(option && option.selected) {
+      if (option && option.selected) {
         suggestion.setAttribute('aria-selected', 'true');
       }
-      else{
+      else {
         suggestion.removeAttribute('aria-selected');
       }
+      return suggestion;
     });
-
+    this.el.dispatchEvent(new Event('change'));
     this._setButtonText();
-    if(this.multiple && this._options.showSelected) {
+    if (this.multiple && this._options.showSelected) {
       this._updateSelectedList();
     }
 
-    if(close && this.open){
+    if (close && this.open) {
       this._toggleOverlay();
     }
   }
 
   _updateSelectedList() {
-    const items = Array.prototype.map.call(this.el.options, function(option, index) {
-      if(!option.selected){
+    const items = this.currentOptions.map((option, index) => {
+      if(!option.selected) {
         return;
       }
-
       const text = option.label || option.value;
 
       return `
@@ -561,21 +689,21 @@ class Select {
             <span class="select-a11y-delete__icon" aria-hidden="true"></span>
           </button>
         </li>`;
-    }.bind(this)).filter(Boolean);
+    }).filter(Boolean);
 
     this.selectedList.innerHTML = items.join('');
 
-    if(items.length){
-      if(!this.selectedList.parentElement){
+    if (items.length) {
+      if (!this.selectedList.parentElement) {
         this.wrap.appendChild(this.selectedList);
       }
     }
-    else if(this.selectedList.parentElement){
+    else if (this.selectedList.parentElement) {
       this.wrap.removeChild(this.selectedList);
     }
   }
 
-  _wrap(){
+  _wrap() {
     const wrapper = document.createElement('div');
     wrapper.classList.add('select-a11y');
     this.el.parentElement.appendChild(wrapper);
@@ -584,7 +712,7 @@ class Select {
     tagHidden.classList.add('select-a11y__hidden');
     tagHidden.setAttribute('aria-hidden', 'true');
 
-    if(this.multiple || this._options.useLabelAsButton){
+    if (this.multiple || this._options.useLabelAsButton) {
       tagHidden.appendChild(this.label);
     }
     tagHidden.appendChild(this.el);
@@ -592,7 +720,7 @@ class Select {
     wrapper.appendChild(tagHidden);
     wrapper.appendChild(this.liveZone);
     wrapper.appendChild(this.button);
-    if(this._options.clearable) {
+    if (this._options.clearable) {
       wrapper.appendChild(this.clearButton);
     }
 

@@ -84,10 +84,9 @@ test( 'Programmatically assign value to select-a11y', async t => {
     var select = document.querySelector('.form-group select[data-select-a11y]');
     if(select instanceof HTMLSelectElement) {
       const selectA11y = window.selectA11ys.shift();
-      const button = document.querySelector('.form-group button');
       const item = select.options.item(2);
       selectA11y.selectOption(item.value);
-
+      const button = document.querySelector('.form-group button');
       return {
         selectedOption: item.label,
         value: button.firstElementChild.textContent.trim()
@@ -95,7 +94,7 @@ test( 'Programmatically assign value to select-a11y', async t => {
     }
   });
 
-  t.same(selectedOption, value, 'Programmatically selecting an option updates <select> value');
+  t.same(value, selectedOption, 'Programmatically selecting an option updates <select> value');
 
   await browser.close();
 
@@ -259,7 +258,7 @@ test('Création de la liste lors de l’ouverture du select simple', async t => 
   t.true(data.help.isParagraph, 'Le texte explicatif est présent');
   t.same(data.help.id, data.input.describedby, 'Le texte explicatif est lié au champ de recherche via l’attribut « aria-describedby »');
   t.same(data.label.for, data.input.id, 'Le label est lié au champ de recherche via l’attribut « for »');
-  t.same(data.list.length, data.options.length, 'La liste crée contient le même nombre d’options que le select');
+  t.same(data.list.length, data.options.length, 'La liste créée contient le même nombre d’options que le select');
   t.false(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »');
 
   await browser.close();
@@ -311,7 +310,7 @@ test('Création de la liste lors de l’ouverture du select simple avec affichag
   t.true(data.help.isParagraph, 'Le texte explicatif est présent');
   t.same(data.help.id, data.input.describedby, 'Le texte explicatif est lié au champ de recherche via l’attribut « aria-describedby »');
   t.same(data.label.for, data.input.id, 'Le label est lié au champ de recherche via l’attribut « for »');
-  t.same(data.list.length, data.options.length - 1, 'La liste crée contient une option de moins que le select, celle ajoutée par select-a11y');
+  t.same(data.list.length, data.options.length - 1, 'La liste créée contient une option de moins que le select, celle ajoutée par select-a11y');
   t.false(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »');
 
   await browser.close();
@@ -930,17 +929,17 @@ test( 'Reset du formulaire', async t => {
 
   await page.click('[type="reset"]');
 
-  await page.waitForTimeout(10);
+  await page.waitForTimeout(50);
 
   const {singleState, multipleState} = await page.evaluate(() => {
-    const singleSelect = document.querySelector('select[data-select-a11y]:not([multiple])');
-    const multipleSelect = document.querySelector('select[data-select-a11y][multiple]');
+    const singleSelect = document.querySelector('.form-group select');
+    const multipleSelect = document.querySelector('.multiple select');
     const list = Array.from(document.querySelectorAll('.multiple .select-a11y__selected-list li'));
     const singleState = {};
     const multipleState = {};
     if(singleSelect instanceof HTMLSelectElement) {
       singleState.selectedValue = singleSelect.value;
-      singleState.selectedOption = singleSelect.item(singleSelect.selectedIndex).text;
+      singleState.selectedOption = singleSelect.item(singleSelect.selectedIndex).label;
       singleState.label = document.querySelector('.form-group button div').textContent.trim();
     }
     if(multipleSelect instanceof HTMLSelectElement) {
@@ -951,10 +950,11 @@ test( 'Reset du formulaire', async t => {
   });
 
   t.same(singleState.selectedOption, singleState.label, 'Le reset de formulaire change le texte du bouton d’ouverture')
-
-  const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) =>{
+  console.log('selected options: ' + multipleState.selectedOptions);
+  console.log('selected list: ' + multipleState.selectedItems);
+  const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) => {
     return option === multipleState.selectedItems[index];
-  })
+  });
 
   t.true(selectedOptionsMatches, 'Le reset de formulaire change la liste des éléments sélectionnés')
 

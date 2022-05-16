@@ -29,7 +29,8 @@
     "url": "https://git.sr.ht/~nicolaskempf57/select-a11y"
   },
   "scripts": {
-    "build": "parcel build",
+    "build": "rm -rf .parcel-cache && parcel build",
+    "dev": "rm -rf .parcel-cache && parcel watch",
     "prepublishOnly": "npm run build",
     "test": "tape tests/index.js"
   },
@@ -39,7 +40,7 @@
     "@parcel/transformer-sass": "^2.4.0",
     "parcel": "^2.4.0",
     "puppeteer": "^13.5.1",
-    "tape": "^5.5.2"
+    "tape": "^5.5.3"
   },
   "bugs": {
     "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y",
