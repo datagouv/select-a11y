@@ -157,7 +157,7 @@ class $21b19656d700fd08$var$Select {
         button.setAttribute('type', 'button');
         button.setAttribute('aria-expanded', this.open);
         button.className = 'select-a11y-button';
-        const text = document.createElement('div');
+        const text = document.createElement('span');
         text.className = 'select-a11y-button__text';
         if (this.multiple) text.innerText = this.label.innerText;
         else {
