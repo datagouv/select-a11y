@@ -1,14 +1,4 @@
-function $parcel$defineInteropFlag(a) {
-  Object.defineProperty(a, '__esModule', {value: true, configurable: true});
-}
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
-
-$parcel$defineInteropFlag(module.exports);
-
-$parcel$export(module.exports, "default", () => $21b19656d700fd08$export$2e2bcd8739ae039);
-const $21b19656d700fd08$var$text = {
+const $5a3b80354f588438$var$text = {
     help: 'Utilisez la tabulation (ou les touches flèches) pour naviguer dans la liste des suggestions',
     placeholder: 'Rechercher dans la liste',
     noResult: 'Aucun résultat',
@@ -17,27 +7,27 @@ const $21b19656d700fd08$var$text = {
     delete: 'Supprimer',
     clear: 'Vider'
 };
-const $21b19656d700fd08$var$matches = Element.prototype.matches;
-let $21b19656d700fd08$var$closest = Element.prototype.closest;
-if (!$21b19656d700fd08$var$closest) $21b19656d700fd08$var$closest = function(s) {
+const $5a3b80354f588438$var$matches = Element.prototype.matches;
+let $5a3b80354f588438$var$closest = Element.prototype.closest;
+if (!$5a3b80354f588438$var$closest) $5a3b80354f588438$var$closest = function(s) {
     var el = this;
     do {
-        if ($21b19656d700fd08$var$matches.call(el, s)) return el;
+        if ($5a3b80354f588438$var$matches.call(el, s)) return el;
         el = el.parentElement || el.parentNode;
     }while (el !== null && el.nodeType === 1)
     return null;
 };
-const $21b19656d700fd08$var$DEEP_CLONE = true;
+const $5a3b80354f588438$var$DEEP_CLONE = true;
 /**
  * Deep copy of an {@link Iterable} as {@link Array}
  * @template {HTMLElement} T
- * @param {Iterable<T>} array 
+ * @param {Iterable<T>} array
  * @returns {Array<T>}
- */ function $21b19656d700fd08$var$deepCopy(array) {
-    return /** @type {Array<T>} */ Array.from(array).map((option)=>option.cloneNode($21b19656d700fd08$var$DEEP_CLONE)
+ */ function $5a3b80354f588438$var$deepCopy(array) {
+    return /** @type {Array<T>} */ Array.from(array).map((option)=>option.cloneNode($5a3b80354f588438$var$DEEP_CLONE)
     );
 }
-class $21b19656d700fd08$var$Select {
+class $5a3b80354f588438$export$ef9b1a59e592288f {
     /**
    * @param {HTMLSelectElement} el - Select HTML element
    * @param {object} [options] - options to control select-a11y behavior
@@ -51,9 +41,9 @@ class $21b19656d700fd08$var$Select {
    * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
    * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
    * @param {boolean} [options.showSelected=true] - show selected options for multiple select
-   * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select. 
+   * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select.
    * Only work if select value is set to `null` otherwise its value defaults to first option.
-   * @param {boolean} [options.clearable=false] - show clear icon for single select. 
+   * @param {boolean} [options.clearable=false] - show clear icon for single select.
    * Only work if select value is set. It resets it to `null`.
    */ constructor(el, options){
         /** @type {HTMLSelectElement} */ this.el = el;
@@ -65,7 +55,7 @@ class $21b19656d700fd08$var$Select {
         /** @type {Array<HTMLElement>} */ this.suggestions = [];
         this.focusIndex = null;
         const passedOptions = Object.assign({}, options);
-        const textOptions = Object.assign({}, $21b19656d700fd08$var$text, passedOptions.text);
+        const textOptions = Object.assign({}, $5a3b80354f588438$var$text, passedOptions.text);
         delete passedOptions.text;
         this._defaultSearch = this._defaultSearch.bind(this);
         this._options = Object.assign({
@@ -99,21 +89,21 @@ class $21b19656d700fd08$var$Select {
                 this.el.options.add(option, 0);
             }
         }
-        /** 
+        /**
      * Select original options at initialization of the component.
      * They are never modified and are used to handle reset.
-     * @type {Array<HTMLOptionElement>} 
-     */ this.originalOptions = $21b19656d700fd08$var$deepCopy(this.el.options);
-        /** 
+     * @type {Array<HTMLOptionElement>}
+     */ this.originalOptions = $5a3b80354f588438$var$deepCopy(this.el.options);
+        /**
      * Select original options at initialization of the component.
      * They are updated based on select / unselect of options but no options are added or removed to it.
      * This is the set of options passed to {@link FillSuggestions} callback.
      * @type {Array<HTMLOptionElement>}
      */ this.updatedOriginalOptions = Array.from(this.el.options);
-        /** 
-     * Select current options. These can be completely differents options than {@link originalOptions} 
+        /**
+     * Select current options. These can be completely differents options than {@link originalOptions}
      * if the provided promise fetches some from an API.
-     * @type {Array<HTMLOptionElement>} 
+     * @type {Array<HTMLOptionElement>}
      */ this.currentOptions = Array.from(this.el.options);
         this._disable();
         this.button = this._createButton();
@@ -207,7 +197,7 @@ class $21b19656d700fd08$var$Select {
         this.el.setAttribute('tabindex', '-1');
     }
     /**
-   * 
+   *
    * @typedef Suggestion
    * @property {boolean} hidden - if suggestion is hidden
    * @property {boolean} disabled - if suggestion is disabled
@@ -217,8 +207,8 @@ class $21b19656d700fd08$var$Select {
    * @property {string} [image] - suggestion image
    * @property {string} [alt] - suggestion image alt
    */ /**
-   * 
-   * @param {HTMLOptionElement} option 
+   *
+   * @param {HTMLOptionElement} option
    * @returns {Suggestion} - a suggestion
    */ _mapToSuggestion(option) {
         return {
@@ -232,8 +222,8 @@ class $21b19656d700fd08$var$Select {
         };
     }
     /**
-   * 
-   * @param {Suggestion} suggestion 
+   *
+   * @param {Suggestion} suggestion
    * @returns {HTMLOptionElement} - an option
    */ _mapToOption(suggestion) {
         const option = document.createElement('option');
@@ -252,8 +242,8 @@ class $21b19656d700fd08$var$Select {
    * @param {Array<HTMLOptionElement>} options - original select options
    * @returns {Promise<Array<Suggestion>>} suggestions
    */ /**
-   * 
-   * @type {FillSuggestions} 
+   *
+   * @type {FillSuggestions}
    */ _defaultSearch(search, options) {
         const newOptions = options.filter((option)=>{
             const text = option.label || option.value;
@@ -262,7 +252,7 @@ class $21b19656d700fd08$var$Select {
         return Promise.resolve(newOptions);
     }
     /**
-   * 
+   *
    * @returns {Promise<Array<Suggestion>>}
    */ async _fillSuggestions() {
         const search = this.search.toLowerCase();
@@ -328,8 +318,8 @@ class $21b19656d700fd08$var$Select {
         clearTimeout(this._resetTimeout);
         this._resetTimeout = setTimeout(async ()=>{
             this.search = '';
-            this.updatedOriginalOptions = $21b19656d700fd08$var$deepCopy(this.originalOptions);
-            this.currentOptions = $21b19656d700fd08$var$deepCopy(this.originalOptions);
+            this.updatedOriginalOptions = $5a3b80354f588438$var$deepCopy(this.originalOptions);
+            this.currentOptions = $5a3b80354f588438$var$deepCopy(this.originalOptions);
             await this._fillSuggestions();
             this.el.dispatchEvent(new Event('change'));
             this._setButtonText();
@@ -337,7 +327,7 @@ class $21b19656d700fd08$var$Select {
         }, 10);
     }
     _handleSuggestionClick(event) {
-        const option = $21b19656d700fd08$var$closest.call(event.target, '[role="option"]');
+        const option = $5a3b80354f588438$var$closest.call(event.target, '[role="option"]');
         if (!option) return;
         const optionIndex = parseInt(option.getAttribute('data-index'), 10);
         const shouldClose = this.multiple && event.metaKey ? false : true;
@@ -350,8 +340,8 @@ class $21b19656d700fd08$var$Select {
         this._fillSuggestions();
     }
     _handleKeyboard(event) {
-        const option = $21b19656d700fd08$var$closest.call(event.target, '[role="option"]');
-        const input = $21b19656d700fd08$var$closest.call(event.target, 'input');
+        const option = $5a3b80354f588438$var$closest.call(event.target, '[role="option"]');
+        const input = $5a3b80354f588438$var$closest.call(event.target, 'input');
         if (event.keyCode === 27) {
             this._toggleOverlay();
             return;
@@ -400,7 +390,7 @@ class $21b19656d700fd08$var$Select {
         });
     }
     _removeOption(event) {
-        const button = $21b19656d700fd08$var$closest.call(event.target, 'button');
+        const button = $5a3b80354f588438$var$closest.call(event.target, 'button');
         if (!button) return;
         const currentButtons = this.selectedList.querySelectorAll('button');
         const buttonPreviousIndex = Array.prototype.indexOf.call(currentButtons, button) - 1;
@@ -518,7 +508,8 @@ class $21b19656d700fd08$var$Select {
         return wrapper;
     }
 }
-var $21b19656d700fd08$export$2e2bcd8739ae039 = $21b19656d700fd08$var$Select;
+var $5a3b80354f588438$export$2e2bcd8739ae039 = $5a3b80354f588438$export$ef9b1a59e592288f;
 
 
+export {$5a3b80354f588438$export$ef9b1a59e592288f as Select, $5a3b80354f588438$export$2e2bcd8739ae039 as default};
 //# sourceMappingURL=main.js.map
