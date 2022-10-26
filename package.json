@@ -2,17 +2,17 @@
   "name": "@conciergerie.dev/select-a11y",
   "version": "2.2.1",
   "description": "Module de select multiple accessible",
+  "type": "module",
   "main": "dist/main.js",
-  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
   "css": "dist/select-a11y.css",
   "test": "public/assets/scripts/index.js",
   "test-css": "public/assets/css/style.css",
+  "sideEffects": false,
   "targets": {
     "main": {
-      "source": "src/select-a11y.js"
-    },
-    "module": {
-      "source": "src/select-a11y.js"
+      "source": "src/select-a11y.js",
+      "context": "browser"
     },
     "css": {
       "source": "src/select-a11y.scss"
