@@ -20,8 +20,8 @@ test( 'Creation du select-a11y simple', async t => {
 
   const {label, select} = await page.evaluate(() => {
     const wrapper = document.querySelector('.form-group');
-    const selectA11y = wrapper.querySelector('.select-a11y');
-    const label = wrapper.firstElementChild;
+    const selectA11y = wrapper?.querySelector('.select-a11y');
+    const label = wrapper?.firstElementChild;
 
     return {
       label: {
@@ -37,17 +37,17 @@ test( 'Creation du select-a11y simple', async t => {
 
   const { tagHidden, live, button } = await page.evaluate(() => {
     const selectA11y = document.querySelector('.form-group > .select-a11y');
-    const tagHidden = selectA11y.querySelector('.select-a11y__hidden');
-    const live = selectA11y.querySelector('[aria-live]');
-    const button = selectA11y.querySelector('button[aria-expanded]');
-    const label = selectA11y.querySelector('label');
+    const tagHidden = selectA11y?.querySelector('.select-a11y__hidden');
+    const live = selectA11y?.querySelector('[aria-live]');
+    const button = selectA11y?.querySelector('button[aria-expanded]');
+    const label = selectA11y?.querySelector('label');
 
 
     return {
       tagHidden: {
         exists: tagHidden !== null,
         isHidden: tagHidden && tagHidden.getAttribute('aria-hidden') === 'true',
-        select: tagHidden && tagHidden.firstElementChild.tagName
+        select: tagHidden && tagHidden.firstElementChild?.tagName
       },
       live: {
         exists: live !== null,
@@ -70,7 +70,7 @@ test( 'Creation du select-a11y simple', async t => {
 
   t.true( button.exists, 'Le bouton permettant d’ouvrir le select est créé');
   t.true( button.isClosed, 'Le bouton permettant d’ouvrir le select est paramétré comme fermé par défaut');
-  t.true( button.labelledby.includes( label.id ), 'Le bouton est lié au label via l’attribut « aria-labelledby »');
+  t.true( button.labelledby?.includes( label.id ?? "" ), 'Le bouton est lié au label via l’attribut « aria-labelledby »');
 
   await browser.close();
 
@@ -83,16 +83,17 @@ test( 'Programmatically assign value to select-a11y', async t => {
   const {selectedOption, value} = await page.evaluate(() => {
     var select = document.querySelector('.form-group select[data-select-a11y]');
     if(select instanceof HTMLSelectElement) {
-      const selectA11y = window.selectA11ys.shift();
+      // @ts-ignore
+      const selectA11y = window.selectA11ys?.shift();
       const item = select.options.item(2);
-      selectA11y.selectOption(item.value);
+      selectA11y.selectOption(item?.value);
       const button = document.querySelector('.form-group button');
       return {
-        selectedOption: item.label,
-        value: button.firstElementChild.textContent.trim()
+        selectedOption: item?.label,
+        value: button?.firstElementChild?.textContent?.trim()
       }
     }
-  });
+  }) ?? {};
 
   t.same(value, selectedOption, 'Programmatically selecting an option updates <select> value');
 
@@ -106,7 +107,7 @@ test( 'Creation du select-a11y multiple', async t => {
 
   const {select} = await page.evaluate(() => {
     const wrapper = document.querySelector('.form-group');
-    const selectA11y = wrapper.querySelector('.select-a11y');
+    const selectA11y = wrapper?.querySelector('.select-a11y');
 
     return {
       select: selectA11y !== null
@@ -117,16 +118,16 @@ test( 'Creation du select-a11y multiple', async t => {
 
   const { tagHidden, live, button} = await page.evaluate(() => {
     const selectA11y = document.querySelector('.form-group.multiple > .select-a11y');
-    const tagHidden = selectA11y.querySelector('.select-a11y__hidden');
-    const live = selectA11y.querySelector('[aria-live]');
-    const button = selectA11y.querySelector('button[aria-expanded]');
+    const tagHidden = selectA11y?.querySelector('.select-a11y__hidden');
+    const live = selectA11y?.querySelector('[aria-live]');
+    const button = selectA11y?.querySelector('button[aria-expanded]');
 
 
     return {
       tagHidden: {
         exists: tagHidden !== null,
         isHidden: tagHidden && tagHidden.getAttribute('aria-hidden') === 'true',
-        label: tagHidden && tagHidden.firstElementChild.tagName,
+        label: tagHidden && tagHidden.firstElementChild?.tagName,
         hasSelect: tagHidden && tagHidden.querySelector('select') !== null
       },
       live: {
@@ -166,16 +167,16 @@ test('État par défaut', async t => {
       const wrapper = select.closest('.select-a11y');
       const label = document.querySelector(`label[for=${select.id}]`);
 
-      const button = wrapper.querySelector('button[aria-expanded]');
+      const button = wrapper?.querySelector('button[aria-expanded]');
 
       if(select.multiple){
         const selectedValues = Array.from(select.selectedOptions).map(option => option.value);
-        const listItems = Array.from(wrapper.querySelectorAll('.select-a11y__selected-item')).map(item => item.firstElementChild.textContent.trim());
+        const listItems = Array.from(wrapper?.querySelectorAll('.select-a11y__selected-item') ?? [])?.map(item => item.firstElementChild?.textContent?.trim());
 
         return {
           multiple: true,
-          label: label.textContent.trim(),
-          buttonLabel: button.textContent.trim(),
+          label: label?.textContent?.trim(),
+          buttonLabel: button?.textContent?.trim(),
           values: selectedValues.join(':'),
           listItems: listItems.join(':'),
         }
@@ -184,10 +185,10 @@ test('État par défaut', async t => {
         return {
           multiple: false,
           useLabelAsButton: select.dataset.hasOwnProperty("selectA11yLabel"),
-          label: label.textContent.trim(),
-          buttonLabel: button.textContent.trim(),
+          label: label?.textContent?.trim(),
+          buttonLabel: button?.textContent?.trim(),
           value: select.value,
-          option: select.item(select.selectedIndex).text,
+          option: select?.item(select.selectedIndex)?.text,
         }
       }
     });
@@ -220,36 +221,35 @@ test('Création de la liste lors de l’ouverture du select simple', async t => 
 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.select-a11y');
-    const select = wrapper.querySelector('select');
+    const select = wrapper?.querySelector('select');
     const container = document.querySelector('.select-a11y__overlay');
-    const help = container.firstElementChild;
-    const label = container.querySelector('label');
-    const input = container.querySelector('input');
-    const options = container.querySelectorAll('[role="option"]');
-
-    const listBox = container.querySelector('[role="listbox"]');
+    const help = container?.firstElementChild;
+    const label = container?.querySelector('label');
+    const input = container?.querySelector('input');
+    const options = container?.querySelectorAll('[role="option"]');
+    const listBox = container?.querySelector('[role="listbox"]');
 
     return {
-      hasContainer: wrapper.contains(container),
+      hasContainer: wrapper?.contains(container),
       help: {
-        isParagraph: help.tagName === 'P',
-        id: help.id
+        isParagraph: help?.tagName === 'P',
+        id: help?.id
       },
       label: {
-        for: label.getAttribute('for')
+        for: label?.getAttribute('for')
       },
       input: {
-        id: input.id,
-        describedby: input.getAttribute('aria-describedby')
+        id: input?.id,
+        describedby: input?.getAttribute('aria-describedby')
       },
       list: {
-        length: options.length
+        length: options?.length
       },
       options: {
-        length: select.options.length
+        length: select?.options.length
       },
       listBox: {
-        multiple: listBox.hasAttribute('aria-multiselectable')
+        multiple: listBox?.hasAttribute('aria-multiselectable')
       },
     }
   });
@@ -273,35 +273,35 @@ test('Création de la liste lors de l’ouverture du select simple avec affichag
 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.label .select-a11y');
-    const select = wrapper.querySelector('select');
+    const select = wrapper?.querySelector('select');
     const container = document.querySelector('.select-a11y__overlay');
-    const help = container.firstElementChild;
-    const label = container.querySelector('label');
-    const input = container.querySelector('input');
-    const options = container.querySelectorAll('[role="option"]');
-    const listBox = container.querySelector('[role="listbox"]');
+    const help = container?.firstElementChild;
+    const label = container?.querySelector('label');
+    const input = container?.querySelector('input');
+    const options = container?.querySelectorAll('[role="option"]');
+    const listBox = container?.querySelector('[role="listbox"]');
 
     return {
-      hasContainer: wrapper.contains(container),
+      hasContainer: wrapper?.contains(container),
       help: {
-        isParagraph: help.tagName === 'P',
-        id: help.id
+        isParagraph: help?.tagName === 'P',
+        id: help?.id
       },
       label: {
-        for: label.getAttribute('for')
+        for: label?.getAttribute('for')
       },
       input: {
-        id: input.id,
-        describedby: input.getAttribute('aria-describedby')
+        id: input?.id,
+        describedby: input?.getAttribute('aria-describedby')
       },
       list: {
-        length: options.length
+        length: options?.length
       },
       options: {
-        length: select.options.length
+        length: select?.options.length
       },
       listBox: {
-        multiple: listBox.hasAttribute('aria-multiselectable')
+        multiple: listBox?.hasAttribute('aria-multiselectable')
       },
     }
   });
@@ -310,7 +310,7 @@ test('Création de la liste lors de l’ouverture du select simple avec affichag
   t.true(data.help.isParagraph, 'Le texte explicatif est présent');
   t.same(data.help.id, data.input.describedby, 'Le texte explicatif est lié au champ de recherche via l’attribut « aria-describedby »');
   t.same(data.label.for, data.input.id, 'Le label est lié au champ de recherche via l’attribut « for »');
-  t.same(data.list.length, data.options.length - 1, 'La liste créée contient une option de moins que le select, celle ajoutée par select-a11y');
+  t.same(data.list.length, (data.options?.length ?? 0) - 1, 'La liste créée contient une option de moins que le select, celle ajoutée par select-a11y');
   t.false(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »');
 
   await browser.close();
@@ -325,36 +325,35 @@ test( 'Création de la liste lors de l’ouverture du select multiple', async t 
 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.multiple .select-a11y');
-    const select = wrapper.querySelector('select');
+    const select = wrapper?.querySelector('select');
     const container = document.querySelector('.multiple .select-a11y__overlay');
-    const help = container.firstElementChild;
-    const label = container.querySelector('label');
-    const input = container.querySelector('input');
-    const options = container.querySelectorAll('[role="option"]');
-
-    const listBox = container.querySelector('[role="listbox"]');
+    const help = container?.firstElementChild;
+    const label = container?.querySelector('label');
+    const input = container?.querySelector('input');
+    const options = container?.querySelectorAll('[role="option"]');
+    const listBox = container?.querySelector('[role="listbox"]');
 
     return {
-      hasContainer: wrapper.contains(container),
+      hasContainer: wrapper?.contains(container),
       help: {
-        isParagraph: help.tagName === 'P',
-        id: help.id
+        isParagraph: help?.tagName === 'P',
+        id: help?.id
       },
       label: {
-        for: label.getAttribute('for')
+        for: label?.getAttribute('for')
       },
       input: {
-        id: input.id,
-        describedby: input.getAttribute('aria-describedby')
+        id: input?.id,
+        describedby: input?.getAttribute('aria-describedby')
       },
       list: {
-        length: options.length
+        length: options?.length
       },
       options: {
-        length: select.options.length
+        length: select?.options.length
       },
       listBox: {
-        multiple: listBox.getAttribute('aria-multiselectable')
+        multiple: listBox?.getAttribute('aria-multiselectable')
       },
     }
   });
@@ -378,44 +377,43 @@ test( 'Création de la liste lors de l’ouverture du select avec image', async 
 
   const data = await page.evaluate(() => {
     const wrapper = document.querySelector('.images .select-a11y');
-    const select = wrapper.querySelector('select');
+    const select = wrapper?.querySelector('select');
     const container = document.querySelector('.images .select-a11y__overlay');
-    const help = container.firstElementChild;
-    const label = container.querySelector('label');
-    const input = container.querySelector('input');
-    const options = container.querySelectorAll('[role="option"]');
-
-    const listBox = container.querySelector('[role="listbox"]');
+    const help = container?.firstElementChild;
+    const label = container?.querySelector('label');
+    const input = container?.querySelector('input');
+    const options = container?.querySelectorAll('[role="option"]');
+    const listBox = container?.querySelector('[role="listbox"]');
 
     return {
-      hasContainer: wrapper.contains(container),
+      hasContainer: wrapper?.contains(container),
       help: {
-        isParagraph: help.tagName === 'P',
-        id: help.id
+        isParagraph: help?.tagName === 'P',
+        id: help?.id
       },
       label: {
-        for: label.getAttribute('for')
+        for: label?.getAttribute('for')
       },
       input: {
-        id: input.id,
-        describedby: input.getAttribute('aria-describedby')
+        id: input?.id,
+        describedby: input?.getAttribute('aria-describedby')
       },
       list: {
-        length: options.length,
-        lengthWithImage: Array.from(options).filter(option => option.querySelector('img')).length,
-        lengthWithAlt: Array.from(options).filter(option => {
+        length: options?.length,
+        lengthWithImage: Array.from(options ?? []).filter(option => option.querySelector('img')).length,
+        lengthWithAlt: Array.from(options ?? []).filter(option => {
           const img = option.querySelector('img');
           const alt = img?.getAttribute('alt');
           return img && alt && alt !== '';
         }).length,
       },
       options: {
-        length: select.options.length,
-        lengthWithImage: Array.from(select.options).filter(option => option.dataset.image).length,
-        lengthWithAlt: Array.from(select.options).filter(option => option.dataset.image && option.dataset.alt).length,
+        length: select?.options?.length,
+        lengthWithImage: Array.from(select?.options ?? []).filter(option => option.dataset.image).length,
+        lengthWithAlt: Array.from(select?.options ?? []).filter(option => option.dataset.image && option.dataset.alt).length,
       },
       listBox: {
-        multiple: listBox.getAttribute('aria-multiselectable')
+        multiple: listBox?.getAttribute('aria-multiselectable')
       },
     }
   });
@@ -505,22 +503,22 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
 
     if(select instanceof HTMLSelectElement) {
       return {
-        closed: button.getAttribute('aria-expanded') === 'false',
+        closed: button?.getAttribute('aria-expanded') === 'false',
         focus: activeElement === button,
-        selectedLabel: [button.firstElementChild.textContent.trim()],
+        selectedLabel: [button?.firstElementChild?.textContent?.trim()],
         selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
       }
     }
     return {
-      closed: button.getAttribute('aria-expanded') === 'false',
+      closed: button?.getAttribute('aria-expanded') === 'false',
       focus: activeElement === button,
-      selectedLabel: [button.firstElementChild.textContent.trim()],
+      selectedLabel: [button?.firstElementChild?.textContent?.trim()],
     }
   });
 
   t.true(spacePressed.closed, 'L’appui sur la barre d’espace sur une option ferme la liste des options');
   t.true(spacePressed.focus, 'L’appui sur la barre d’espace sur une option rend le focus au bouton d’ouverture');
-  t.same(spacePressed.selectedOptions.length, 1, 'Le select comporte une options sélectionnée' );
+  t.same(spacePressed.selectedOptions?.length, 1, 'Le select comporte une options sélectionnée' );
   t.same(spacePressed.selectedLabel, spacePressed.selectedOptions, 'L’appui sur la barre d’espace sur une option sélectionne l’option');
 
   await page.reload();
@@ -542,24 +540,24 @@ test( 'Gestion de la selection au clavier d’un select', async t => {
 
     if(select instanceof HTMLSelectElement) {
       return {
-        closed: button.getAttribute('aria-expanded') === 'false',
+        closed: button?.getAttribute('aria-expanded') === 'false',
         focus: activeElement === button,
-        active: activeElement.tagName,
-        selectedLabel: [button.firstElementChild.textContent.trim()],
+        active: activeElement?.tagName,
+        selectedLabel: [button?.firstElementChild?.textContent?.trim()],
         selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
       }
     }
     return {
-      closed: button.getAttribute('aria-expanded') === 'false',
+      closed: button?.getAttribute('aria-expanded') === 'false',
       focus: activeElement === button,
-      active: activeElement.tagName,
-      selectedLabel: [button.firstElementChild.textContent.trim()],
+      active: activeElement?.tagName,
+      selectedLabel: [button?.firstElementChild?.textContent?.trim()],
     }
   });
 
   t.true(enterPressed.closed, 'L’appui sur la touche entrée sur une option ferme la liste des options');
   t.true(enterPressed.focus, 'L’appui sur la touche entrée sur une option rend le focus au bouton d’ouverture');
-  t.same(enterPressed.selectedOptions.length, 1, 'Le select comporte une options sélectionnée' );
+  t.same(enterPressed.selectedOptions?.length, 1, 'Le select comporte une options sélectionnée' );
   t.same(enterPressed.selectedLabel, enterPressed.selectedOptions, 'L’appui sur la touche entrée sur une option sélectionne l’option');
 
   await browser.close();
@@ -586,20 +584,20 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
 
     if(select instanceof HTMLSelectElement) {
       return {
-        open: button.getAttribute('aria-expanded') === 'true',
-        selected: activeElement.getAttribute('aria-selected') === 'true',
+        open: button?.getAttribute('aria-expanded') === 'true',
+        selected: activeElement?.getAttribute('aria-selected') === 'true',
         selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
       }
     }
     return {
-      open: button.getAttribute('aria-expanded') === 'true',
-      selected: activeElement.getAttribute('aria-selected') === 'true',
+      open: button?.getAttribute('aria-expanded') === 'true',
+      selected: activeElement?.getAttribute('aria-selected') === 'true',
     }
   });
 
   t.true(spacePressed.open, 'L’appui sur la barre d’espace sur une option ne ferme pas la liste des options d’un select multiple');
   t.true(spacePressed.selected, 'L’appui sur la barre d’espace sur une option sélectionne l’option');
-  t.same(spacePressed.selectedOptions.length, 2, 'Le select comporte 2 options sélectionnées' );
+  t.same(spacePressed.selectedOptions?.length, 2, 'Le select comporte 2 options sélectionnées' );
 
   await page.keyboard.press('Tab');
 
@@ -615,22 +613,22 @@ test( 'Gestion de la selection au clavier d’un select multiple', async t => {
 
     if(select instanceof HTMLSelectElement) {
       return {
-        closed: button.getAttribute('aria-expanded') === 'false',
+        closed: button?.getAttribute('aria-expanded') === 'false',
         focus: activeElement === button,
-        selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
+        selectedItems: list.map(item => item.firstElementChild?.textContent?.trim()),
         selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
       }
     }
     return {
-      closed: button.getAttribute('aria-expanded') === 'false',
+      closed: button?.getAttribute('aria-expanded') === 'false',
       focus: activeElement === button,
-      selectedItems: list.map(item => item.firstElementChild.textContent.trim()),
+      selectedItems: list.map(item => item.firstElementChild?.textContent?.trim()),
     }
   });
 
   t.true(enterPressed.closed, 'L’appui sur la touche entrée sur une option ferme la liste des options');
   t.true(enterPressed.focus, 'L’appui sur la touche entrée sur une option rend le focus au bouton d’ouverture');
-  t.same(enterPressed.selectedOptions.length, 2, 'Le select comporte 2 options sélectionnées' );
+  t.same(enterPressed.selectedOptions?.length, 2, 'Le select comporte 2 options sélectionnées' );
   t.same(enterPressed.selectedItems, enterPressed.selectedOptions, 'L’appui sur la touche entrée sur une option sélectionne l’option');
 
   await browser.close();
@@ -697,7 +695,7 @@ test( 'Gestion de la liste au blur', async t => {
 
     return {
       isButton: document.activeElement === document.querySelector('.multiple button'),
-      expanded: button.getAttribute('aria-expanded')
+      expanded: button?.getAttribute('aria-expanded')
     }
   });
 
@@ -712,7 +710,7 @@ test( 'Gestion de la liste au blur', async t => {
   const buttonBlurTopExpanded = await page.evaluate(() => {
     const button = document.querySelector('.multiple button');
 
-    return button.getAttribute('aria-expanded');
+    return button?.getAttribute('aria-expanded');
   });
 
   t.same(buttonBlurTopExpanded, 'false', 'La liste est fermée lorsque le focus est en dehors du select');
@@ -733,7 +731,7 @@ test( 'Gestion de la liste au blur', async t => {
     const selected = document.querySelector('.multiple .select-a11y__selected-item button');
 
     return {
-      expanded: button.getAttribute('aria-expanded'),
+      expanded: button?.getAttribute('aria-expanded'),
       selectionFocused: selected === document.activeElement
     }
   });
@@ -775,7 +773,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
     const opener = document.querySelector('.form-group button');
 
     return {
-      expanded: opener.getAttribute('aria-expanded'),
+      expanded: opener?.getAttribute('aria-expanded'),
       openerFocused: opener === activeElement
     }
   });
@@ -796,7 +794,7 @@ test( 'Gestion de la liste du select simple au clic', async t => {
     const opener = document.querySelector('.form-group button');
 
     return {
-      expanded: opener.getAttribute('aria-expanded'),
+      expanded: opener?.getAttribute('aria-expanded'),
       openerFocused: opener === activeElement
     }
   });
@@ -823,7 +821,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
     const opener = document.querySelector('.multiple button');
 
     return {
-      expanded: opener.getAttribute('aria-expanded'),
+      expanded: opener?.getAttribute('aria-expanded'),
       openerFocused: opener === activeElement
     }
   });
@@ -845,7 +843,7 @@ test( 'Gestion de la liste du select multiple au clic', async t => {
     const option = document.querySelector('.select-a11y-suggestions [role="option"]:nth-child(2')
 
     return {
-      expanded: opener.getAttribute('aria-expanded'),
+      expanded: opener?.getAttribute('aria-expanded'),
       optionFocused: option === activeElement
     }
   });
@@ -939,19 +937,16 @@ test( 'Reset du formulaire', async t => {
     const multipleState = {};
     if(singleSelect instanceof HTMLSelectElement) {
       singleState.selectedValue = singleSelect.value;
-      singleState.selectedOption = singleSelect.item(singleSelect.selectedIndex).label;
-      singleState.label = document.querySelector('.form-group button div').textContent.trim();
+      singleState.selectedOption = singleSelect.item(singleSelect.selectedIndex)?.label;
+      singleState.label = document.querySelector('.form-group button span')?.textContent?.trim();
     }
     if(multipleSelect instanceof HTMLSelectElement) {
       multipleState.selectedOptions = Array.from(multipleSelect.selectedOptions).map(option => option.value);
-      multipleState.selectedItems = list.map(item => item.firstElementChild.textContent.trim());
+      multipleState.selectedItems = list.map(item => item.firstElementChild?.textContent?.trim());
     }
     return {singleState, multipleState};
   });
-
   t.same(singleState.selectedOption, singleState.label, 'Le reset de formulaire change le texte du bouton d’ouverture')
-  console.log('selected options: ' + multipleState.selectedOptions);
-  console.log('selected list: ' + multipleState.selectedItems);
   const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) => {
     return option === multipleState.selectedItems[index];
   });

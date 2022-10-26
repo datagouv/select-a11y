@@ -8,7 +8,7 @@
   "css": "dist/select-a11y.css",
   "test": "public/assets/scripts/index.js",
   "test-css": "public/assets/css/style.css",
-  "sideEffects": false,
+  "sideEffects": "public/assets/scripts/*.js",
   "targets": {
     "main": {
       "source": "src/select-a11y.js",
@@ -32,7 +32,7 @@
     "build": "rm -rf .parcel-cache && parcel build",
     "dev": "rm -rf .parcel-cache && parcel watch",
     "prepublishOnly": "npm run build",
-    "test": "tape tests/index.js"
+    "test": "tape tests/index.cjs"
   },
   "author": "Nicolas KEMPF - conciergerie.dev",
   "license": "MIT",

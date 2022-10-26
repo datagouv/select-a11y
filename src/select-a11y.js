@@ -24,6 +24,7 @@ if (!closest) {
 }
 
 const DEEP_CLONE = true;
+const SILENTLY = false;
 
 /**
  * Deep copy of an {@link Iterable} as {@link Array}
@@ -164,13 +165,21 @@ export class Select {
    * Select new value
    * @param {*} value option value
    */
-  selectOption(value) {
+  selectOption(value, dispatchEvent = true) {
     const optionIndex = this.currentOptions.findIndex(option => option.value === value);
     if (optionIndex === -1) {
       return;
     }
     const shouldClose = this.multiple ? false : true;
-    this._toggleSelection(optionIndex, shouldClose);
+    this._toggleSelection(optionIndex, shouldClose, dispatchEvent);
+  }
+
+  /**
+   * Select new value without dispatching the change Event
+   * @param {*} value option value
+   */
+  selectOptionSilently(value) {
+    this.selectOption(value, SILENTLY);
   }
 
 
@@ -633,7 +642,7 @@ export class Select {
     }
   }
 
-  _toggleSelection(optionIndex, close = true) {
+  _toggleSelection(optionIndex, close = true, dispatch = true) {
     const toggledOption = this.el.item(optionIndex);
     if (this.multiple) {
       if(toggledOption?.hasAttribute('selected')) {
@@ -670,7 +679,9 @@ export class Select {
       }
       return suggestion;
     });
-    this.el.dispatchEvent(new Event('change'));
+    if(dispatch) {
+      this.el.dispatchEvent(new Event('change'));
+    }
     this._setButtonText();
     if (this.multiple && this._options.showSelected) {
       this._updateSelectedList();

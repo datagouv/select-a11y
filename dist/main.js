@@ -47,7 +47,7 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
    * Only work if select value is set. It resets it to `null`.
    */ constructor(el, options){
         /** @type {HTMLSelectElement} */ this.el = el;
-        /** @type {HTMLLabelElement} */ this.label = document.querySelector(`label[for=${el.id}]`);
+        /** @type {HTMLLabelElement | null} */ this.label = document.querySelector(`label[for=${el.id}]`);
         this.id = el.id;
         this.open = false;
         this.multiple = this.el.multiple;
@@ -81,7 +81,7 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
             );
             if (this._options.useLabelAsButton && !hasSelectedOption) {
                 const option = document.createElement('option');
-                option.innerText = this.label.innerText;
+                option.innerText = this.label?.innerText ?? "";
                 option.setAttribute('value', '');
                 option.setAttribute('selected', 'selected');
                 option.setAttribute('disabled', 'disabled');
@@ -119,9 +119,6 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
         }
         this.button.addEventListener('click', this._handleOpener);
         this.clearButton.addEventListener('click', this._handleClear);
-        this.input.addEventListener('input', this._handleInput);
-        this.input.addEventListener('focus', this._positionCursor, true);
-        this.list.addEventListener('click', this._handleSuggestionClick);
         this.wrap.addEventListener('keydown', this._handleKeyboard);
         document.addEventListener('blur', this._handleFocus, true);
         if (this.el.form) this.el.form.addEventListener('reset', this._handleReset);
@@ -145,15 +142,15 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     _createButton() {
         const button = document.createElement('button');
         button.setAttribute('type', 'button');
-        button.setAttribute('aria-expanded', this.open);
+        button.setAttribute('aria-expanded', this.open ? "true" : "false");
         button.className = 'select-a11y-button';
         const text = document.createElement('span');
         text.className = 'select-a11y-button__text';
-        if (this.multiple) text.innerText = this.label.innerText;
+        if (this.multiple) text.innerText = this.label?.innerText ?? "";
         else {
-            if (!this.label.id) this.label.id = `${this.el.id}-label`;
+            if (this.label && !this.label.id) this.label.id = `${this.el.id}-label`;
             button.setAttribute('id', this.el.id + '-button');
-            button.setAttribute('aria-labelledby', this.label.id + ' ' + button.id);
+            button.setAttribute('aria-labelledby', this.label?.id + ' ' + button.id);
         }
         button.appendChild(text);
         button.insertAdjacentHTML('beforeend', '<span class="select-a11y-button__icon" aria-hidden="true"></span>');
@@ -185,7 +182,12 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     `;
         container.appendChild(suggestions);
         this.list = suggestions;
-        /** @type {HTMLInputElement} */ this.input = container.querySelector('input');
+        this.list.addEventListener('click', this._handleSuggestionClick);
+        /** @type {HTMLInputElement | null} */ this.input = container.querySelector('input');
+        if (this.input) {
+            this.input.addEventListener('input', this._handleInput);
+            this.input.addEventListener('focus', this._positionCursor, true);
+        }
         return container;
     }
     _createSelectedList() {
@@ -260,8 +262,8 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
         const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
         this.currentOptions = suggestions.map(this._mapToOption);
         this.el.replaceChildren(...this.currentOptions);
-        const suggestionElements = suggestions.map((suggestion, index)=>{
-            if (suggestion.hidden || suggestion.disabled) return;
+        const suggestionElements = suggestions.filter((suggestion)=>!suggestion.hidden && !suggestion.disabled
+        ).map((suggestion, index)=>{
             const suggestionElement = document.createElement('div');
             suggestionElement.setAttribute('role', 'option');
             suggestionElement.setAttribute('tabindex', '0');
@@ -278,18 +280,20 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
                 suggestionElement.prepend(image);
             }
             return suggestionElement;
-        }).filter(Boolean);
+        });
         this.suggestions = suggestionElements;
-        if (!suggestionElements.length) this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
-        else {
-            const listBox = document.createElement('div');
-            listBox.setAttribute('role', 'listbox');
-            if (this.multiple) listBox.setAttribute('aria-multiselectable', 'true');
-            suggestionElements.forEach((suggestionElement)=>{
-                listBox.appendChild(suggestionElement);
-            });
-            this.list.innerHTML = '';
-            this.list.appendChild(listBox);
+        if (this.list) {
+            if (!suggestionElements.length) this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
+            else {
+                const listBox = document.createElement('div');
+                listBox.setAttribute('role', 'listbox');
+                if (this.multiple) listBox.setAttribute('aria-multiselectable', 'true');
+                suggestionElements.forEach((suggestionElement)=>{
+                    listBox.appendChild(suggestionElement);
+                });
+                this.list.innerHTML = '';
+                this.list.appendChild(listBox);
+            }
         }
         this._setLiveZone();
         return suggestions;
@@ -335,8 +339,8 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     }
     _handleInput() {
         // prevent event fireing on focus and blur
-        if (this.search === this.input.value) return;
-        this.search = this.input.value;
+        if (this.search === this.input?.value) return;
+        this.search = this.input?.value ?? "";
         this._fillSuggestions();
     }
     _handleKeyboard(event) {
@@ -385,20 +389,22 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     }
     _positionCursor() {
         setTimeout(()=>{
-            const endOfInput = this.input.value.length;
-            this.input.setSelectionRange(endOfInput, endOfInput);
+            if (this.input) {
+                const endOfInput = this.input.value.length ?? 0;
+                this.input.setSelectionRange(endOfInput, endOfInput);
+            }
         });
     }
     _removeOption(event) {
         const button = $5a3b80354f588438$var$closest.call(event.target, 'button');
         if (!button) return;
-        const currentButtons = this.selectedList.querySelectorAll('button');
+        const currentButtons = this.selectedList?.querySelectorAll('button');
         const buttonPreviousIndex = Array.prototype.indexOf.call(currentButtons, button) - 1;
         const optionIndex = parseInt(button.getAttribute('data-index'), 10);
         // disable the option
         this._toggleSelection(optionIndex);
         // manage the focus if there's still the selected list
-        if (this.selectedList.parentElement) {
+        if (this.selectedList?.parentElement) {
             const buttons = this.selectedList.querySelectorAll('button');
             // look for the bouton before the one clicked
             if (buttons[buttonPreviousIndex]) buttons[buttonPreviousIndex].focus();
@@ -408,10 +414,12 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     _setButtonText() {
         if (!this.multiple) {
             const selectedOption = this.el.item(this.el.selectedIndex);
-            if (selectedOption && selectedOption.value) this.button.classList.remove('select-a11y-button--no-selected-option');
-            else this.button.classList.add('select-a11y-button--no-selected-option');
-            const child = this.button.firstElementChild;
-            if (child instanceof HTMLElement) child.innerText = selectedOption.label || selectedOption.value;
+            if (selectedOption) {
+                if (selectedOption.value) this.button.classList.remove('select-a11y-button--no-selected-option');
+                else this.button.classList.add('select-a11y-button--no-selected-option');
+                const child = this.button.firstElementChild;
+                if (child instanceof HTMLElement) child.innerText = selectedOption.label || selectedOption.value;
+            }
         }
     }
     _setLiveZone() {
@@ -425,17 +433,17 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     }
     _toggleOverlay(state, focusBack) {
         this.open = state !== undefined ? state : !this.open;
-        this.button.setAttribute('aria-expanded', this.open);
+        this.button.setAttribute('aria-expanded', this.open ? "true" : "false");
         if (this.open) {
             this._fillSuggestions();
             this.button.insertAdjacentElement('afterend', this.overlay);
-            this.input.focus();
+            this.input?.focus();
         } else if (this.wrap.contains(this.overlay)) {
             this.wrap.removeChild(this.overlay);
             // reset the focus index
             this.focusIndex = null;
             // reset search values
-            this.input.value = '';
+            if (this.input) this.input.value = '';
             this.search = '';
             // reset aria-live
             this._setLiveZone();
@@ -448,22 +456,22 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     _toggleSelection(optionIndex, close = true) {
         const toggledOption = this.el.item(optionIndex);
         if (this.multiple) {
-            if (toggledOption.hasAttribute('selected')) toggledOption.removeAttribute('selected');
-            else toggledOption.setAttribute('selected', 'selected');
+            if (toggledOption?.hasAttribute('selected')) toggledOption.removeAttribute('selected');
+            else toggledOption?.setAttribute('selected', 'selected');
         } else {
-            toggledOption.setAttribute('selected', 'selected');
+            toggledOption?.setAttribute('selected', 'selected');
             this.el.selectedIndex = optionIndex;
         }
         this.updatedOriginalOptions = this.updatedOriginalOptions.map((option)=>{
-            if (option.value === toggledOption.value) {
+            if (option.value === toggledOption?.value) {
                 if (toggledOption.hasAttribute('selected')) option.setAttribute('selected', 'selected');
                 else option.removeAttribute('selected');
             }
-            if (!this.multiple && option.value !== toggledOption.value) option.removeAttribute('selected');
+            if (!this.multiple && option.value !== toggledOption?.value) option.removeAttribute('selected');
             return option;
         });
         this.suggestions = this.suggestions.map((suggestion)=>{
-            const index = parseInt(suggestion.getAttribute('data-index'), 10);
+            const index = parseInt(suggestion.getAttribute('data-index') ?? "", 10);
             const option = this.el.item(index);
             if (option && option.selected) suggestion.setAttribute('aria-selected', 'true');
             else suggestion.removeAttribute('aria-selected');
@@ -487,15 +495,17 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
           </button>
         </li>`;
         }).filter(Boolean);
-        this.selectedList.innerHTML = items.join('');
-        if (items.length) {
-            if (!this.selectedList.parentElement) this.wrap.appendChild(this.selectedList);
-        } else if (this.selectedList.parentElement) this.wrap.removeChild(this.selectedList);
+        if (this.selectedList) {
+            this.selectedList.innerHTML = items.join('');
+            if (items.length) {
+                if (!this.selectedList?.parentElement) this.wrap.appendChild(this.selectedList);
+            } else if (this.selectedList.parentElement) this.wrap.removeChild(this.selectedList);
+        }
     }
     _wrap() {
         const wrapper = document.createElement('div');
         wrapper.classList.add('select-a11y');
-        this.el.parentElement.appendChild(wrapper);
+        this.el.parentElement?.appendChild(wrapper);
         const tagHidden = document.createElement('div');
         tagHidden.classList.add('select-a11y__hidden');
         tagHidden.setAttribute('aria-hidden', 'true');

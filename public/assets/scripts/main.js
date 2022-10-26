@@ -2,6 +2,7 @@ import Select from "../../../dist/module";
 /** @type NodeListOf<HTMLSelectElement> */
 var selects = document.querySelectorAll('select[data-select-a11y]');
 
+// @ts-ignore
 window.selectA11ys = Array.from(selects).map(function(select) {
   let options = {};
   if(select.dataset.hasOwnProperty("selectA11yLabel")) {
