@@ -28,14 +28,14 @@ const DEEP_CLONE = true;
 /**
  * Deep copy of an {@link Iterable} as {@link Array}
  * @template {HTMLElement} T
- * @param {Iterable<T>} array 
+ * @param {Iterable<T>} array
  * @returns {Array<T>}
  */
 function deepCopy (array) {
   return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
 }
 
-class Select {
+export class Select {
   /**
    * @param {HTMLSelectElement} el - Select HTML element
    * @param {object} [options] - options to control select-a11y behavior
@@ -49,15 +49,15 @@ class Select {
    * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
    * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
    * @param {boolean} [options.showSelected=true] - show selected options for multiple select
-   * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select. 
+   * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select.
    * Only work if select value is set to `null` otherwise its value defaults to first option.
-   * @param {boolean} [options.clearable=false] - show clear icon for single select. 
+   * @param {boolean} [options.clearable=false] - show clear icon for single select.
    * Only work if select value is set. It resets it to `null`.
    */
   constructor(el, options) {
     /** @type {HTMLSelectElement} */
     this.el = el;
-    /** @type {HTMLLabelElement} */
+    /** @type {HTMLLabelElement | null} */
     this.label = document.querySelector(`label[for=${el.id}]`);
     this.id = el.id;
     this.open = false;
@@ -96,7 +96,7 @@ class Select {
       const hasSelectedOption = Array.from(this.el.options).some(option => option.selected);
       if (this._options.useLabelAsButton && !hasSelectedOption) {
         const option = document.createElement('option');
-        option.innerText = this.label.innerText;
+        option.innerText = this.label?.innerText ?? "";
         option.setAttribute('value', '');
         option.setAttribute('selected', 'selected');
         option.setAttribute('disabled', 'disabled');
@@ -104,15 +104,15 @@ class Select {
         this.el.options.add(option, 0);
       }
     }
-    
-    /** 
+
+    /**
      * Select original options at initialization of the component.
      * They are never modified and are used to handle reset.
-     * @type {Array<HTMLOptionElement>} 
+     * @type {Array<HTMLOptionElement>}
      */
     this.originalOptions =  deepCopy(this.el.options);
 
-    /** 
+    /**
      * Select original options at initialization of the component.
      * They are updated based on select / unselect of options but no options are added or removed to it.
      * This is the set of options passed to {@link FillSuggestions} callback.
@@ -120,15 +120,14 @@ class Select {
      */
     this.updatedOriginalOptions = Array.from(this.el.options);
 
-    /** 
-     * Select current options. These can be completely differents options than {@link originalOptions} 
+    /**
+     * Select current options. These can be completely differents options than {@link originalOptions}
      * if the provided promise fetches some from an API.
-     * @type {Array<HTMLOptionElement>} 
+     * @type {Array<HTMLOptionElement>}
      */
     this.currentOptions = Array.from(this.el.options);
 
     this._disable();
-
     this.button = this._createButton();
     this._setButtonText();
     this.clearButton = this._createClearButton();
@@ -145,9 +144,6 @@ class Select {
 
     this.button.addEventListener('click', this._handleOpener);
     this.clearButton.addEventListener('click', this._handleClear);
-    this.input.addEventListener('input', this._handleInput);
-    this.input.addEventListener('focus', this._positionCursor, true);
-    this.list.addEventListener('click', this._handleSuggestionClick);
     this.wrap.addEventListener('keydown', this._handleKeyboard);
     document.addEventListener('blur', this._handleFocus, true);
 
@@ -181,20 +177,20 @@ class Select {
   _createButton() {
     const button = document.createElement('button');
     button.setAttribute('type', 'button');
-    button.setAttribute('aria-expanded', this.open);
+    button.setAttribute('aria-expanded', this.open ? "true" : "false");
     button.className = 'select-a11y-button';
     const text = document.createElement('span');
     text.className = 'select-a11y-button__text';
 
     if (this.multiple) {
-      text.innerText = this.label.innerText;
+      text.innerText = this.label?.innerText ?? "";
     }
     else {
-      if (!this.label.id) {
+      if (this.label && !this.label.id) {
         this.label.id = `${this.el.id}-label`;
       }
       button.setAttribute('id', this.el.id + '-button');
-      button.setAttribute('aria-labelledby', this.label.id + ' ' + button.id);
+      button.setAttribute('aria-labelledby', this.label?.id + ' ' + button.id);
     }
 
     button.appendChild(text);
@@ -235,8 +231,13 @@ class Select {
     container.appendChild(suggestions);
 
     this.list = suggestions;
-    /** @type {HTMLInputElement} */
+    this.list.addEventListener('click', this._handleSuggestionClick);
+    /** @type {HTMLInputElement | null} */
     this.input = container.querySelector('input');
+    if(this.input) {
+      this.input.addEventListener('input', this._handleInput);
+      this.input.addEventListener('focus', this._positionCursor, true);
+    }
 
     return container;
   }
@@ -253,7 +254,7 @@ class Select {
   }
 
   /**
-   * 
+   *
    * @typedef Suggestion
    * @property {boolean} hidden - if suggestion is hidden
    * @property {boolean} disabled - if suggestion is disabled
@@ -265,8 +266,8 @@ class Select {
    */
 
   /**
-   * 
-   * @param {HTMLOptionElement} option 
+   *
+   * @param {HTMLOptionElement} option
    * @returns {Suggestion} - a suggestion
    */
   _mapToSuggestion(option) {
@@ -282,8 +283,8 @@ class Select {
   }
 
   /**
-   * 
-   * @param {Suggestion} suggestion 
+   *
+   * @param {Suggestion} suggestion
    * @returns {HTMLOptionElement} - an option
    */
   _mapToOption(suggestion) {
@@ -316,8 +317,8 @@ class Select {
    */
 
   /**
-   * 
-   * @type {FillSuggestions} 
+   *
+   * @type {FillSuggestions}
    */
   _defaultSearch(search, options) {
     const newOptions = options.filter(option => {
@@ -328,7 +329,7 @@ class Select {
   }
 
   /**
-   * 
+   *
    * @returns {Promise<Array<Suggestion>>}
    */
   async _fillSuggestions() {
@@ -338,10 +339,9 @@ class Select {
     const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
     this.currentOptions = suggestions.map(this._mapToOption);
     this.el.replaceChildren(...this.currentOptions);
-    const suggestionElements = suggestions.map((suggestion, index) => {
-      if (suggestion.hidden || suggestion.disabled) {
-        return;
-      }
+    const suggestionElements = suggestions
+      .filter((suggestion) => !suggestion.hidden && !suggestion.disabled)
+      .map((suggestion, index) => {
       const suggestionElement = document.createElement('div');
       suggestionElement.setAttribute('role', 'option');
       suggestionElement.setAttribute('tabindex', '0');
@@ -361,25 +361,26 @@ class Select {
       }
 
       return suggestionElement;
-    }).filter(Boolean);
+    });
     this.suggestions = suggestionElements;
-    if (!suggestionElements.length) {
-      this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
-    }
-    else {
-      const listBox = document.createElement('div');
-      listBox.setAttribute('role', 'listbox');
+    if(this.list) {
+      if (!suggestionElements.length) {
+        this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
+      } else {
+        const listBox = document.createElement('div');
+        listBox.setAttribute('role', 'listbox');
 
-      if (this.multiple) {
-        listBox.setAttribute('aria-multiselectable', 'true');
+        if (this.multiple) {
+          listBox.setAttribute('aria-multiselectable', 'true');
+        }
+
+        suggestionElements.forEach((suggestionElement) => {
+          listBox.appendChild(suggestionElement);
+        });
+
+        this.list.innerHTML = '';
+        this.list.appendChild(listBox);
       }
-
-      suggestionElements.forEach((suggestionElement) => {
-        listBox.appendChild(suggestionElement);
-      });
-
-      this.list.innerHTML = '';
-      this.list.appendChild(listBox);
     }
     this._setLiveZone();
     return suggestions;
@@ -450,11 +451,11 @@ class Select {
 
   _handleInput() {
     // prevent event fireing on focus and blur
-    if (this.search === this.input.value) {
+    if (this.search === this.input?.value) {
       return;
     }
 
-    this.search = this.input.value;
+    this.search = this.input?.value ?? "";
     this._fillSuggestions();
   }
 
@@ -528,8 +529,10 @@ class Select {
 
   _positionCursor() {
     setTimeout(() => {
-      const endOfInput = this.input.value.length;
+      if(this.input) {
+        const endOfInput = this.input.value.length ?? 0;
       this.input.setSelectionRange(endOfInput, endOfInput);
+      }
     });
   }
 
@@ -540,7 +543,7 @@ class Select {
       return;
     }
 
-    const currentButtons = this.selectedList.querySelectorAll('button');
+    const currentButtons = this.selectedList?.querySelectorAll('button');
     const buttonPreviousIndex = Array.prototype.indexOf.call(currentButtons, button) - 1;
     const optionIndex = parseInt(button.getAttribute('data-index'), 10);
 
@@ -548,7 +551,7 @@ class Select {
     this._toggleSelection(optionIndex);
 
     // manage the focus if there's still the selected list
-    if (this.selectedList.parentElement) {
+    if (this.selectedList?.parentElement) {
       const buttons = this.selectedList.querySelectorAll('button');
 
       // look for the bouton before the one clicked
@@ -567,14 +570,16 @@ class Select {
   _setButtonText() {
     if (!this.multiple) {
       const selectedOption = this.el.item(this.el.selectedIndex);
-      if (selectedOption && selectedOption.value) {
-        this.button.classList.remove('select-a11y-button--no-selected-option');
-      } else {
-        this.button.classList.add('select-a11y-button--no-selected-option');
-      }
-      const child = this.button.firstElementChild;
-      if (child instanceof HTMLElement) {
-        child.innerText = selectedOption.label || selectedOption.value;
+      if (selectedOption) {
+        if (selectedOption.value) {
+          this.button.classList.remove('select-a11y-button--no-selected-option');
+        } else {
+          this.button.classList.add('select-a11y-button--no-selected-option');
+        }
+        const child = this.button.firstElementChild;
+        if (child instanceof HTMLElement) {
+          child.innerText = selectedOption.label || selectedOption.value;
+        }
       }
     }
   }
@@ -597,12 +602,12 @@ class Select {
 
   _toggleOverlay(state, focusBack) {
     this.open = state !== undefined ? state : !this.open;
-    this.button.setAttribute('aria-expanded', this.open);
+    this.button.setAttribute('aria-expanded', this.open ? "true" : "false");
 
     if (this.open) {
       this._fillSuggestions();
       this.button.insertAdjacentElement('afterend', this.overlay);
-      this.input.focus();
+      this.input?.focus();
     }
     else if (this.wrap.contains(this.overlay)) {
       this.wrap.removeChild(this.overlay);
@@ -611,7 +616,9 @@ class Select {
       this.focusIndex = null;
 
       // reset search values
-      this.input.value = '';
+      if (this.input) {
+        this.input.value = '';
+      }
       this.search = '';
 
 
@@ -629,31 +636,31 @@ class Select {
   _toggleSelection(optionIndex, close = true) {
     const toggledOption = this.el.item(optionIndex);
     if (this.multiple) {
-      if(toggledOption.hasAttribute('selected')) {
+      if(toggledOption?.hasAttribute('selected')) {
         toggledOption.removeAttribute('selected');
       } else {
-        toggledOption.setAttribute('selected', 'selected');
+        toggledOption?.setAttribute('selected', 'selected');
       }
     }
     else {
-      toggledOption.setAttribute('selected', 'selected');
+      toggledOption?.setAttribute('selected', 'selected');
       this.el.selectedIndex = optionIndex;
     }
     this.updatedOriginalOptions = this.updatedOriginalOptions.map(option => {
-      if(option.value === toggledOption.value) {
+      if(option.value === toggledOption?.value) {
         if(toggledOption.hasAttribute('selected')) {
           option.setAttribute('selected', 'selected');
         } else {
           option.removeAttribute('selected');
         }
       }
-      if(!this.multiple && option.value !== toggledOption.value) {
+      if(!this.multiple && option.value !== toggledOption?.value) {
         option.removeAttribute('selected');
       }
       return option;
     });
     this.suggestions = this.suggestions.map((suggestion) => {
-      const index = parseInt(suggestion.getAttribute('data-index'), 10);
+      const index = parseInt(suggestion.getAttribute('data-index') ?? "", 10);
       const option = this.el.item(index);
       if (option && option.selected) {
         suggestion.setAttribute('aria-selected', 'true');
@@ -691,22 +698,23 @@ class Select {
         </li>`;
     }).filter(Boolean);
 
-    this.selectedList.innerHTML = items.join('');
+    if(this.selectedList) {
+      this.selectedList.innerHTML = items.join('');
 
-    if (items.length) {
-      if (!this.selectedList.parentElement) {
-        this.wrap.appendChild(this.selectedList);
+      if (items.length) {
+        if (!this.selectedList?.parentElement) {
+          this.wrap.appendChild(this.selectedList);
+        }
+      } else if (this.selectedList.parentElement) {
+        this.wrap.removeChild(this.selectedList);
       }
-    }
-    else if (this.selectedList.parentElement) {
-      this.wrap.removeChild(this.selectedList);
     }
   }
 
   _wrap() {
     const wrapper = document.createElement('div');
     wrapper.classList.add('select-a11y');
-    this.el.parentElement.appendChild(wrapper);
+    this.el.parentElement?.appendChild(wrapper);
 
     const tagHidden = document.createElement('div');
     tagHidden.classList.add('select-a11y__hidden');
