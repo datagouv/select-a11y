@@ -80,22 +80,55 @@ test( 'Creation du select-a11y simple', async t => {
 test( 'Programmatically assign value to select-a11y', async t => {
   const { browser, page } = await createBrowser();
 
-  const {selectedOption, value} = await page.evaluate(() => {
-    var select = document.querySelector('.form-group select[data-select-a11y]');
+  const {selectedOption, value, changed} = await page.evaluate(() => {
+    let select = document.querySelector('.form-group select[data-select-a11y]');
+    let changed = false;
     if(select instanceof HTMLSelectElement) {
       // @ts-ignore
       const selectA11y = window.selectA11ys?.shift();
+      select.addEventListener('change', () => changed = true);
       const item = select.options.item(2);
       selectA11y.selectOption(item?.value);
       const button = document.querySelector('.form-group button');
       return {
         selectedOption: item?.label,
-        value: button?.firstElementChild?.textContent?.trim()
+        value: button?.firstElementChild?.textContent?.trim(),
+        changed,
       }
     }
   }) ?? {};
 
   t.same(value, selectedOption, 'Programmatically selecting an option updates <select> value');
+  t.true(changed, 'Programmatically selecting an option dispatch change event');
+
+  await browser.close();
+
+  t.end();
+});
+
+test( 'Programmatically assign value to select-a11y', async t => {
+  const { browser, page } = await createBrowser();
+
+  const {selectedOption, value, changed} = await page.evaluate(() => {
+    let select = document.querySelector('.form-group select[data-select-a11y]');
+    let changed = false;
+    if(select instanceof HTMLSelectElement) {
+      // @ts-ignore
+      const selectA11y = window.selectA11ys?.shift();
+      const item = select.options.item(2);
+      select.addEventListener('change', () => changed = true);
+      selectA11y.selectOptionSilently(item?.value);
+      const button = document.querySelector('.form-group button');
+      return {
+        selectedOption: item?.label,
+        value: button?.firstElementChild?.textContent?.trim(),
+        changed,
+      }
+    }
+  }) ?? {};
+
+  t.same(value, selectedOption, 'Programmatically selecting an option updates <select> value');
+  t.false(changed, "selectOptionSilently doesn't dispatch change event");
 
   await browser.close();
 

@@ -1,4 +1,4 @@
-import Select from "../../../dist/module";
+import Select from "../../../dist/main";
 /** @type NodeListOf<HTMLSelectElement> */
 var selects = document.querySelectorAll('select[data-select-a11y]');
 

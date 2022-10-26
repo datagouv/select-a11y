@@ -18,6 +18,7 @@ if (!$5a3b80354f588438$var$closest) $5a3b80354f588438$var$closest = function(s) 
     return null;
 };
 const $5a3b80354f588438$var$DEEP_CLONE = true;
+const $5a3b80354f588438$var$SILENTLY = false;
 /**
  * Deep copy of an {@link Iterable} as {@link Array}
  * @template {HTMLElement} T
@@ -132,12 +133,18 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
     /**
    * Select new value
    * @param {*} value option value
-   */ selectOption(value) {
+   */ selectOption(value, dispatchEvent = true) {
         const optionIndex = this.currentOptions.findIndex((option)=>option.value === value
         );
         if (optionIndex === -1) return;
         const shouldClose = this.multiple ? false : true;
-        this._toggleSelection(optionIndex, shouldClose);
+        this._toggleSelection(optionIndex, shouldClose, dispatchEvent);
+    }
+    /**
+   * Select new value without dispatching the change Event
+   * @param {*} value option value
+   */ selectOptionSilently(value) {
+        this.selectOption(value, $5a3b80354f588438$var$SILENTLY);
     }
     _createButton() {
         const button = document.createElement('button');
@@ -453,7 +460,7 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
             });
         }
     }
-    _toggleSelection(optionIndex, close = true) {
+    _toggleSelection(optionIndex, close = true, dispatch = true) {
         const toggledOption = this.el.item(optionIndex);
         if (this.multiple) {
             if (toggledOption?.hasAttribute('selected')) toggledOption.removeAttribute('selected');
@@ -477,7 +484,7 @@ class $5a3b80354f588438$export$ef9b1a59e592288f {
             else suggestion.removeAttribute('aria-selected');
             return suggestion;
         });
-        this.el.dispatchEvent(new Event('change'));
+        if (dispatch) this.el.dispatchEvent(new Event('change'));
         this._setButtonText();
         if (this.multiple && this._options.showSelected) this._updateSelectedList();
         if (close && this.open) this._toggleOverlay();
