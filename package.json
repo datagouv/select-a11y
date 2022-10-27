@@ -1,6 +1,6 @@
 {
   "name": "@conciergerie.dev/select-a11y",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Module de select multiple accessible",
   "type": "module",
   "main": "dist/main.js",
