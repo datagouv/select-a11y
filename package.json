@@ -1,7 +1,7 @@
 {
   "name": "@conciergerie.dev/select-a11y",
   "version": "3.0.0",
-  "description": "Module de select multiple accessible",
+  "description": "Combobox, single and multiple select component with a focus on accessibility. It includes a search bar with local and remote search.",
   "type": "module",
   "main": "dist/main.js",
   "types": "dist/types.d.ts",
@@ -29,7 +29,8 @@
     "url": "https://git.sr.ht/~nicolaskempf57/select-a11y"
   },
   "scripts": {
-    "build": "rm -rf .parcel-cache && parcel build",
+    "build": "rm -rf .parcel-cache && parcel build && npm run build-types",
+    "build-types": "npx -p typescript tsc dist/*.js --declaration --allowJs --emitDeclarationOnly --outDir dist",
     "dev": "rm -rf .parcel-cache && parcel watch",
     "prepublishOnly": "npm run build",
     "test": "tape tests/index.cjs"
@@ -40,7 +41,8 @@
     "@parcel/transformer-sass": "^2.4.0",
     "parcel": "^2.4.0",
     "puppeteer": "^13.5.1",
-    "tape": "^5.5.3"
+    "tape": "^5.5.3",
+    "typescript": "^4.8.4"
   },
   "bugs": {
     "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y",
