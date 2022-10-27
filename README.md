@@ -4,10 +4,8 @@
 
 This fork is based on the [original select-a11y from Pidila](http://pidila.gitlab.io/select-a11y/).
 
-To see the demo, three solutions are available:
-*  view the [Pidila online demo](http://pidila.gitlab.io/select-a11y/) ;
+To see the demo:
 * download or clone this repository, then open the file /public/index.html ;
-* install locally by cloning the repository, and then running the commands `$ npm install` then `$ gulp dev`.
 
 ## References
 
@@ -21,12 +19,12 @@ All you need is the files in the `dist/` directory.
 
 The source files are in the `src/` directory.
 
-- Call the `dist/main.js` script in the bottom of your page, just before the body closing tag, or compile the `dist/module.js` with your others scripts.
+- Call the `dist/main.js` script in the bottom of your page in a `<script type="module">` or use a build system.
 
 - Add the css or scss in your style files.
 You can retrieve `dist/select-a11y.css`, an already compiled version.
 
-To be transformed by select-a11y, the fastest way is to add the `data-select-a11y` attribute on the `select` tag you want to transform.
+To be transformed by select-a11y, you must call `new Select(select, options);` with your `HTMLSelectElement` as first parameter.
 
 
 ### Code sample
