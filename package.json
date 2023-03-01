@@ -33,7 +33,8 @@
     "build-types": "npx -p typescript tsc dist/*.js --declaration --allowJs --emitDeclarationOnly --outDir dist",
     "dev": "rm -rf .parcel-cache && parcel watch",
     "prepublishOnly": "npm run build",
-    "test": "tape tests/index.cjs"
+    "test": "tape tests/index.cjs",
+    "publish-version": "npm publish --access public"
   },
   "author": "Nicolas KEMPF - conciergerie.dev",
   "license": "MIT",
