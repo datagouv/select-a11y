@@ -11,6 +11,10 @@
     ".": {
       "import": "./dist/select-a11y.js",
       "require": "./dist/select-a11y.umd.cjs"
+    },
+    "./dist/*.css": {
+      "import": "./dist/*.css",
+      "require": "./dist/*.css"
     }
   },
   "repository": {
