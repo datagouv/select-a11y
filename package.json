@@ -6,7 +6,7 @@
   "types": "./types/select-a11y.d.ts",
   "main": "./dist/select-a11y.umd.cjs",
   "module": "./dist/select-a11y.js",
-  "css": "dist/select-a11y.css",
+  "css": "dist/style.css",
   "exports": {
     ".": {
       "import": "./dist/select-a11y.js",
