@@ -22,9 +22,9 @@
     "dev": "vite",
     "build": "vite build && npm run build-types",
     "build-types": "npx -p typescript tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
-    "prepublishOnly": "npm test && npm run build",
-    "preview": "vite preview",
-    "test": "vite build -c vite.preview.js && vitest",
+    "prepublishOnly": "npm test:build && npm run build",
+    "test:build": "vite build -c vite.preview.js && vitest run",
+    "test:watch": "vite build -c vite.preview.js && vitest",
     "publish-version": "npm publish --access public"
   },
   "author": "Nicolas KEMPF - conciergerie.dev",
