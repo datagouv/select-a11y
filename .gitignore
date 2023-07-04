@@ -1,10 +1,6 @@
 # directories
 node_modules/
-*.js.map
-public/assets/scripts/select-a11y.js
-public/assets/css/
 .npmrc
 .parcel-cache/
 .DS_Store
 npm-debug.log
-public/assets/scripts/index.js

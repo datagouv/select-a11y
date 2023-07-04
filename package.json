@@ -3,25 +3,14 @@
   "version": "3.1.0",
   "description": "Combobox, single and multiple select component with a focus on accessibility. It includes a search bar with local and remote search.",
   "type": "module",
-  "main": "dist/main.js",
-  "types": "dist/types.d.ts",
+  "types": "./types/select-a11y.d.ts",
+  "main": "./dist/select-a11y.umd.cjs",
+  "module": "./dist/select-a11y.js",
   "css": "dist/select-a11y.css",
-  "test": "public/assets/scripts/index.js",
-  "test-css": "public/assets/css/style.css",
-  "sideEffects": "public/assets/scripts/*.js",
-  "targets": {
-    "main": {
-      "source": "src/select-a11y.js",
-      "context": "browser"
-    },
-    "css": {
-      "source": "src/select-a11y.scss"
-    },
-    "test": {
-      "source": "public/assets/scripts/main.js"
-    },
-    "test-css": {
-      "source": "public/assets/scss/style.scss"
+  "exports": {
+    ".": {
+      "import": "./dist/select-a11y.js",
+      "require": "./dist/select-a11y.umd.cjs"
     }
   },
   "repository": {
@@ -29,21 +18,24 @@
     "url": "https://git.sr.ht/~nicolaskempf57/select-a11y"
   },
   "scripts": {
-    "build": "rm -rf .parcel-cache && parcel build && npm run build-types",
-    "build-types": "npx -p typescript tsc dist/*.js --declaration --allowJs --emitDeclarationOnly --outDir dist",
-    "dev": "rm -rf .parcel-cache && parcel watch",
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "vite build && npm run build-types",
+    "build-types": "npx -p typescript tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
     "prepublishOnly": "npm run build",
-    "test": "tape tests/index.cjs",
+    "preview": "vite preview",
+    "test": "vite build -c vite.preview.js && vitest",
     "publish-version": "npm publish --access public"
   },
   "author": "Nicolas KEMPF - conciergerie.dev",
   "license": "MIT",
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.4.0",
-    "parcel": "^2.4.0",
     "puppeteer": "^13.5.1",
+    "sass": "^1.63.6",
     "tape": "^5.5.3",
-    "typescript": "^4.8.4"
+    "typescript": "^5.1.6",
+    "vite": "^4.3.9",
+    "vitest": "^0.32.4"
   },
   "bugs": {
     "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y",

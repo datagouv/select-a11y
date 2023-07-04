@@ -1,0 +1,13 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["dom", "ESNext"],
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "types",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "skipLibCheck": true,
+  }
+}

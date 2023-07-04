@@ -193,13 +193,13 @@ export class Select {
 
     if (this.multiple) {
       text.innerText = this.label?.innerText ?? "";
-    }
-    else {
+    } else {
       if (this.label && !this.label.id) {
         this.label.id = `${this.el.id}-label`;
       }
       button.setAttribute('id', this.el.id + '-button');
       button.setAttribute('aria-labelledby', this.label?.id + ' ' + button.id);
+      text.innerHTML = "&nbsp;";
     }
 
     button.appendChild(text);
@@ -234,7 +234,7 @@ export class Select {
     container.innerHTML = `
       <p id="a11y-usage-${this.id}-js" class="sr-only">${this._options.text.help}</p>
       <label for="a11y-${this.id}-js" class="sr-only">${this._options.text.placeholder}</label>
-      <input type="search" id="a11y-${this.id}-js" class="${this.el.className}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${this._options.text.placeholder}" aria-describedby="a11y-usage-${this.id}-js">
+      <input type="search" id="a11y-${this.id}-js" class="select-a11y__input ${this.el.className}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${this._options.text.placeholder}" aria-describedby="a11y-usage-${this.id}-js">
     `;
 
     container.appendChild(suggestions);
@@ -459,7 +459,7 @@ export class Select {
   }
 
   _handleInput() {
-    // prevent event fireing on focus and blur
+    // prevent event firing on focus and blur
     if (this.search === this.input?.value) {
       return;
     }
