@@ -1,3 +1,5 @@
+import "./select-a11y.scss";
+
 const text = {
   help: 'Utilisez la tabulation (ou les touches flèches) pour naviguer dans la liste des suggestions',
   placeholder: 'Rechercher dans la liste',
