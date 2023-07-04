@@ -1,6 +1,6 @@
 {
   "name": "@conciergerie.dev/select-a11y",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Combobox, single and multiple select component with a focus on accessibility. It includes a search bar with local and remote search.",
   "type": "module",
   "types": "./types/select-a11y.d.ts",
@@ -22,7 +22,7 @@
     "dev": "vite",
     "build": "vite build && npm run build-types",
     "build-types": "npx -p typescript tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm test && npm run build",
     "preview": "vite preview",
     "test": "vite build -c vite.preview.js && vitest",
     "publish-version": "npm publish --access public"
