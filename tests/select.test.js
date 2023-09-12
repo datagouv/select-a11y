@@ -244,7 +244,7 @@ describe('select-a11y', async () => {
         if (select.useLabelAsButton && !select.value) {
           expect(select.label, 'Le select multiple affiche le label dans le bouton d’ouverture').toBe(select.buttonLabel);
         } else {
-          expect(select.buttonLabel, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ourerture').toBe(select.option);
+          expect(select.buttonLabel, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ouverture').toBe(select.option || "");
         }
       }
     });
@@ -751,24 +751,45 @@ describe('select-a11y', async () => {
   test('Gestion de la liste du select simple au clic', async () => {
     const { browser, page } = await goToPage();
 
-    await page.click('.form-group button');
-    await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
+    await page.click('.form-group.with-hidden-disabled button');
+
+    const clickedLabel = await page.evaluate(() => {
+      /** @type {HTMLDivElement | null} */
+      const selectedOption = document.querySelector('.form-group.with-hidden-disabled .select-a11y-suggestions [role="option"]:nth-child(4)');
+      if(selectedOption) {
+        return selectedOption.innerText.trim();
+      }
+      return undefined;
+    });
+    await page.click('.form-group.with-hidden-disabled .select-a11y-suggestions [role="option"]:nth-child(4)');
     await page.waitForTimeout(10);
 
     const clickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
-      const opener = document.querySelector('.form-group button');
+      const opener = document.querySelector('.form-group.with-hidden-disabled button');
+      const select = document.querySelector('.form-group.with-hidden-disabled select');
+
+      if (select instanceof HTMLSelectElement) {
+        return {
+          expanded: opener?.getAttribute('aria-expanded'),
+          openerFocused: opener === activeElement,
+          selectedLabel: opener?.firstElementChild?.textContent?.trim(),
+        }
+      }
 
       return {
         expanded: opener?.getAttribute('aria-expanded'),
-        openerFocused: opener === activeElement
+        openerFocused: opener === activeElement,
+        selectedLabel: undefined,
       }
     });
 
     expect(clickStatus.expanded, 'La liste est refermée après un clic sur une option').toBe("false");
     expect(clickStatus.openerFocused, 'Le focus est replacé sur le bouton ouvrant la liste').toBe(true);
+    expect(clickStatus.selectedLabel, 'Une option est sélectionnée').toBeDefined();
+    expect(clickStatus.selectedLabel, "L'option sélectionnée est celle qui a été cliquée").toBe(clickedLabel);
 
-    await page.click('.form-group button');
+    await page.click('.form-group.with-hidden-disabled button');
 
     await page.keyboard.down('Meta');
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
@@ -778,7 +799,7 @@ describe('select-a11y', async () => {
 
     const metaClickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
-      const opener = document.querySelector('.form-group button');
+      const opener = document.querySelector('.form-group.with-hidden-disabled button');
 
       return {
         expanded: opener?.getAttribute('aria-expanded'),

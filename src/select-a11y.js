@@ -351,28 +351,34 @@ export class Select {
     this.currentOptions = suggestions.map(this._mapToOption);
     this.el.replaceChildren(...this.currentOptions);
     const suggestionElements = suggestions
-      .filter((suggestion) => !suggestion.hidden && !suggestion.disabled)
       .map((suggestion, index) => {
-      const suggestionElement = document.createElement('div');
-      suggestionElement.setAttribute('role', 'option');
-      suggestionElement.setAttribute('tabindex', '0');
-      suggestionElement.setAttribute('data-index', index.toString());
-      suggestionElement.classList.add('select-a11y-suggestion');
-      suggestionElement.innerText = suggestion.label || suggestion.value;
-      // check if the option is selected
-      if (suggestion.selected) {
-        suggestionElement.setAttribute('aria-selected', 'true');
-      }
-      if (suggestion.image) {
-        const image = document.createElement('img');
-        image.setAttribute('src', suggestion.image);
-        image.setAttribute('alt', suggestion.alt ? suggestion.alt : '');
-        image.classList.add('select-a11y-suggestion__image');
-        suggestionElement.prepend(image);
-      }
+        const suggestionElement = document.createElement('div');
+        suggestionElement.setAttribute('role', 'option');
+        suggestionElement.setAttribute('tabindex', '0');
+        suggestionElement.setAttribute('data-index', index.toString());
+        if(suggestion.hidden) {
+          suggestionElement.setAttribute('data-hidden', "hidden");
+        }
+        if(suggestion.disabled) {
+          suggestionElement.setAttribute('data-disabled', "disabled");
+        }
+        suggestionElement.classList.add('select-a11y-suggestion');
+        suggestionElement.innerText = suggestion.label || suggestion.value;
+        // check if the option is selected
+        if (suggestion.selected) {
+          suggestionElement.setAttribute('aria-selected', 'true');
+        }
+        if (suggestion.image) {
+          const image = document.createElement('img');
+          image.setAttribute('src', suggestion.image);
+          image.setAttribute('alt', suggestion.alt ? suggestion.alt : '');
+          image.classList.add('select-a11y-suggestion__image');
+          suggestionElement.prepend(image);
+        }
 
-      return suggestionElement;
-    });
+        return suggestionElement;
+      })
+      .filter((suggestionElement) => !suggestionElement.dataset.disabled && !suggestionElement.dataset.hidden);
     this.suggestions = suggestionElements;
     if(this.list) {
       if (!suggestionElements.length) {
