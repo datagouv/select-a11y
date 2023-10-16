@@ -34,11 +34,11 @@
   "author": "Nicolas KEMPF - conciergerie.dev",
   "license": "MIT",
   "devDependencies": {
-    "puppeteer": "^13.5.1",
-    "sass": "^1.63.6",
-    "typescript": "^5.1.6",
-    "vite": "^4.3.9",
-    "vitest": "^0.32.4"
+    "puppeteer": "^21.3.8",
+    "sass": "^1.69.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11",
+    "vitest": "^0.34.6"
   },
   "bugs": {
     "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y",
