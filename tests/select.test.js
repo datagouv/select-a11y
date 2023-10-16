@@ -354,6 +354,7 @@ describe('select-a11y', async () => {
             useLabelAsButton: select.dataset.hasOwnProperty("selectA11yLabel"),
             label: label?.textContent?.trim(),
             buttonLabel: button?.textContent?.trim(),
+            buttonNoOptionClass: button?.classList.contains("select-a11y-button--no-selected-option"),
             values: selectedValues.join(':'),
             listItems: listItems.join(':'),
           }
@@ -364,7 +365,9 @@ describe('select-a11y', async () => {
             useLabelAsButton: select.dataset.hasOwnProperty("selectA11yLabel"),
             label: label?.textContent?.trim(),
             buttonLabel: button?.textContent?.trim(),
+            buttonNoOptionClass: button?.classList.contains("select-a11y-button--no-selected-option"),
             value: select.value,
+            id: select.id,
             option: select?.item(select.selectedIndex)?.text,
           }
         }
@@ -379,12 +382,14 @@ describe('select-a11y', async () => {
           expect(select.buttonLabel, 'Multiple select shows an empty button').toBe("");
         }
         expect(select.listItems, 'Multiple select shows the list of selected elements').toBe(select.values);
+        expect(select.buttonNoOptionClass, 'Multiple select has special class only when no option is selected').toBe(!select.values);
       } else {
         if (select.useLabelAsButton && !select.value) {
           expect(select.label, 'Select shows label in the open button').toBe(select.buttonLabel);
         } else {
           expect(select.buttonLabel, 'Select shows the selected value as default in the open button').toBe(select.option || "");
         }
+        expect(select.buttonNoOptionClass, 'Single select has special class only when no option is selected').toBe(!select.value);
       }
     });
   });
