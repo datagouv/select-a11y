@@ -193,16 +193,12 @@ export class Select {
     const text = document.createElement('span');
     text.className = 'select-a11y-button__text';
 
-    if (this.multiple) {
-      text.innerText = this.label?.innerText ?? "";
-    } else {
-      if (this.label && !this.label.id) {
-        this.label.id = `${this.el.id}-label`;
-      }
-      button.setAttribute('id', this.el.id + '-button');
-      button.setAttribute('aria-labelledby', this.label?.id + ' ' + button.id);
-      text.innerHTML = "&nbsp;";
+    if (this.label && !this.label.id) {
+      this.label.id = `${this.el.id}-label`;
     }
+    button.setAttribute('id', this.el.id + '-button');
+    button.setAttribute('aria-labelledby', this.label?.id + ' ' + button.id);
+    text.innerHTML = "&nbsp;";
 
     button.appendChild(text);
     button.insertAdjacentHTML('beforeend', '<span class="select-a11y-button__icon" aria-hidden="true"></span>');
@@ -585,18 +581,25 @@ export class Select {
   }
 
   _setButtonText() {
-    if (!this.multiple) {
-      const selectedOption = this.el.item(this.el.selectedIndex);
+    const selectedOption = this.el.item(this.el.selectedIndex);
+    /** @type {HTMLElement} */
+    const child = this.button.firstElementChild;
+
+    if (selectedOption && selectedOption.value) {
+      this.button.classList.remove('select-a11y-button--no-selected-option');
+    } else {
+      this.button.classList.add('select-a11y-button--no-selected-option');
+    }
+
+    if (this.multiple) {
+      if(this._options.useLabelAsButton) {
+        child.innerText = this.label?.innerText || "";
+      } else {
+        child.innerHTML = "&nbsp;";
+      }
+    } else {
       if (selectedOption) {
-        if (selectedOption.value) {
-          this.button.classList.remove('select-a11y-button--no-selected-option');
-        } else {
-          this.button.classList.add('select-a11y-button--no-selected-option');
-        }
-        const child = this.button.firstElementChild;
-        if (child instanceof HTMLElement) {
-          child.innerText = selectedOption.label || selectedOption.value;
-        }
+        child.innerText = selectedOption.label || selectedOption.value;
       }
     }
   }
@@ -702,7 +705,7 @@ export class Select {
 
   _updateSelectedList() {
     const items = this.currentOptions.map((option, index) => {
-      if(!option.selected) {
+      if(!option.selected || option.hidden) {
         return;
       }
       const text = option.label || option.value;
@@ -739,7 +742,7 @@ export class Select {
     tagHidden.classList.add('select-a11y__hidden');
     tagHidden.setAttribute('aria-hidden', 'true');
 
-    if (this.multiple || this._options.useLabelAsButton) {
+    if (this._options.useLabelAsButton) {
       tagHidden.appendChild(this.label);
     }
     tagHidden.appendChild(this.el);

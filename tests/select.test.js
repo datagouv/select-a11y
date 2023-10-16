@@ -102,6 +102,139 @@ describe('select-a11y', async () => {
     expect(button.labelledby?.includes(label.id ?? ""), 'Le bouton est lié au label via l’attribut « aria-labelledby »').toBe(true);
   });
 
+  test('Create single select-a11y with label as placeholder', async () => {
+    const { browser, page } = await goToPage();
+
+    const wrapper = await page.$('body');
+    expect(wrapper).toBeDefined();
+
+    const body = await page.evaluate(() => {
+      return document.querySelector("body");
+    });
+
+    const { label, select } = await page.evaluate(() => {
+      const wrapper = document.querySelector('.form-group.label');
+      const selectA11y = wrapper?.querySelector('.select-a11y');
+      const tagHidden = selectA11y?.querySelector('.select-a11y__hidden');
+      const label = tagHidden?.firstElementChild;
+
+      return {
+        label: {
+          moved: label && label.getAttribute('for') === 'select-label',
+          id: label && label.id
+        },
+        select: selectA11y !== null
+      }
+    });
+
+    expect(label.moved, 'Label has moved').toBe(true);
+    expect(select, 'select-a11y container is created').toBe(true);
+
+    const { tagHidden, live, button } = await page.evaluate(() => {
+      const selectA11y = document.querySelector('.form-group.label > .select-a11y');
+      const tagHidden = selectA11y?.querySelector('.select-a11y__hidden');
+      const live = selectA11y?.querySelector('[aria-live]');
+      const button = selectA11y?.querySelector('button[aria-expanded]');
+      const label = selectA11y?.querySelector('label');
+
+      return {
+        tagHidden: {
+          exists: tagHidden !== null,
+          isHidden: tagHidden && tagHidden.getAttribute('aria-hidden') === 'true',
+          label: tagHidden && tagHidden.firstElementChild?.tagName,
+          hasSelect: tagHidden && tagHidden.querySelector('select') !== null
+        },
+        live: {
+          exists: live !== null,
+          isPolite: live && live.getAttribute('aria-live') === 'polite'
+        },
+        button: {
+          exists: button !== null,
+          isClosed: button && button.getAttribute('aria-expanded') === 'false',
+          labelledby: button && button.getAttribute('aria-labelledby')
+        }
+      }
+    });
+
+    expect(tagHidden.exists, 'The container of the original select is created').toBe(true);
+    expect(tagHidden.hasSelect, 'The container of the original select contains the original select').toBe(true);
+    expect(tagHidden.label, 'The container of the original select contains the label of the original select').toBe('LABEL');
+    expect(tagHidden.isHidden, 'The container of the original select is hidden from screen readers').toBe(true);
+
+    expect(live.exists, 'L‘élément de restitution vocal est créé').toBe(true);
+    expect(live.isPolite, 'L‘élément de restitution vocal est paramétré à « polite »').toBe(true);
+
+    expect(button.exists, 'Le bouton permettant d’ouvrir le select est créé').toBe(true);
+    expect(button.isClosed, 'Le bouton permettant d’ouvrir le select est paramétré comme fermé par défaut').toBe(true);
+    expect(button.labelledby?.includes(label.id ?? ""), 'Le bouton est lié au label via l’attribut « aria-labelledby »').toBe(true);
+  });
+
+  test('Create multiple select-a11y with label as placeholder', async () => {
+    const { browser, page } = await goToPage();
+
+    const wrapper = await page.$('body');
+    expect(wrapper).toBeDefined();
+
+    const body = await page.evaluate(() => {
+      return document.querySelector("body");
+    });
+
+    const { label, select } = await page.evaluate(() => {
+      const wrapper = document.querySelector('.form-group.multiple-label');
+      const selectA11y = wrapper?.querySelector('.select-a11y');
+      const label = wrapper?.firstElementChild;
+
+      return {
+        label: {
+          stayed: label && label.getAttribute('for') === 'select-placeholder',
+          id: label && label.id
+        },
+        select: selectA11y !== null
+      }
+    });
+
+    expect(label.stayed, 'Label is moved').toBe(false);
+    expect(select, 'select-a11y container is created').toBe(true);
+
+    const { tagHidden, live, button } = await page.evaluate(() => {
+      const selectA11y = document.querySelector('.form-group.multiple-label > .select-a11y');
+      const tagHidden = selectA11y?.querySelector('.select-a11y__hidden');
+      const live = selectA11y?.querySelector('[aria-live]');
+      const button = selectA11y?.querySelector('button[aria-expanded]');
+      const label = selectA11y?.querySelector('label');
+
+      return {
+        tagHidden: {
+          exists: tagHidden !== null,
+          isHidden: tagHidden && tagHidden.getAttribute('aria-hidden') === 'true',
+          label: tagHidden && tagHidden.firstElementChild?.tagName,
+          hasSelect: tagHidden && tagHidden.querySelector('select') !== null
+        },
+        live: {
+          exists: live !== null,
+          isPolite: live && live.getAttribute('aria-live') === 'polite'
+        },
+        button: {
+          exists: button !== null,
+          isClosed: button && button.getAttribute('aria-expanded') === 'false',
+          labelledby: button && button.getAttribute('aria-labelledby')
+        }
+      }
+    });
+
+    expect(tagHidden.exists, 'The container of the original select is created').toBe(true);
+    expect(tagHidden.hasSelect, 'The container of the original select contains the original select').toBe(true);
+    expect(tagHidden.label, 'The container of the original select contains the label of the original select').toBe('LABEL');
+    expect(tagHidden.isHidden, 'The container of the original select is hidden from screen readers').toBe(true);
+
+    expect(live.exists, 'L‘élément de restitution vocal est créé').toBe(true);
+    expect(live.isPolite, 'L‘élément de restitution vocal est paramétré à « polite »').toBe(true);
+
+    expect(button.exists, 'Le bouton permettant d’ouvrir le select est créé').toBe(true);
+    expect(button.isClosed, 'Le bouton permettant d’ouvrir le select est paramétré comme fermé par défaut').toBe(true);
+    expect(button.labelledby?.includes(label.id ?? ""), 'Le bouton est lié au label via l’attribut « aria-labelledby »').toBe(true);
+  });
+
   test('Programmatically assign value to select-a11y', async () => {
     const { browser, page } = await goToPage();
 
@@ -153,16 +286,19 @@ describe('select-a11y', async () => {
   test('Creation du select-a11y multiple', async () => {
     const { browser, page } = await goToPage();
 
-    const { select } = await page.evaluate(() => {
-      const wrapper = document.querySelector('.form-group');
+    const { select, stayed } = await page.evaluate(() => {
+      const wrapper = document.querySelector('.form-group.multiple');
+      const label = wrapper?.firstElementChild;
       const selectA11y = wrapper?.querySelector('.select-a11y');
 
       return {
-        select: selectA11y !== null
+        select: selectA11y !== null,
+        stayed: label && label.getAttribute('for') === 'select-element',
       }
     });
 
     expect(select, 'Le conteneur de select-a11y est créé').toBe(true);
+    expect(stayed, 'Label has not moved').toBe(true);
 
     const { tagHidden, live, button } = await page.evaluate(() => {
       const selectA11y = document.querySelector('.form-group.multiple > .select-a11y');
@@ -174,7 +310,6 @@ describe('select-a11y', async () => {
         tagHidden: {
           exists: tagHidden !== null,
           isHidden: tagHidden && tagHidden.getAttribute('aria-hidden') === 'true',
-          label: tagHidden && tagHidden.firstElementChild?.tagName,
           hasSelect: tagHidden && tagHidden.querySelector('select') !== null
         },
         live: {
@@ -190,7 +325,6 @@ describe('select-a11y', async () => {
 
     expect(tagHidden.exists, 'Le conteneur du select original est créé').toBe(true);
     expect(tagHidden.hasSelect, 'Le conteneur du select original contient bien le select original').toBe(true);
-    expect(tagHidden.label, 'Le conteneur du select original contient bien le label du select original').toBe('LABEL');
     expect(tagHidden.isHidden, 'Le conteneur du select original est caché au lecteurs d’écran').toBe(true);
 
     expect(live.exists, 'L‘élément de restitution vocal est créé').toBe(true);
@@ -200,7 +334,7 @@ describe('select-a11y', async () => {
     expect(button.isClosed, 'Le bouton permettant d’ouvrir le select est paramétré comme fermé par défaut').toBe(true);
   });
 
-  test('État par défaut', async () => {
+  test('Default states', async () => {
     const { browser, page } = await goToPage();
 
     const selects = await page.evaluate(() => {
@@ -217,6 +351,7 @@ describe('select-a11y', async () => {
 
           return {
             multiple: true,
+            useLabelAsButton: select.dataset.hasOwnProperty("selectA11yLabel"),
             label: label?.textContent?.trim(),
             buttonLabel: button?.textContent?.trim(),
             values: selectedValues.join(':'),
@@ -238,13 +373,17 @@ describe('select-a11y', async () => {
 
     selects.forEach(select => {
       if (select.multiple) {
-        expect(select.label, 'Le select multiple affiche le label dans le bouton d’ouverture').toBe(select.buttonLabel);
-        expect(select.listItems, 'Le select multiple affiche une liste des éléments sélectionnés par défaut').toBe(select.values);
+        if (select.useLabelAsButton) {
+          expect(select.label, 'Multiple select always shows the label in the open button with the provided option').toBe(select.buttonLabel);
+        } else {
+          expect(select.buttonLabel, 'Multiple select shows an empty button').toBe("");
+        }
+        expect(select.listItems, 'Multiple select shows the list of selected elements').toBe(select.values);
       } else {
         if (select.useLabelAsButton && !select.value) {
-          expect(select.label, 'Le select multiple affiche le label dans le bouton d’ouverture').toBe(select.buttonLabel);
+          expect(select.label, 'Select shows label in the open button').toBe(select.buttonLabel);
         } else {
-          expect(select.buttonLabel, 'Le select affiche la valeur de l’élément sélectionné par défaut dans le bouton d’ouverture').toBe(select.option || "");
+          expect(select.buttonLabel, 'Select shows the selected value as default in the open button').toBe(select.option || "");
         }
       }
     });

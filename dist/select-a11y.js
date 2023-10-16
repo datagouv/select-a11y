@@ -88,11 +88,11 @@ class f {
     this.selectOption(e, b);
   }
   _createButton() {
-    var i, s;
+    var i;
     const e = document.createElement("button");
     e.setAttribute("type", "button"), e.setAttribute("aria-expanded", this.open ? "true" : "false"), e.className = "select-a11y-button";
     const t = document.createElement("span");
-    return t.className = "select-a11y-button__text", this.multiple ? t.innerText = ((i = this.label) == null ? void 0 : i.innerText) ?? "" : (this.label && !this.label.id && (this.label.id = `${this.el.id}-label`), e.setAttribute("id", this.el.id + "-button"), e.setAttribute("aria-labelledby", ((s = this.label) == null ? void 0 : s.id) + " " + e.id), t.innerHTML = "&nbsp;"), e.appendChild(t), e.insertAdjacentHTML("beforeend", '<span class="select-a11y-button__icon" aria-hidden="true"></span>'), e;
+    return t.className = "select-a11y-button__text", this.label && !this.label.id && (this.label.id = `${this.el.id}-label`), e.setAttribute("id", this.el.id + "-button"), e.setAttribute("aria-labelledby", ((i = this.label) == null ? void 0 : i.id) + " " + e.id), t.innerHTML = "&nbsp;", e.appendChild(t), e.insertAdjacentHTML("beforeend", '<span class="select-a11y-button__icon" aria-hidden="true"></span>'), e;
   }
   _createClearButton() {
     const e = document.createElement("button");
@@ -288,14 +288,9 @@ class f {
       this.button.focus();
   }
   _setButtonText() {
-    if (!this.multiple) {
-      const e = this.el.item(this.el.selectedIndex);
-      if (e) {
-        e.value ? this.button.classList.remove("select-a11y-button--no-selected-option") : this.button.classList.add("select-a11y-button--no-selected-option");
-        const t = this.button.firstElementChild;
-        t instanceof HTMLElement && (t.innerText = e.label || e.value);
-      }
-    }
+    var i;
+    const e = this.el.item(this.el.selectedIndex), t = this.button.firstElementChild;
+    e && e.value ? this.button.classList.remove("select-a11y-button--no-selected-option") : this.button.classList.add("select-a11y-button--no-selected-option"), this.multiple ? this._options.useLabelAsButton ? t.innerText = ((i = this.label) == null ? void 0 : i.innerText) || "" : t.innerHTML = "&nbsp;" : e && (t.innerText = e.label || e.value);
   }
   _setLiveZone() {
     const e = this.suggestions.length;
@@ -318,7 +313,7 @@ class f {
   _updateSelectedList() {
     var t;
     const e = this.currentOptions.map((i, s) => {
-      if (!i.selected)
+      if (!i.selected || i.hidden)
         return;
       const l = i.label || i.value;
       return `
@@ -337,7 +332,7 @@ class f {
     const e = document.createElement("div");
     e.classList.add("select-a11y"), (i = this.el.parentElement) == null || i.appendChild(e);
     const t = document.createElement("div");
-    return t.classList.add("select-a11y__hidden"), t.setAttribute("aria-hidden", "true"), (this.multiple || this._options.useLabelAsButton) && t.appendChild(this.label), t.appendChild(this.el), e.appendChild(t), e.appendChild(this.liveZone), e.appendChild(this.button), this._options.clearable && e.appendChild(this.clearButton), e;
+    return t.classList.add("select-a11y__hidden"), t.setAttribute("aria-hidden", "true"), this._options.useLabelAsButton && t.appendChild(this.label), t.appendChild(this.el), e.appendChild(t), e.appendChild(this.liveZone), e.appendChild(this.button), this._options.clearable && e.appendChild(this.clearButton), e;
   }
 }
 export {

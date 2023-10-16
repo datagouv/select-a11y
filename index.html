@@ -46,6 +46,7 @@
 
           <h3>Example 2</h3>
           <div class="form-group label">
+            <p>Label as placeholder</p>
             <label for="select-label">Is your website…</label>
             <select class="form-control" id="select-label" data-select-a11y data-select-a11y-label>
                 <option>Perceivable</option>
@@ -56,7 +57,7 @@
           </div>
 
           <h3>Example 3</h3>
-          <p>Label as placeholder</p>
+          <p>Label as placeholder with selected value</p>
           <div class="form-group">
             <label for="select-label-selected">Is your website…</label>
             <select class="form-control" id="select-label-selected" data-select-a11y data-select-a11y-label>
@@ -99,12 +100,26 @@
                 <option data-image="https://placekitten.com/g/200/200">Sleeping</option>
                 <option data-image="https://placekitten.com/g/200/200">Climbing trees</option>
                 <option data-image="https://placekitten.com/g/200/200">Knitting socks</option>
-                <option data-image="https://placekitten.com/g/200/200" selected>Riding bikes</option>
+                <option data-image="https://placekitten.com/g/200/200">Riding bikes</option>
                 <option data-image="https://placekitten.com/g/200/200">Eating cupcakes</option>
             </select>
           </div>
 
           <h3>Example 7</h3>
+          <p>As seen in this example, you can use label as placeholder for multiple select too.</p>
+          <div class="form-group multiple-label">
+            <label for="select-placeholder">What do you want to do today?</label>
+            <select class="form-control" id="select-placeholder" multiple data-select-a11y data-select-a11y-label>
+                <option data-image="https://placekitten.com/g/200/200">Sleeping</option>
+                <option data-image="https://placekitten.com/g/200/200">Climbing trees</option>
+                <option data-image="https://placekitten.com/g/200/200">Knitting socks</option>
+                <option data-image="https://placekitten.com/g/200/200">Riding bikes</option>
+                <option data-image="https://placekitten.com/g/200/200">Eating cupcakes</option>
+            </select>
+          </div>
+
+
+          <h3>Example 8</h3>
           <p>Some <code>options</code> may have a <code>disabled</code> and <code>hidden</code> attribute</p>
           <div class="form-group with-hidden-disabled">
             <label for="hidden-option">What do you want to do today?</label>
