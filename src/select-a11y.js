@@ -635,8 +635,8 @@ export class Select {
       // reset the focus index
       this.focusIndex = null;
 
-      // reset search values
-      if (this.input) {
+      // reset search values for default search
+      if (this.input && this._options.fillSuggestions === this._defaultSearch) {
         this.input.value = '';
       }
       this.search = '';
