@@ -58,16 +58,21 @@ export class Select {
    * Only work if select value is set. It resets it to `null`.
    */
   constructor(el, options) {
+
     /** @type {HTMLSelectElement} */
     this.el = el;
+
     /** @type {HTMLLabelElement | null} */
     this.label = document.querySelector(`label[for=${el.id}]`);
+
     this.id = el.id;
     this.open = false;
     this.multiple = this.el.multiple;
     this.search = '';
+
     /** @type {Array<HTMLElement>} */
     this.suggestions = [];
+
     this.focusIndex = null;
 
     const passedOptions = Object.assign({}, options);
@@ -165,7 +170,7 @@ export class Select {
 
   /**
    * Select new value
-   * @param {*} value option value
+   * @param {string} value option value
    */
   selectOption(value, dispatchEvent = true) {
     const optionIndex = this.currentOptions.findIndex(option => option.value === value);
@@ -178,7 +183,7 @@ export class Select {
 
   /**
    * Select new value without dispatching the change Event
-   * @param {*} value option value
+   * @param {string} value option value
    */
   selectOptionSilently(value) {
     this.selectOption(value, SILENTLY);
@@ -239,8 +244,10 @@ export class Select {
 
     this.list = suggestions;
     this.list.addEventListener('click', this._handleSuggestionClick);
+
     /** @type {HTMLInputElement | null} */
     this.input = container.querySelector('input');
+
     if(this.input) {
       this.input.addEventListener('input', this._handleInput);
       this.input.addEventListener('focus', this._positionCursor, true);
