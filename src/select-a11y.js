@@ -43,13 +43,13 @@ export class Select {
    * @param {HTMLSelectElement} el - Select HTML element
    * @param {object} [options] - options to control select-a11y behavior
    * @param {object} [options.text] - texts used in the class
-   * @param {object} [options.text.help] - helper text used for assistive technologies
-   * @param {object} [options.text.placeholder] - search input placeholder
-   * @param {object} [options.text.noResult] - text shown when there is no option
-   * @param {object} [options.text.results] - text to show the number of results available for assistive technologies
-   * @param {object} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
-   * @param {object} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
-   * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
+   * @param {string} [options.text.help] - helper text used for assistive technologies
+   * @param {string} [options.text.placeholder] - search input placeholder
+   * @param {string} [options.text.noResult] - text shown when there is no option
+   * @param {string} [options.text.results] - text to show the number of results available for assistive technologies
+   * @param {string} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
+   * @param {string} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
+   * @param {string} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
    * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
    * @param {boolean} [options.showSelected=true] - show selected options for multiple select
    * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select.
