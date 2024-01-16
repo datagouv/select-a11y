@@ -20,6 +20,7 @@ describe('select-a11y', async () => {
 
   beforeAll(async () => {
     server = await preview({ preview: { port: 3000 } });
+    server.printUrls() 
     browser = await puppeteer.launch({ dumpio: true });
     page = await browser.newPage();
   });
@@ -33,7 +34,7 @@ describe('select-a11y', async () => {
 
 
   const goToPage = async () => {
-    await page.goto('http://127.0.0.1:3000');
+    await page.goto('http://localhost:3000');
 
     return { browser, page };
   };
@@ -594,6 +595,53 @@ describe('select-a11y', async () => {
     expect(data.listBox.multiple, 'La liste pour le select contient l’attribut « aria-multiselectable »').toBe("true");
     expect(data.list.lengthWithImage, 'La liste crée contient des images si les options contiennent un data-image').toBe(data.options.lengthWithImage);
     expect(data.list.lengthWithAlt, 'La liste crée contient des images avec attribut alt si les options contiennent un data-image et un data-alt').toBe(data.options.lengthWithAlt);
+  });
+
+  test('Création de la liste lors de l’utilisation de description et de helper', async () => {
+    const { browser, page } = await goToPage();
+
+    await page.click('.description button');
+
+    const data = await page.evaluate(() => {
+      const wrapper = document.querySelector('.description .select-a11y');
+      const select = wrapper?.querySelector('select');
+      const container = document.querySelector('.description .select-a11y__overlay');
+      const label = container?.querySelector('label');
+      const input = container?.querySelector('input');
+      const options = container?.querySelectorAll('[role="option"]');
+      const listBox = container?.querySelector('[role="listbox"]');
+
+      return {
+        hasContainer: wrapper?.contains(container),
+        label: {
+          for: label?.getAttribute('for')
+        },
+        input: {
+          id: input?.id,
+          describedby: input?.getAttribute('aria-describedby')
+        },
+        list: {
+          length: options?.length,
+          lengthWithDescription: Array.from(options ?? []).filter(option => option.querySelector('.description .select-a11y-suggestion__description')).length,
+          lengthWithHelper: Array.from(options ?? []).filter(option => option.querySelector('.description .select-a11y-suggestion__helper')).length,
+        },
+        options: {
+          length: select?.options.length,
+          lengthWithDescription: Array.from(select?.options ?? []).filter(option => option.dataset.description).length,
+          lengthWithHelper: Array.from(select?.options ?? []).filter(option => option.dataset.helper).length,
+        },
+        listBox: {
+          multiple: listBox?.hasAttribute('aria-multiselectable')
+        },
+      }
+    });
+
+    expect(data.hasContainer, 'La liste est créée lors de l’activation du bouton').toBe(true);
+    expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
+    expect(data.list.length, 'La liste créée contient le même nombre doptions que le select').toBe(data.options?.length ?? 0);
+    expect(data.list.lengthWithDescription, 'La liste crée contient des descriptions si les options contiennent un data-description').toBe(data.options.lengthWithDescription);
+    expect(data.list.lengthWithHelper, 'La liste crée contient des helpers si les options contiennent un data-helper').toBe(data.options.lengthWithHelper);
+    expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
   });
 
   test('Gestion du champ de recherche', async () => {

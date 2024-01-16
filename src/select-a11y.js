@@ -277,6 +277,8 @@ export class Select {
    * @property {any} value - suggestion value
    * @property {string} [image] - suggestion image
    * @property {string} [alt] - suggestion image alt
+   * @property {string} [helper] - suggestion image
+   * @property {string} [description] - suggestion image alt
    */
 
   /**
@@ -293,6 +295,8 @@ export class Select {
       value: option.value,
       image: option.dataset.image,
       alt: option.dataset.alt,
+      helper: option.dataset.helper,
+      description: option.dataset.description
     }
   }
 
@@ -303,6 +307,7 @@ export class Select {
    */
   _mapToOption(suggestion) {
     const option = document.createElement('option');
+    console.log(suggestion)
     option.label = suggestion.label;
     option.value = suggestion.value;
     if(suggestion.hidden) {
@@ -319,6 +324,12 @@ export class Select {
     }
     if(suggestion.alt) {
       option.dataset.alt = suggestion.alt;
+    }
+    if(suggestion.description) {
+      option.dataset.description = suggestion.description
+    }
+    if (suggestion.helper) {
+      option.dataset.helper = suggestion.helper
     }
     return option;
   }
@@ -366,10 +377,41 @@ export class Select {
           suggestionElement.setAttribute('data-disabled', "disabled");
         }
         suggestionElement.classList.add('select-a11y-suggestion');
-        suggestionElement.innerText = suggestion.label || suggestion.value;
+        suggestionElement.style.display = 'flex';
+        suggestionElement.style.justifyContent = 'space-between';
+        //original code
+        //suggestionElement.innerText = suggestion.label || suggestion.value;
+
+        //test
+
+        const firstColumn = document.createElement('div');
+        firstColumn.classList.add('column');
+        suggestionElement.appendChild(firstColumn);
+
+        const labelElement = document.createElement('div');
+        labelElement.classList.add('select-a11y-suggestion__label');
+        labelElement.innerText = suggestion.label || suggestion.value;
+        firstColumn.appendChild(labelElement);
+
         // check if the option is selected
         if (suggestion.selected) {
           suggestionElement.setAttribute('aria-selected', 'true');
+        }
+        if (suggestion.description) {
+          const descriptionElement = document.createElement('div');
+          descriptionElement.classList.add('select-a11y-suggestion__description');
+          descriptionElement.innerText = suggestion.description;
+          firstColumn.appendChild(descriptionElement);
+        }
+        if (suggestion.helper) {
+          const secondColumn = document.createElement('div');
+          secondColumn.classList.add('column');
+          suggestionElement.appendChild(secondColumn);
+
+          const helperElement = document.createElement('code');
+          helperElement.classList.add('select-a11y-suggestion__helper');
+          helperElement.innerText = suggestion.helper;
+          secondColumn.appendChild(helperElement);
         }
         if (suggestion.image) {
           const image = document.createElement('img');

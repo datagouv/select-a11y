@@ -1,4 +1,4 @@
-const u = {
+const p = {
   help: "Utilisez la tabulation (ou les touches flèches) pour naviguer dans la liste des suggestions",
   placeholder: "Rechercher dans la liste",
   noResult: "Aucun résultat",
@@ -6,36 +6,36 @@ const u = {
   deleteItem: "Supprimer {t}",
   delete: "Supprimer",
   clear: "Vider"
-}, c = Element.prototype.matches;
-let o = Element.prototype.closest;
-o || (o = function(r) {
+}, m = Element.prototype.matches;
+let r = Element.prototype.closest;
+r || (r = function(h) {
   var e = this;
   do {
-    if (c.call(e, r))
+    if (m.call(e, h))
       return e;
     e = e.parentElement || e.parentNode;
   } while (e !== null && e.nodeType === 1);
   return null;
 });
-const p = !0, b = !1;
-function h(r) {
+const f = !0, b = !1;
+function u(h) {
   return (
     /** @type {Array<T>} */
-    Array.from(r).map((e) => e.cloneNode(p))
+    Array.from(h).map((e) => e.cloneNode(f))
   );
 }
-class f {
+class _ {
   /**
    * @param {HTMLSelectElement} el - Select HTML element
    * @param {object} [options] - options to control select-a11y behavior
    * @param {object} [options.text] - texts used in the class
-   * @param {object} [options.text.help] - helper text used for assistive technologies
-   * @param {object} [options.text.placeholder] - search input placeholder
-   * @param {object} [options.text.noResult] - text shown when there is no option
-   * @param {object} [options.text.results] - text to show the number of results available for assistive technologies
-   * @param {object} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
-   * @param {object} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
-   * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
+   * @param {string} [options.text.help] - helper text used for assistive technologies
+   * @param {string} [options.text.placeholder] - search input placeholder
+   * @param {string} [options.text.noResult] - text shown when there is no option
+   * @param {string} [options.text.results] - text to show the number of results available for assistive technologies
+   * @param {string} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
+   * @param {string} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
+   * @param {string} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
    * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
    * @param {boolean} [options.showSelected=true] - show selected options for multiple select
    * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select.
@@ -46,7 +46,7 @@ class f {
   constructor(e, t) {
     var l;
     this.el = e, this.label = document.querySelector(`label[for=${e.id}]`), this.id = e.id, this.open = !1, this.multiple = this.el.multiple, this.search = "", this.suggestions = [], this.focusIndex = null;
-    const i = Object.assign({}, t), s = Object.assign({}, u, i.text);
+    const i = Object.assign({}, t), s = Object.assign({}, p, i.text);
     if (delete i.text, this._defaultSearch = this._defaultSearch.bind(this), this._options = Object.assign({
       text: s,
       showSelected: !0,
@@ -54,13 +54,13 @@ class f {
       useLabelAsButton: !1,
       clearable: !1
     }, i), this._handleFocus = this._handleFocus.bind(this), this._handleInput = this._handleInput.bind(this), this._handleKeyboard = this._handleKeyboard.bind(this), this._handleOpener = this._handleOpener.bind(this), this._handleClear = this._handleClear.bind(this), this._handleReset = this._handleReset.bind(this), this._handleSuggestionClick = this._handleSuggestionClick.bind(this), this._positionCursor = this._positionCursor.bind(this), this._removeOption = this._removeOption.bind(this), this.setText = this.setText.bind(this), this._setButtonText = this._setButtonText.bind(this), !this.multiple) {
-      const a = Array.from(this.el.options).some((n) => n.selected);
-      if (this._options.useLabelAsButton && !a) {
-        const n = document.createElement("option");
-        n.innerText = ((l = this.label) == null ? void 0 : l.innerText) ?? "", n.setAttribute("value", ""), n.setAttribute("selected", "selected"), n.setAttribute("disabled", "disabled"), n.setAttribute("hidden", "hidden"), this.el.options.add(n, 0);
+      const n = Array.from(this.el.options).some((a) => a.selected);
+      if (this._options.useLabelAsButton && !n) {
+        const a = document.createElement("option");
+        a.innerText = ((l = this.label) == null ? void 0 : l.innerText) ?? "", a.setAttribute("value", ""), a.setAttribute("selected", "selected"), a.setAttribute("disabled", "disabled"), a.setAttribute("hidden", "hidden"), this.el.options.add(a, 0);
       }
     }
-    this.originalOptions = h(this.el.options), this.updatedOriginalOptions = Array.from(this.el.options), this.currentOptions = Array.from(this.el.options), this._disable(), this.button = this._createButton(), this._setButtonText(), this.clearButton = this._createClearButton(), this.liveZone = this._createLiveZone(), this.overlay = this._createOverlay(), this.wrap = this._wrap(), this.multiple && this._options.showSelected && (this.selectedList = this._createSelectedList(), this._updateSelectedList(), this.selectedList.addEventListener("click", this._removeOption)), this.button.addEventListener("click", this._handleOpener), this.clearButton.addEventListener("click", this._handleClear), this.wrap.addEventListener("keydown", this._handleKeyboard), document.addEventListener("blur", this._handleFocus, !0), this.el.form && this.el.form.addEventListener("reset", this._handleReset);
+    this.originalOptions = u(this.el.options), this.updatedOriginalOptions = Array.from(this.el.options), this.currentOptions = Array.from(this.el.options), this._disable(), this.button = this._createButton(), this._setButtonText(), this.clearButton = this._createClearButton(), this.liveZone = this._createLiveZone(), this.overlay = this._createOverlay(), this.wrap = this._wrap(), this.multiple && this._options.showSelected && (this.selectedList = this._createSelectedList(), this._updateSelectedList(), this.selectedList.addEventListener("click", this._removeOption)), this.button.addEventListener("click", this._handleOpener), this.clearButton.addEventListener("click", this._handleClear), this.wrap.addEventListener("keydown", this._handleKeyboard), document.addEventListener("blur", this._handleFocus, !0), this.el.form && this.el.form.addEventListener("reset", this._handleReset);
   }
   /**
    * Update texts with new texts
@@ -71,7 +71,7 @@ class f {
   }
   /**
    * Select new value
-   * @param {*} value option value
+   * @param {string} value option value
    */
   selectOption(e, t = !0) {
     const i = this.currentOptions.findIndex((l) => l.value === e);
@@ -82,7 +82,7 @@ class f {
   }
   /**
    * Select new value without dispatching the change Event
-   * @param {*} value option value
+   * @param {string} value option value
    */
   selectOptionSilently(e) {
     this.selectOption(e, b);
@@ -129,6 +129,8 @@ class f {
    * @property {any} value - suggestion value
    * @property {string} [image] - suggestion image
    * @property {string} [alt] - suggestion image alt
+   * @property {string} [helper] - suggestion image
+   * @property {string} [description] - suggestion image alt
    */
   /**
    *
@@ -143,7 +145,9 @@ class f {
       label: e.label,
       value: e.value,
       image: e.dataset.image,
-      alt: e.dataset.alt
+      alt: e.dataset.alt,
+      helper: e.dataset.helper,
+      description: e.dataset.description
     };
   }
   /**
@@ -153,7 +157,7 @@ class f {
    */
   _mapToOption(e) {
     const t = document.createElement("option");
-    return t.label = e.label, t.value = e.value, e.hidden && t.setAttribute("hidden", "hidden"), e.disabled && t.setAttribute("disabled", "disabled"), e.selected && t.setAttribute("selected", "selected"), e.image && (t.dataset.image = e.image), e.alt && (t.dataset.alt = e.alt), t;
+    return console.log(e), t.label = e.label, t.value = e.value, e.hidden && t.setAttribute("hidden", "hidden"), e.disabled && t.setAttribute("disabled", "disabled"), e.selected && t.setAttribute("selected", "selected"), e.image && (t.dataset.image = e.image), e.alt && (t.dataset.alt = e.alt), e.description && (t.dataset.description = e.description), e.helper && (t.dataset.helper = e.helper), t;
   }
   /**
    * @callback FillSuggestions
@@ -177,12 +181,26 @@ class f {
     const e = this.search.toLowerCase(), t = await this._options.fillSuggestions(e, this.updatedOriginalOptions);
     this.currentOptions = t.map(this._mapToOption), this.el.replaceChildren(...this.currentOptions);
     const i = t.map((s, l) => {
+      const n = document.createElement("div");
+      n.setAttribute("role", "option"), n.setAttribute("tabindex", "0"), n.setAttribute("data-index", l.toString()), s.hidden && n.setAttribute("data-hidden", "hidden"), s.disabled && n.setAttribute("data-disabled", "disabled"), n.classList.add("select-a11y-suggestion"), n.style.display = "flex", n.style.justifyContent = "space-between";
       const a = document.createElement("div");
-      if (a.setAttribute("role", "option"), a.setAttribute("tabindex", "0"), a.setAttribute("data-index", l.toString()), s.hidden && a.setAttribute("data-hidden", "hidden"), s.disabled && a.setAttribute("data-disabled", "disabled"), a.classList.add("select-a11y-suggestion"), a.innerText = s.label || s.value, s.selected && a.setAttribute("aria-selected", "true"), s.image) {
-        const n = document.createElement("img");
-        n.setAttribute("src", s.image), n.setAttribute("alt", s.alt ? s.alt : ""), n.classList.add("select-a11y-suggestion__image"), a.prepend(n);
+      a.classList.add("column"), n.appendChild(a);
+      const d = document.createElement("div");
+      if (d.classList.add("select-a11y-suggestion__label"), d.innerText = s.label || s.value, a.appendChild(d), s.selected && n.setAttribute("aria-selected", "true"), s.description) {
+        const o = document.createElement("div");
+        o.classList.add("select-a11y-suggestion__description"), o.innerText = s.description, a.appendChild(o);
       }
-      return a;
+      if (s.helper) {
+        const o = document.createElement("div");
+        o.classList.add("column"), n.appendChild(o);
+        const c = document.createElement("code");
+        c.classList.add("select-a11y-suggestion__helper"), c.innerText = s.helper, o.appendChild(c);
+      }
+      if (s.image) {
+        const o = document.createElement("img");
+        o.setAttribute("src", s.image), o.setAttribute("alt", s.alt ? s.alt : ""), o.classList.add("select-a11y-suggestion__image"), n.prepend(o);
+      }
+      return n;
     }).filter((s) => !s.dataset.disabled && !s.dataset.hidden);
     if (this.suggestions = i, this.list)
       if (!i.length)
@@ -218,11 +236,11 @@ class f {
   }
   _handleReset() {
     clearTimeout(this._resetTimeout), this._resetTimeout = setTimeout(async () => {
-      this.search = "", this.updatedOriginalOptions = h(this.originalOptions), this.currentOptions = h(this.originalOptions), await this._fillSuggestions(), this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList();
+      this.search = "", this.updatedOriginalOptions = u(this.originalOptions), this.currentOptions = u(this.originalOptions), await this._fillSuggestions(), this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList();
     }, 10);
   }
   _handleSuggestionClick(e) {
-    const t = o.call(e.target, '[role="option"]');
+    const t = r.call(e.target, '[role="option"]');
     if (!t)
       return;
     const i = parseInt(t.getAttribute("data-index"), 10), s = !(this.multiple && e.metaKey);
@@ -233,7 +251,7 @@ class f {
     this.search !== ((e = this.input) == null ? void 0 : e.value) && (this.search = ((t = this.input) == null ? void 0 : t.value) ?? "", this._fillSuggestions());
   }
   _handleKeyboard(e) {
-    const t = o.call(e.target, '[role="option"]'), i = o.call(e.target, "input");
+    const t = r.call(e.target, '[role="option"]'), i = r.call(e.target, "input");
     if (e.keyCode === 27) {
       this._toggleOverlay();
       return;
@@ -276,12 +294,12 @@ class f {
     });
   }
   _removeOption(e) {
-    var a, n;
-    const t = o.call(e.target, "button");
+    var n, a;
+    const t = r.call(e.target, "button");
     if (!t)
       return;
-    const i = (a = this.selectedList) == null ? void 0 : a.querySelectorAll("button"), s = Array.prototype.indexOf.call(i, t) - 1, l = parseInt(t.getAttribute("data-index"), 10);
-    if (this._toggleSelection(l), (n = this.selectedList) != null && n.parentElement) {
+    const i = (n = this.selectedList) == null ? void 0 : n.querySelectorAll("button"), s = Array.prototype.indexOf.call(i, t) - 1, l = parseInt(t.getAttribute("data-index"), 10);
+    if (this._toggleSelection(l), (a = this.selectedList) != null && a.parentElement) {
       const d = this.selectedList.querySelectorAll("button");
       d[s] ? d[s].focus() : d[0].focus();
     } else
@@ -306,8 +324,8 @@ class f {
   _toggleSelection(e, t = !0, i = !0) {
     const s = this.el.item(e);
     this.multiple ? s != null && s.hasAttribute("selected") ? s.removeAttribute("selected") : s == null || s.setAttribute("selected", "selected") : (s == null || s.setAttribute("selected", "selected"), this.el.selectedIndex = e), this.updatedOriginalOptions = this.updatedOriginalOptions.map((l) => (l.value === (s == null ? void 0 : s.value) && (s.hasAttribute("selected") ? l.setAttribute("selected", "selected") : l.removeAttribute("selected")), !this.multiple && l.value !== (s == null ? void 0 : s.value) && l.removeAttribute("selected"), l)), this.suggestions = this.suggestions.map((l) => {
-      const a = parseInt(l.getAttribute("data-index") ?? "", 10), n = this.el.item(a);
-      return n && n.selected ? l.setAttribute("aria-selected", "true") : l.removeAttribute("aria-selected"), l;
+      const n = parseInt(l.getAttribute("data-index") ?? "", 10), a = this.el.item(n);
+      return a && a.selected ? l.setAttribute("aria-selected", "true") : l.removeAttribute("aria-selected"), l;
     }), i && this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList(), t && this.open && this._toggleOverlay();
   }
   _updateSelectedList() {
@@ -336,7 +354,7 @@ class f {
   }
 }
 export {
-  f as Select,
-  f as default
+  _ as Select,
+  _ as default
 };
 //# sourceMappingURL=select-a11y.js.map

@@ -3,13 +3,13 @@ export class Select {
      * @param {HTMLSelectElement} el - Select HTML element
      * @param {object} [options] - options to control select-a11y behavior
      * @param {object} [options.text] - texts used in the class
-     * @param {object} [options.text.help] - helper text used for assistive technologies
-     * @param {object} [options.text.placeholder] - search input placeholder
-     * @param {object} [options.text.noResult] - text shown when there is no option
-     * @param {object} [options.text.results] - text to show the number of results available for assistive technologies
-     * @param {object} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
-     * @param {object} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
-     * @param {object} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
+     * @param {string} [options.text.help] - helper text used for assistive technologies
+     * @param {string} [options.text.placeholder] - search input placeholder
+     * @param {string} [options.text.noResult] - text shown when there is no option
+     * @param {string} [options.text.results] - text to show the number of results available for assistive technologies
+     * @param {string} [options.text.deleteItem] - text used as title for "x" close button for selected option (see options.showSelected below)
+     * @param {string} [options.text.delete] - text used for assistive technologies for the "x" close button for selected option (see options.showSelected below)
+     * @param {string} [options.text.clear] - text used for assistive technologies for the "x" clear button for clearable single select (see options.clearable below)
      * @param {FillSuggestions} [options.fillSuggestions] - fill suggestions based on search input content
      * @param {boolean} [options.showSelected=true] - show selected options for multiple select
      * @param {boolean} [options.useLabelAsButton=false] - use label as button even for single select.
@@ -19,13 +19,13 @@ export class Select {
      */
     constructor(el: HTMLSelectElement, options?: {
         text?: {
-            help?: object;
-            placeholder?: object;
-            noResult?: object;
-            results?: object;
-            deleteItem?: object;
-            delete?: object;
-            clear?: object;
+            help?: string;
+            placeholder?: string;
+            noResult?: string;
+            results?: string;
+            deleteItem?: string;
+            delete?: string;
+            clear?: string;
         };
         fillSuggestions?: (search: string, options: Array<HTMLOptionElement>) => Promise<{
             /**
@@ -56,6 +56,14 @@ export class Select {
              * - suggestion image alt
              */
             alt?: string;
+            /**
+             * - suggestion image
+             */
+            helper?: string;
+            /**
+             * - suggestion image alt
+             */
+            description?: string;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -101,6 +109,14 @@ export class Select {
          * - suggestion image alt
          */
         alt?: string;
+        /**
+         * - suggestion image
+         */
+        helper?: string;
+        /**
+         * - suggestion image alt
+         */
+        description?: string;
     }[]>;
     _options: {
         text: {
@@ -112,13 +128,13 @@ export class Select {
             delete: string;
             clear: string;
         } & {
-            help?: object;
-            placeholder?: object;
-            noResult?: object;
-            results?: object;
-            deleteItem?: object;
-            delete?: object;
-            clear?: object;
+            help?: string;
+            placeholder?: string;
+            noResult?: string;
+            results?: string;
+            deleteItem?: string;
+            delete?: string;
+            clear?: string;
         };
         showSelected: boolean;
         fillSuggestions: (search: string, options: Array<HTMLOptionElement>) => Promise<{
@@ -150,18 +166,26 @@ export class Select {
              * - suggestion image alt
              */
             alt?: string;
+            /**
+             * - suggestion image
+             */
+            helper?: string;
+            /**
+             * - suggestion image alt
+             */
+            description?: string;
         }[]>;
         useLabelAsButton: boolean;
         clearable: boolean;
     } & {
         text?: {
-            help?: object;
-            placeholder?: object;
-            noResult?: object;
-            results?: object;
-            deleteItem?: object;
-            delete?: object;
-            clear?: object;
+            help?: string;
+            placeholder?: string;
+            noResult?: string;
+            results?: string;
+            deleteItem?: string;
+            delete?: string;
+            clear?: string;
         };
         fillSuggestions?: (search: string, options: Array<HTMLOptionElement>) => Promise<{
             /**
@@ -192,6 +216,14 @@ export class Select {
              * - suggestion image alt
              */
             alt?: string;
+            /**
+             * - suggestion image
+             */
+            helper?: string;
+            /**
+             * - suggestion image alt
+             */
+            description?: string;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -239,14 +271,14 @@ export class Select {
     selectedList: HTMLUListElement;
     /**
      * Select new value
-     * @param {*} value option value
+     * @param {string} value option value
      */
-    selectOption(value: any, dispatchEvent?: boolean): void;
+    selectOption(value: string, dispatchEvent?: boolean): void;
     /**
      * Select new value without dispatching the change Event
-     * @param {*} value option value
+     * @param {string} value option value
      */
-    selectOptionSilently(value: any): void;
+    selectOptionSilently(value: string): void;
     _createButton(): HTMLButtonElement;
     _createClearButton(): HTMLButtonElement;
     _createLiveZone(): HTMLParagraphElement;
@@ -266,6 +298,8 @@ export class Select {
      * @property {any} value - suggestion value
      * @property {string} [image] - suggestion image
      * @property {string} [alt] - suggestion image alt
+     * @property {string} [helper] - suggestion image
+     * @property {string} [description] - suggestion image alt
      */
     /**
      *
@@ -301,6 +335,14 @@ export class Select {
          * - suggestion image alt
          */
         alt?: string;
+        /**
+         * - suggestion image
+         */
+        helper?: string;
+        /**
+         * - suggestion image alt
+         */
+        description?: string;
     };
     /**
      *
@@ -336,6 +378,14 @@ export class Select {
          * - suggestion image alt
          */
         alt?: string;
+        /**
+         * - suggestion image
+         */
+        helper?: string;
+        /**
+         * - suggestion image alt
+         */
+        description?: string;
     }): HTMLOptionElement;
     /**
      *
@@ -370,6 +420,14 @@ export class Select {
          * - suggestion image alt
          */
         alt?: string;
+        /**
+         * - suggestion image
+         */
+        helper?: string;
+        /**
+         * - suggestion image alt
+         */
+        description?: string;
     }[]>;
     _focusTimeout: NodeJS.Timeout;
     _resetTimeout: NodeJS.Timeout;

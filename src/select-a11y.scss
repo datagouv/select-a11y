@@ -219,6 +219,17 @@ $select-a11y-suggestion-border:      $gray-3 !default;
   margin-right: 0.5rem;
 }
 
+.select-a11y-suggestion__description {
+  margin-top: 0.5rem;
+  font-size: 14px;
+}
+
+.select-a11y-suggestion__helper {
+  background-color: #f6f6f6;
+  color: #666;
+  padding: 0.25rem;
+}
+
 .select-a11y__no-suggestion {
   padding: 0 0.5em;
   color: $select-a11y-suggestion-color;
