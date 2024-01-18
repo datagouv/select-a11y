@@ -69,6 +69,7 @@ export class Select {
     this.open = false;
     this.multiple = this.el.multiple;
     this.search = '';
+    this.optgroup = this.el.querySelectorAll('optgroup');
 
     /** @type {Array<HTMLElement>} */
     this.suggestions = [];
@@ -277,8 +278,10 @@ export class Select {
    * @property {any} value - suggestion value
    * @property {string} [image] - suggestion image
    * @property {string} [alt] - suggestion image alt
-   * @property {string} [helper] - suggestion image
-   * @property {string} [description] - suggestion image alt
+   * @property {string} [helper] - suggestion helper
+   * @property {string} [description] - suggestion description
+   * @property {string} [group] - suggestion group
+   * @property {boolean} [recommended] - suggestion recommended
    */
 
   /**
@@ -296,7 +299,9 @@ export class Select {
       image: option.dataset.image,
       alt: option.dataset.alt,
       helper: option.dataset.helper,
-      description: option.dataset.description
+      description: option.dataset.description,
+      group: option.dataset.group,
+      recommended: option.dataset.recommended
     }
   }
 
@@ -307,7 +312,6 @@ export class Select {
    */
   _mapToOption(suggestion) {
     const option = document.createElement('option');
-    console.log(suggestion)
     option.label = suggestion.label;
     option.value = suggestion.value;
     if(suggestion.hidden) {
@@ -330,6 +334,9 @@ export class Select {
     }
     if (suggestion.helper) {
       option.dataset.helper = suggestion.helper
+    }
+    if (suggestion.recommended) {
+      option.dataset.recommended = suggestion.recommended
     }
     return option;
   }
@@ -379,10 +386,6 @@ export class Select {
         suggestionElement.classList.add('select-a11y-suggestion');
         suggestionElement.style.display = 'flex';
         suggestionElement.style.justifyContent = 'space-between';
-        //original code
-        //suggestionElement.innerText = suggestion.label || suggestion.value;
-
-        //test
 
         const firstColumn = document.createElement('div');
         firstColumn.classList.add('column');
@@ -400,6 +403,11 @@ export class Select {
         if (suggestion.description) {
           const descriptionElement = document.createElement('div');
           descriptionElement.classList.add('select-a11y-suggestion__description');
+
+          if (suggestion.recommended) {
+            descriptionElement.setAttribute('data-recommended', 'true');
+          }
+
           descriptionElement.innerText = suggestion.description;
           firstColumn.appendChild(descriptionElement);
         }
@@ -420,13 +428,35 @@ export class Select {
           image.classList.add('select-a11y-suggestion__image');
           suggestionElement.prepend(image);
         }
-
-        return suggestionElement;
+        return { suggestionElement, group: suggestion.group };
       })
-      .filter((suggestionElement) => !suggestionElement.dataset.disabled && !suggestionElement.dataset.hidden);
-    this.suggestions = suggestionElements;
+      .filter((suggestion) => !suggestion.suggestionElement.dataset.disabled && !suggestion.suggestionElement.dataset.hidden);
+    
+    const noGroupedSuggestions = {};
+    const groupedSuggestions = {};
+
+    suggestionElements.forEach(({ suggestionElement, group }) => {
+      if (!group) {
+        const index = Object.keys(noGroupedSuggestions).length;
+        noGroupedSuggestions[index] = suggestionElement;
+      } else {
+        if (!groupedSuggestions[group]) {
+          const groupDiv = document.createElement('div');
+          groupDiv.setAttribute('role', 'group');
+          groupedSuggestions[group] = groupDiv;
+          const presentation = document.createElement('div')
+          presentation.setAttribute('role', 'presentation')
+          presentation.innerHTML = group;
+          groupDiv.appendChild(presentation);
+        }
+        groupedSuggestions[group].appendChild(suggestionElement);
+      }
+    });
+
+    this.suggestions = suggestionElements.map(({ suggestionElement }) => suggestionElement);
+
     if(this.list) {
-      if (!suggestionElements.length) {
+      if (!this.suggestions.length) {
         this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
       } else {
         const listBox = document.createElement('div');
@@ -435,11 +465,13 @@ export class Select {
         if (this.multiple) {
           listBox.setAttribute('aria-multiselectable', 'true');
         }
-
-        suggestionElements.forEach((suggestionElement) => {
-          listBox.appendChild(suggestionElement);
+        
+        Object.values(noGroupedSuggestions).forEach((item) => {
+          listBox.appendChild(item);
         });
-
+        Object.values(groupedSuggestions).forEach((group) => {
+          listBox.appendChild(group);
+        });
         this.list.innerHTML = '';
         this.list.appendChild(listBox);
       }

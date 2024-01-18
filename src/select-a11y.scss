@@ -222,6 +222,13 @@ $select-a11y-suggestion-border:      $gray-3 !default;
 .select-a11y-suggestion__description {
   margin-top: 0.5rem;
   font-size: 14px;
+
+  &[data-recommended="true"]::before {
+    content: '\2605';
+    color: #0063D0;
+    margin-right: 0.2em;
+    font-size: 0.9em;
+  }
 }
 
 .select-a11y-suggestion__helper {

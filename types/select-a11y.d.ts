@@ -57,13 +57,21 @@ export class Select {
              */
             alt?: string;
             /**
-             * - suggestion image
+             * - suggestion helper
              */
             helper?: string;
             /**
-             * - suggestion image alt
+             * - suggestion description
              */
             description?: string;
+            /**
+             * - suggestion group
+             */
+            group?: string;
+            /**
+             * - suggestion recommended
+             */
+            recommended?: boolean;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -77,6 +85,7 @@ export class Select {
     open: boolean;
     multiple: boolean;
     search: string;
+    optgroup: NodeListOf<HTMLOptGroupElement>;
     /** @type {Array<HTMLElement>} */
     suggestions: Array<HTMLElement>;
     focusIndex: any;
@@ -110,13 +119,21 @@ export class Select {
          */
         alt?: string;
         /**
-         * - suggestion image
+         * - suggestion helper
          */
         helper?: string;
         /**
-         * - suggestion image alt
+         * - suggestion description
          */
         description?: string;
+        /**
+         * - suggestion group
+         */
+        group?: string;
+        /**
+         * - suggestion recommended
+         */
+        recommended?: boolean;
     }[]>;
     _options: {
         text: {
@@ -167,13 +184,21 @@ export class Select {
              */
             alt?: string;
             /**
-             * - suggestion image
+             * - suggestion helper
              */
             helper?: string;
             /**
-             * - suggestion image alt
+             * - suggestion description
              */
             description?: string;
+            /**
+             * - suggestion group
+             */
+            group?: string;
+            /**
+             * - suggestion recommended
+             */
+            recommended?: boolean;
         }[]>;
         useLabelAsButton: boolean;
         clearable: boolean;
@@ -217,13 +242,21 @@ export class Select {
              */
             alt?: string;
             /**
-             * - suggestion image
+             * - suggestion helper
              */
             helper?: string;
             /**
-             * - suggestion image alt
+             * - suggestion description
              */
             description?: string;
+            /**
+             * - suggestion group
+             */
+            group?: string;
+            /**
+             * - suggestion recommended
+             */
+            recommended?: boolean;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -298,8 +331,10 @@ export class Select {
      * @property {any} value - suggestion value
      * @property {string} [image] - suggestion image
      * @property {string} [alt] - suggestion image alt
-     * @property {string} [helper] - suggestion image
-     * @property {string} [description] - suggestion image alt
+     * @property {string} [helper] - suggestion helper
+     * @property {string} [description] - suggestion description
+     * @property {string} [group] - suggestion group
+     * @property {boolean} [recommended] - suggestion recommended
      */
     /**
      *
@@ -336,13 +371,21 @@ export class Select {
          */
         alt?: string;
         /**
-         * - suggestion image
+         * - suggestion helper
          */
         helper?: string;
         /**
-         * - suggestion image alt
+         * - suggestion description
          */
         description?: string;
+        /**
+         * - suggestion group
+         */
+        group?: string;
+        /**
+         * - suggestion recommended
+         */
+        recommended?: boolean;
     };
     /**
      *
@@ -379,13 +422,21 @@ export class Select {
          */
         alt?: string;
         /**
-         * - suggestion image
+         * - suggestion helper
          */
         helper?: string;
         /**
-         * - suggestion image alt
+         * - suggestion description
          */
         description?: string;
+        /**
+         * - suggestion group
+         */
+        group?: string;
+        /**
+         * - suggestion recommended
+         */
+        recommended?: boolean;
     }): HTMLOptionElement;
     /**
      *
@@ -421,13 +472,21 @@ export class Select {
          */
         alt?: string;
         /**
-         * - suggestion image
+         * - suggestion helper
          */
         helper?: string;
         /**
-         * - suggestion image alt
+         * - suggestion description
          */
         description?: string;
+        /**
+         * - suggestion group
+         */
+        group?: string;
+        /**
+         * - suggestion recommended
+         */
+        recommended?: boolean;
     }[]>;
     _focusTimeout: NodeJS.Timeout;
     _resetTimeout: NodeJS.Timeout;

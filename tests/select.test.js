@@ -644,6 +644,50 @@ describe('select-a11y', async () => {
     expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
   });
 
+  test('Création de la liste lors de l’utilisation des groups', async () => {
+    const { browser, page } = await goToPage();
+
+    await page.click('.group button');
+
+    const data = await page.evaluate(() => {
+      const wrapper = document.querySelector('.group .select-a11y');
+      const select = wrapper?.querySelector('select');
+      const container = document.querySelector('.group .select-a11y__overlay');
+      const label = container?.querySelector('label');
+      const input = container?.querySelector('input');
+      const options = container?.querySelectorAll('[role="option"]');
+      const listBox = container?.querySelector('[role="listbox"]');
+
+      return {
+        hasContainer: wrapper?.contains(container),
+        label: {
+          for: label?.getAttribute('for')
+        },
+        input: {
+          id: input?.id,
+          describedby: input?.getAttribute('aria-describedby')
+        },
+        list: {
+          length: options?.length,
+          lengthWithGroups: Array.from(options ?? []).filter(option => option.querySelectorAll('[role="presentation"]').length > 0).length
+        },
+        options: {
+          length: select?.options.length,
+          lengthWithGroups: new Set(Array.from(select?.options ?? []).filter(option => option.dataset.group)).size
+        },
+        listBox: {
+          multiple: listBox?.hasAttribute('aria-multiselectable')
+        },
+      }
+    });
+
+    //expect(data.hasContainer, 'La liste est créée lors de l’activation du bouton').toBe(true);
+    expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
+    expect(data.list.length, 'La liste créée contient le même nombre doptions que le select').toBe(data.options?.length ?? 0);
+    expect(data.list.lengthWithGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.lengthWithGroups);
+    expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
+  });
+
   test('Gestion du champ de recherche', async () => {
     const { browser, page } = await goToPage();
 
