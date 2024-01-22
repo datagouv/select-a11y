@@ -69,7 +69,6 @@ export class Select {
     this.open = false;
     this.multiple = this.el.multiple;
     this.search = '';
-    this.optgroup = this.el.querySelectorAll('optgroup');
 
     /** @type {Array<HTMLElement>} */
     this.suggestions = [];
@@ -280,8 +279,7 @@ export class Select {
    * @property {string} [alt] - suggestion image alt
    * @property {string} [helper] - suggestion helper
    * @property {string} [description] - suggestion description
-   * @property {string} [group] - suggestion group
-   * @property {boolean} [recommended] - suggestion recommended
+   * @property {boolean} [showIcon] - suggestion recommended
    */
 
   /**
@@ -290,6 +288,9 @@ export class Select {
    * @returns {Suggestion} - a suggestion
    */
   _mapToSuggestion(option) {
+    const parentOptgroup = option.closest('optgroup');
+    const groupLabel = parentOptgroup ? parentOptgroup.label : null;
+
     return {
       hidden: option.hidden,
       disabled: option.disabled,
@@ -300,8 +301,8 @@ export class Select {
       alt: option.dataset.alt,
       helper: option.dataset.helper,
       description: option.dataset.description,
-      group: option.dataset.group,
-      recommended: option.dataset.recommended
+      showIcon: option.dataset.showIcon,
+      group: groupLabel
     }
   }
 
@@ -335,8 +336,11 @@ export class Select {
     if (suggestion.helper) {
       option.dataset.helper = suggestion.helper
     }
-    if (suggestion.recommended) {
-      option.dataset.recommended = suggestion.recommended
+    if (suggestion.showIcon) {
+      option.dataset.showIcon = suggestion.showIcon
+    }
+    if (suggestion.group) {
+      option.dataset.group = suggestion.group
     }
     return option;
   }
@@ -404,8 +408,8 @@ export class Select {
           const descriptionElement = document.createElement('div');
           descriptionElement.classList.add('select-a11y-suggestion__description');
 
-          if (suggestion.recommended) {
-            descriptionElement.setAttribute('data-recommended', 'true');
+          if (suggestion.showIcon) {
+            descriptionElement.setAttribute('data-show-icon', 'true');
           }
 
           descriptionElement.innerText = suggestion.description;

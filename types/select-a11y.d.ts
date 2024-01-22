@@ -65,13 +65,9 @@ export class Select {
              */
             description?: string;
             /**
-             * - suggestion group
-             */
-            group?: string;
-            /**
              * - suggestion recommended
              */
-            recommended?: boolean;
+            showIcon?: boolean;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -85,7 +81,6 @@ export class Select {
     open: boolean;
     multiple: boolean;
     search: string;
-    optgroup: NodeListOf<HTMLOptGroupElement>;
     /** @type {Array<HTMLElement>} */
     suggestions: Array<HTMLElement>;
     focusIndex: any;
@@ -127,13 +122,9 @@ export class Select {
          */
         description?: string;
         /**
-         * - suggestion group
-         */
-        group?: string;
-        /**
          * - suggestion recommended
          */
-        recommended?: boolean;
+        showIcon?: boolean;
     }[]>;
     _options: {
         text: {
@@ -192,13 +183,9 @@ export class Select {
              */
             description?: string;
             /**
-             * - suggestion group
-             */
-            group?: string;
-            /**
              * - suggestion recommended
              */
-            recommended?: boolean;
+            showIcon?: boolean;
         }[]>;
         useLabelAsButton: boolean;
         clearable: boolean;
@@ -250,13 +237,9 @@ export class Select {
              */
             description?: string;
             /**
-             * - suggestion group
-             */
-            group?: string;
-            /**
              * - suggestion recommended
              */
-            recommended?: boolean;
+            showIcon?: boolean;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -333,8 +316,7 @@ export class Select {
      * @property {string} [alt] - suggestion image alt
      * @property {string} [helper] - suggestion helper
      * @property {string} [description] - suggestion description
-     * @property {string} [group] - suggestion group
-     * @property {boolean} [recommended] - suggestion recommended
+     * @property {boolean} [showIcon] - suggestion recommended
      */
     /**
      *
@@ -379,13 +361,9 @@ export class Select {
          */
         description?: string;
         /**
-         * - suggestion group
-         */
-        group?: string;
-        /**
          * - suggestion recommended
          */
-        recommended?: boolean;
+        showIcon?: boolean;
     };
     /**
      *
@@ -430,13 +408,9 @@ export class Select {
          */
         description?: string;
         /**
-         * - suggestion group
-         */
-        group?: string;
-        /**
          * - suggestion recommended
          */
-        recommended?: boolean;
+        showIcon?: boolean;
     }): HTMLOptionElement;
     /**
      *
@@ -480,13 +454,9 @@ export class Select {
          */
         description?: string;
         /**
-         * - suggestion group
-         */
-        group?: string;
-        /**
          * - suggestion recommended
          */
-        recommended?: boolean;
+        showIcon?: boolean;
     }[]>;
     _focusTimeout: NodeJS.Timeout;
     _resetTimeout: NodeJS.Timeout;

@@ -223,7 +223,7 @@ $select-a11y-suggestion-border:      $gray-3 !default;
   margin-top: 0.5rem;
   font-size: 14px;
 
-  &[data-recommended="true"]::before {
+  &[data-show-icon="true"]::before {
     content: '\2605';
     color: #0063D0;
     margin-right: 0.2em;

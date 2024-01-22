@@ -45,7 +45,7 @@ class v {
    */
   constructor(e, t) {
     var n;
-    this.el = e, this.label = document.querySelector(`label[for=${e.id}]`), this.id = e.id, this.open = !1, this.multiple = this.el.multiple, this.search = "", this.optgroup = this.el.querySelectorAll("optgroup"), this.suggestions = [], this.focusIndex = null;
+    this.el = e, this.label = document.querySelector(`label[for=${e.id}]`), this.id = e.id, this.open = !1, this.multiple = this.el.multiple, this.search = "", this.suggestions = [], this.focusIndex = null;
     const s = Object.assign({}, t), l = Object.assign({}, f, s.text);
     if (delete s.text, this._defaultSearch = this._defaultSearch.bind(this), this._options = Object.assign({
       text: l,
@@ -131,8 +131,7 @@ class v {
    * @property {string} [alt] - suggestion image alt
    * @property {string} [helper] - suggestion helper
    * @property {string} [description] - suggestion description
-   * @property {string} [group] - suggestion group
-   * @property {boolean} [recommended] - suggestion recommended
+   * @property {boolean} [showIcon] - suggestion recommended
    */
   /**
    *
@@ -140,6 +139,7 @@ class v {
    * @returns {Suggestion} - a suggestion
    */
   _mapToSuggestion(e) {
+    const t = e.closest("optgroup"), s = t ? t.label : null;
     return {
       hidden: e.hidden,
       disabled: e.disabled,
@@ -150,8 +150,8 @@ class v {
       alt: e.dataset.alt,
       helper: e.dataset.helper,
       description: e.dataset.description,
-      group: e.dataset.group,
-      recommended: e.dataset.recommended
+      showIcon: e.dataset.showIcon,
+      group: s
     };
   }
   /**
@@ -161,7 +161,7 @@ class v {
    */
   _mapToOption(e) {
     const t = document.createElement("option");
-    return t.label = e.label, t.value = e.value, e.hidden && t.setAttribute("hidden", "hidden"), e.disabled && t.setAttribute("disabled", "disabled"), e.selected && t.setAttribute("selected", "selected"), e.image && (t.dataset.image = e.image), e.alt && (t.dataset.alt = e.alt), e.description && (t.dataset.description = e.description), e.helper && (t.dataset.helper = e.helper), e.recommended && (t.dataset.recommended = e.recommended), t;
+    return t.label = e.label, t.value = e.value, e.hidden && t.setAttribute("hidden", "hidden"), e.disabled && t.setAttribute("disabled", "disabled"), e.selected && t.setAttribute("selected", "selected"), e.image && (t.dataset.image = e.image), e.alt && (t.dataset.alt = e.alt), e.description && (t.dataset.description = e.description), e.helper && (t.dataset.helper = e.helper), e.showIcon && (t.dataset.showIcon = e.showIcon), e.group && (t.dataset.group = e.group), t;
   }
   /**
    * @callback FillSuggestions
@@ -185,39 +185,39 @@ class v {
     const e = this.search.toLowerCase(), t = await this._options.fillSuggestions(e, this.updatedOriginalOptions);
     this.currentOptions = t.map(this._mapToOption), this.el.replaceChildren(...this.currentOptions);
     const s = t.map((i, a) => {
-      const d = document.createElement("div");
-      d.setAttribute("role", "option"), d.setAttribute("tabindex", "0"), d.setAttribute("data-index", a.toString()), i.hidden && d.setAttribute("data-hidden", "hidden"), i.disabled && d.setAttribute("data-disabled", "disabled"), d.classList.add("select-a11y-suggestion"), d.style.display = "flex", d.style.justifyContent = "space-between";
+      const o = document.createElement("div");
+      o.setAttribute("role", "option"), o.setAttribute("tabindex", "0"), o.setAttribute("data-index", a.toString()), i.hidden && o.setAttribute("data-hidden", "hidden"), i.disabled && o.setAttribute("data-disabled", "disabled"), o.classList.add("select-a11y-suggestion"), o.style.display = "flex", o.style.justifyContent = "space-between";
       const r = document.createElement("div");
-      r.classList.add("column"), d.appendChild(r);
+      r.classList.add("column"), o.appendChild(r);
       const u = document.createElement("div");
-      if (u.classList.add("select-a11y-suggestion__label"), u.innerText = i.label || i.value, r.appendChild(u), i.selected && d.setAttribute("aria-selected", "true"), i.description) {
-        const o = document.createElement("div");
-        o.classList.add("select-a11y-suggestion__description"), i.recommended && o.setAttribute("data-recommended", "true"), o.innerText = i.description, r.appendChild(o);
+      if (u.classList.add("select-a11y-suggestion__label"), u.innerText = i.label || i.value, r.appendChild(u), i.selected && o.setAttribute("aria-selected", "true"), i.description) {
+        const d = document.createElement("div");
+        d.classList.add("select-a11y-suggestion__description"), i.showIcon && d.setAttribute("data-show-icon", "true"), d.innerText = i.description, r.appendChild(d);
       }
       if (i.helper) {
-        const o = document.createElement("div");
-        o.classList.add("column"), d.appendChild(o);
+        const d = document.createElement("div");
+        d.classList.add("column"), o.appendChild(d);
         const p = document.createElement("code");
-        p.classList.add("select-a11y-suggestion__helper"), p.innerText = i.helper, o.appendChild(p);
+        p.classList.add("select-a11y-suggestion__helper"), p.innerText = i.helper, d.appendChild(p);
       }
       if (i.image) {
-        const o = document.createElement("img");
-        o.setAttribute("src", i.image), o.setAttribute("alt", i.alt ? i.alt : ""), o.classList.add("select-a11y-suggestion__image"), d.prepend(o);
+        const d = document.createElement("img");
+        d.setAttribute("src", i.image), d.setAttribute("alt", i.alt ? i.alt : ""), d.classList.add("select-a11y-suggestion__image"), o.prepend(d);
       }
-      return { suggestionElement: d, group: i.group };
+      return { suggestionElement: o, group: i.group };
     }).filter((i) => !i.suggestionElement.dataset.disabled && !i.suggestionElement.dataset.hidden), l = {}, n = {};
     if (s.forEach(({ suggestionElement: i, group: a }) => {
       if (a) {
         if (!n[a]) {
-          const d = document.createElement("div");
-          d.setAttribute("role", "group"), n[a] = d;
+          const o = document.createElement("div");
+          o.setAttribute("role", "group"), n[a] = o;
           const r = document.createElement("div");
-          r.setAttribute("role", "presentation"), r.innerHTML = a, d.appendChild(r);
+          r.setAttribute("role", "presentation"), r.innerHTML = a, o.appendChild(r);
         }
         n[a].appendChild(i);
       } else {
-        const d = Object.keys(l).length;
-        l[d] = i;
+        const o = Object.keys(l).length;
+        l[o] = i;
       }
     }), this.suggestions = s.map(({ suggestionElement: i }) => i), this.list)
       if (!this.suggestions.length)
@@ -319,8 +319,8 @@ class v {
       return;
     const s = (i = this.selectedList) == null ? void 0 : i.querySelectorAll("button"), l = Array.prototype.indexOf.call(s, t) - 1, n = parseInt(t.getAttribute("data-index"), 10);
     if (this._toggleSelection(n), (a = this.selectedList) != null && a.parentElement) {
-      const d = this.selectedList.querySelectorAll("button");
-      d[l] ? d[l].focus() : d[0].focus();
+      const o = this.selectedList.querySelectorAll("button");
+      o[l] ? o[l].focus() : o[0].focus();
     } else
       this.button.focus();
   }

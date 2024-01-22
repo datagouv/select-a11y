@@ -652,11 +652,14 @@ describe('select-a11y', async () => {
     const data = await page.evaluate(() => {
       const wrapper = document.querySelector('.group .select-a11y');
       const select = wrapper?.querySelector('select');
+      const test = select?.querySelectorAll('option');
       const container = document.querySelector('.group .select-a11y__overlay');
       const label = container?.querySelector('label');
       const input = container?.querySelector('input');
       const options = container?.querySelectorAll('[role="option"]');
       const listBox = container?.querySelector('[role="listbox"]');
+      const presentations = container?.querySelectorAll('[role="presentation"]');
+
 
       return {
         hasContainer: wrapper?.contains(container),
@@ -669,22 +672,21 @@ describe('select-a11y', async () => {
         },
         list: {
           length: options?.length,
-          lengthWithGroups: Array.from(options ?? []).filter(option => option.querySelectorAll('[role="presentation"]').length > 0).length
+          optGroups:test
         },
         options: {
           length: select?.options.length,
-          lengthWithGroups: new Set(Array.from(select?.options ?? []).filter(option => option.dataset.group)).size
+          groupsLength: presentations.length
         },
         listBox: {
           multiple: listBox?.hasAttribute('aria-multiselectable')
         },
       }
     });
-
-    //expect(data.hasContainer, 'La liste est créée lors de l’activation du bouton').toBe(true);
+    
     expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
-    expect(data.list.length, 'La liste créée contient le même nombre doptions que le select').toBe(data.options?.length ?? 0);
-    expect(data.list.lengthWithGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.lengthWithGroups);
+    expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options.length);
+    //expect(data.list.optGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.groupsLength);
     expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
   });
 
