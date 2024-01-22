@@ -652,7 +652,7 @@ describe('select-a11y', async () => {
     const data = await page.evaluate(() => {
       const wrapper = document.querySelector('.group .select-a11y');
       const select = wrapper?.querySelector('select');
-      const test = select?.querySelectorAll('option');
+      const optGroups = select?.querySelectorAll('optgroup');
       const container = document.querySelector('.group .select-a11y__overlay');
       const label = container?.querySelector('label');
       const input = container?.querySelector('input');
@@ -672,21 +672,26 @@ describe('select-a11y', async () => {
         },
         list: {
           length: options?.length,
-          optGroups:test
+          optGroups: optGroups.length
         },
         options: {
           length: select?.options.length,
-          groupsLength: presentations.length
+          groupsLength: presentations.length,
+          noGroup: Array.from(select?.options ?? []).filter(option => !option.parentNode.matches('optgroup')).length
         },
         listBox: {
           multiple: listBox?.hasAttribute('aria-multiselectable')
         },
+        noGroups: {
+          length: Array.from(options ?? []).filter(option => !option.parentNode.matches('[role="group"]')).length,
+        }
       }
     });
     
     expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
     expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options.length);
-    //expect(data.list.optGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.groupsLength);
+    expect(data.list.optGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.groupsLength);
+    expect(data.noGroups.length, 'La liste crée contient le bon nombre d’options sans groupe').toBe(data.options.noGroup);
     expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
   });
 

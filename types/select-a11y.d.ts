@@ -458,6 +458,7 @@ export class Select {
          */
         showIcon?: boolean;
     }[]>;
+    _fillSelect(options: any): any[];
     _focusTimeout: NodeJS.Timeout;
     _resetTimeout: NodeJS.Timeout;
     _moveIndex(step: any): void;

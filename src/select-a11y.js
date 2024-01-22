@@ -372,9 +372,10 @@ export class Select {
     const search = this.search.toLowerCase();
 
     // loop over the
-    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
+    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions); 
     this.currentOptions = suggestions.map(this._mapToOption);
-    this.el.replaceChildren(...this.currentOptions);
+    this.el.replaceChildren(...this._fillSelect(this.currentOptions));
+
     const suggestionElements = suggestions
       .map((suggestion, index) => {
         const suggestionElement = document.createElement('div');
@@ -436,14 +437,11 @@ export class Select {
       })
       .filter((suggestion) => !suggestion.suggestionElement.dataset.disabled && !suggestion.suggestionElement.dataset.hidden);
     
-    const noGroupedSuggestions = {};
+    const noGroupedSuggestions = [];
     const groupedSuggestions = {};
 
     suggestionElements.forEach(({ suggestionElement, group }) => {
-      if (!group) {
-        const index = Object.keys(noGroupedSuggestions).length;
-        noGroupedSuggestions[index] = suggestionElement;
-      } else {
+      if (group) {
         if (!groupedSuggestions[group]) {
           const groupDiv = document.createElement('div');
           groupDiv.setAttribute('role', 'group');
@@ -454,6 +452,8 @@ export class Select {
           groupDiv.appendChild(presentation);
         }
         groupedSuggestions[group].appendChild(suggestionElement);
+      } else {
+        noGroupedSuggestions.push(suggestionElement);
       }
     });
 
@@ -482,6 +482,31 @@ export class Select {
     }
     this._setLiveZone();
     return suggestions;
+  }
+
+  _fillSelect(options) {
+    const newOptions = [];
+    const noGroupedSuggestions = [];
+    const groupedSuggestions = {};
+
+    options.forEach((option) => {
+      const group = option.dataset.group;
+      if (group) {
+        const existingOptgroup = Object.values(groupedSuggestions).find((optgroup) => optgroup.label === group);
+        if (!existingOptgroup) {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = group;
+          groupedSuggestions[group] = optgroup;
+          newOptions.push(optgroup)
+        }
+        groupedSuggestions[group].appendChild(option);
+      } else {
+        noGroupedSuggestions.push(option);
+        newOptions.push(option)
+      }
+    });
+    newOptions.push(...Object.values(noGroupedSuggestions), ...Object.values(groupedSuggestions));
+    return newOptions;
   }
 
   _handleOpener(event) {
