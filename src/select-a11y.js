@@ -419,6 +419,7 @@ export class Select {
         if (suggestion.helper) {
           const secondColumn = document.createElement('div');
           secondColumn.classList.add('column');
+          secondColumn.style.textAlign = 'right';
           suggestionElement.appendChild(secondColumn);
 
           const helperElement = document.createElement('code');
