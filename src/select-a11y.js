@@ -487,26 +487,21 @@ export class Select {
 
   _fillSelect(options) {
     const newOptions = [];
-    const noGroupedSuggestions = [];
-    const groupedSuggestions = {};
 
     options.forEach((option) => {
       const group = option.dataset.group;
       if (group) {
-        const existingOptgroup = Object.values(groupedSuggestions).find((optgroup) => optgroup.label === group);
+        const existingOptgroup = newOptions.find((opt) => opt.tagName === 'OPTGROUP' && opt.label === group);
         if (!existingOptgroup) {
           const optgroup = document.createElement('optgroup');
           optgroup.label = group;
-          groupedSuggestions[group] = optgroup;
           newOptions.push(optgroup)
         }
-        groupedSuggestions[group].appendChild(option);
+        newOptions[newOptions.length - 1].appendChild(option);
       } else {
-        noGroupedSuggestions.push(option);
         newOptions.push(option)
       }
     });
-    newOptions.push(...Object.values(noGroupedSuggestions), ...Object.values(groupedSuggestions));
     return newOptions;
   }
 
