@@ -118,7 +118,9 @@ export class Select {
      * They are never modified and are used to handle reset.
      * @type {Array<HTMLOptionElement>}
      */
-    this.originalOptions =  deepCopy(this.el.options);
+    console.log(Array.from(this.el.options).map(option => ({ value: option.value, parentNode: option.parentNode })));
+    this.originalOptions =  Array.from(this.el.options);
+    console.log(Array.from(this.originalOptions).map(option => ({ value: option.value, parentNode: option.parentNode })));
 
     /**
      * Select original options at initialization of the component.
@@ -290,7 +292,7 @@ export class Select {
   _mapToSuggestion(option) {
     const parentOptgroup = option.closest('optgroup');
     const groupLabel = parentOptgroup ? parentOptgroup.label : null;
-
+  
     return {
       hidden: option.hidden,
       disabled: option.disabled,
@@ -303,7 +305,7 @@ export class Select {
       description: option.dataset.description,
       showIcon: option.dataset.showIcon,
       group: groupLabel
-    }
+    };
   }
 
   /**
@@ -372,7 +374,7 @@ export class Select {
     const search = this.search.toLowerCase();
 
     // loop over the
-    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions); 
+    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
     this.currentOptions = suggestions.map(this._mapToOption);
     this.el.replaceChildren(...this._fillSelect(this.currentOptions));
 
@@ -544,8 +546,8 @@ export class Select {
 
     this._resetTimeout = setTimeout(async () => {
       this.search = '';
-      this.updatedOriginalOptions = deepCopy(this.originalOptions);
-      this.currentOptions = deepCopy(this.originalOptions);
+      this.updatedOriginalOptions = Array.from(this.originalOptions);
+      this.currentOptions = Array.from(this.originalOptions);
       await this._fillSuggestions();
       this.el.dispatchEvent(new Event('change'));
       this._setButtonText();

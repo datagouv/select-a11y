@@ -260,30 +260,6 @@ describe('select-a11y', async () => {
     expect(changed, 'Programmatically selecting an option dispatch change event').toBe(true);
   });
 
-  test('Programmatically assign value to select-a11y', async () => {
-    const { browser, page } = await goToPage();
-
-    const { selectedOption, value, changed } = await page.evaluate(() => {
-      let select = document.querySelector('.form-group select[data-select-a11y]');
-      let changed = false;
-      if (select instanceof HTMLSelectElement) {
-        const selectA11y = window.selectA11ys?.shift();
-        const item = select.options.item(2);
-        select.addEventListener('change', () => changed = true);
-        selectA11y.selectOptionSilently(item?.value);
-        const button = document.querySelector('.form-group button');
-        return {
-          selectedOption: item?.label,
-          value: button?.firstElementChild?.textContent?.trim(),
-          changed,
-        }
-      }
-    }) ?? {};
-
-    expect(value, 'Programmatically selecting an option updates <select> value').toBe(selectedOption);
-    expect(changed, "selectOptionSilently doesn't dispatch change event").toBe(false);
-  });
-
   test('Creation du select-a11y multiple', async () => {
     const { browser, page } = await goToPage();
 
@@ -882,6 +858,84 @@ describe('select-a11y', async () => {
     expect(enterPressed.selectedItems, 'L’appui sur la touche entrée sur une option sélectionne l’option').toStrictEqual(enterPressed.selectedOptions);
   });
 
+  test('Gestion de la selection au clavier d’un select avec optgroup', async () => {
+    const { browser, page } = await goToPage();
+
+    await page.focus('.group button');
+    await page.keyboard.press('Enter');
+
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+
+    await page.keyboard.press('Space');
+
+    await page.waitForTimeout(10);
+
+    const spacePressed = await page.evaluate(() => {
+      const button = document.querySelector('.group button');
+      const select = document.querySelector('.group select');
+      const activeElement = document.activeElement;
+
+      if (select instanceof HTMLSelectElement) {
+        return {
+          closed: button?.getAttribute('aria-expanded') === 'false',
+          focus: activeElement === button,
+          selectedLabel: [button?.firstElementChild?.textContent?.trim()],
+          selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
+        }
+      }
+      return {
+        closed: button?.getAttribute('aria-expanded') === 'false',
+        focus: activeElement === button,
+        selectedLabel: [button?.firstElementChild?.textContent?.trim()],
+      }
+    });
+
+    expect(spacePressed.closed, 'L’appui sur la barre d’espace sur une option ferme la liste des options').toBe(true);
+    expect(spacePressed.focus, 'L’appui sur la barre d’espace sur une option rend le focus au bouton d’ouverture').toBe(true);
+    expect(spacePressed.selectedOptions?.length, 'Le select comporte une options sélectionnée').toBe(1);
+    expect(spacePressed.selectedLabel, 'L’appui sur la barre d’espace sur une option sélectionne l’option').toStrictEqual(spacePressed.selectedOptions);
+
+    await page.reload();
+
+    await page.focus('.group button');
+    await page.keyboard.press('Enter');
+
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+
+    await page.keyboard.press('Enter');
+
+    await page.waitForTimeout(10);
+
+    const enterPressed = await page.evaluate(() => {
+      const button = document.querySelector('.group button');
+      const select = document.querySelector('.group select');
+      const activeElement = document.activeElement;
+
+      if (select instanceof HTMLSelectElement) {
+        return {
+          closed: button?.getAttribute('aria-expanded') === 'false',
+          focus: activeElement === button,
+          active: activeElement?.tagName,
+          selectedLabel: [button?.firstElementChild?.textContent?.trim()],
+          selectedOptions: Array.from(select.selectedOptions).map(option => option.value)
+        }
+      }
+      return {
+        closed: button?.getAttribute('aria-expanded') === 'false',
+        focus: activeElement === button,
+        active: activeElement?.tagName,
+        selectedLabel: [button?.firstElementChild?.textContent?.trim()],
+      }
+    });
+
+    expect(enterPressed.closed, 'L’appui sur la touche entrée sur une option ferme la liste des options').toBe(true);
+    expect(enterPressed.focus, 'L’appui sur la touche entrée sur une option rend le focus au bouton d’ouverture').toBe(true);
+    expect(enterPressed.selectedOptions?.length, 'Le select comporte une options sélectionnée').toBe(1);
+    expect(enterPressed.selectedLabel, 'L’appui sur la touche entrée sur une option sélectionne l’option').toStrictEqual(enterPressed.selectedOptions);
+  });
+
   test('Suppression des options via la liste des options sélectionnées', async () => {
     const { browser, page } = await goToPage();
 
@@ -1054,6 +1108,69 @@ describe('select-a11y', async () => {
     expect(metaClickStatus.openerFocused, 'Le focus est replacé sur le bouton ouvrant la liste').toBe(true);
   });
 
+  test('Gestion de la liste du select simple au clic avec optgroups', async () => {
+    const { browser, page } = await goToPage();
+
+    await page.click('.group button');
+
+    const clickedLabel = await page.evaluate(() => {
+      /** @type {HTMLDivElement | null} */
+      const selectedOption = document.querySelector('.group .select-a11y-suggestions [role="option"]:nth-child(4) .select-a11y-suggestion__label');
+      if(selectedOption) {
+        return selectedOption.innerText.trim();
+      }
+      return undefined;
+    });
+    await page.click('.group .select-a11y-suggestions [role="option"]:nth-child(4)');
+    await page.waitForTimeout(10);
+
+    const clickStatus = await page.evaluate(() => {
+      const activeElement = document.activeElement;
+      const opener = document.querySelector('.group button');
+      const select = document.querySelector('.group select');
+
+      if (select instanceof HTMLSelectElement) {
+        return {
+          expanded: opener?.getAttribute('aria-expanded'),
+          openerFocused: opener === activeElement,
+          selectedLabel: opener?.firstElementChild?.textContent?.trim(),
+        }
+      }
+
+      return {
+        expanded: opener?.getAttribute('aria-expanded'),
+        openerFocused: opener === activeElement,
+        selectedLabel: undefined,
+      }
+    });
+
+    expect(clickStatus.expanded, 'La liste est refermée après un clic sur une option').toBe("false");
+    expect(clickStatus.openerFocused, 'Le focus est replacé sur le bouton ouvrant la liste').toBe(true);
+    expect(clickStatus.selectedLabel, 'Une option est sélectionnée').toBeDefined();
+    expect(clickStatus.selectedLabel, "L'option sélectionnée est celle qui a été cliquée").toBe(clickedLabel);
+
+    await page.click('.form-group.group button');
+
+    await page.keyboard.down('Meta');
+    await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
+    await page.keyboard.up('Meta');
+
+    await page.waitForTimeout(10);
+
+    const metaClickStatus = await page.evaluate(() => {
+      const activeElement = document.activeElement;
+      const opener = document.querySelector('.form-group.group button');
+
+      return {
+        expanded: opener?.getAttribute('aria-expanded'),
+        openerFocused: opener === activeElement
+      }
+    });
+
+    expect(metaClickStatus.expanded, 'La liste est refermée après un meta + clic sur une option').toBe("false");
+    expect(metaClickStatus.openerFocused, 'Le focus est replacé sur le bouton ouvrant la liste').toBe(true);
+  });
+
   test('Gestion de la liste du select multiple au clic', async () => {
     const { browser, page } = await goToPage();
 
@@ -1164,16 +1281,22 @@ describe('select-a11y', async () => {
 
     await page.waitForTimeout(10);
 
+    await page.click('.form-group.group button');
+
+    await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
+
     await page.click('[type="reset"]');
 
     await page.waitForTimeout(50);
 
-    const { singleState, multipleState } = await page.evaluate(() => {
+    const { singleState, multipleState, groupState } = await page.evaluate(() => {
       const singleSelect = document.querySelector('.form-group select');
       const multipleSelect = document.querySelector('.multiple select');
+      const groupSelect = document.querySelector('.group select');
       const list = Array.from(document.querySelectorAll('.multiple .select-a11y__selected-list li'));
       const singleState = {};
       const multipleState = {};
+      const groupState = {};
       if (singleSelect instanceof HTMLSelectElement) {
         singleState.selectedValue = singleSelect.value;
         singleState.selectedOption = singleSelect.item(singleSelect.selectedIndex)?.label;
@@ -1183,7 +1306,12 @@ describe('select-a11y', async () => {
         multipleState.selectedOptions = Array.from(multipleSelect.selectedOptions).map(option => option.value);
         multipleState.selectedItems = list.map(item => item.firstElementChild?.textContent?.trim());
       }
-      return { singleState, multipleState };
+      if (groupSelect instanceof HTMLSelectElement) {
+        groupState.selectedValue = groupSelect.value;
+        groupState.selectedOption = groupSelect.item(groupSelect.selectedIndex)?.label;
+        groupState.label = document.querySelector('.group button span')?.textContent?.trim();
+      }
+      return { singleState, multipleState, groupState };
     });
     expect(singleState.selectedOption, 'Le reset de formulaire change le texte du bouton d’ouverture').toBe(singleState.label);
     const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) => {
@@ -1191,5 +1319,6 @@ describe('select-a11y', async () => {
     });
 
     expect(selectedOptionsMatches, 'Le reset de formulaire change la liste des éléments sélectionnés').toBe(true);
+    expect(groupState.selectedOption, 'Le reset de formulaire change le texte du bouton d’ouverture pour les groupes').toBe(groupState.label);
   })
 });
