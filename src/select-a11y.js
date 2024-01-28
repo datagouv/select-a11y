@@ -35,13 +35,13 @@ const SILENTLY = false;
  * @returns {Array<T>}
  */
 function deepCopy (array) {
-  let test = []
+  let copiedOptions = []
   Array.from(array).forEach(option => {
     let processedOption = option.cloneNode(DEEP_CLONE)
-    processedOption.node = option.parentNode
-    test.push(processedOption);
+    processedOption.node = option.parentNode || option.node
+    copiedOptions.push(processedOption);
   });
-  return test
+  return copiedOptions
   //return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
 }
 
@@ -125,8 +125,8 @@ export class Select {
      * They are never modified and are used to handle reset.
      * @type {Array<HTMLOptionElement>}
      */
-    this.originalOptions =  deepCopy(this.el.options)
-    
+    this.originalOptions =  deepCopy(this.el.options);
+
     /**
      * Select original options at initialization of the component.
      * They are updated based on select / unselect of options but no options are added or removed to it.
@@ -295,7 +295,7 @@ export class Select {
    * @returns {Suggestion} - a suggestion
    */
   _mapToSuggestion(option) {
-    const parentOptgroup = option.closest('optgroup') || option.node;
+    const parentOptgroup = option.closest('optgroup') || option.node;
     const groupLabel = parentOptgroup ? parentOptgroup.label : null;
 
     return {
@@ -379,7 +379,7 @@ export class Select {
     const search = this.search.toLowerCase();
 
     // loop over the
-    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
+    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions); 
     this.currentOptions = suggestions.map(this._mapToOption);
     this.el.replaceChildren(...this._fillSelect(this.currentOptions));
 
@@ -551,11 +551,10 @@ export class Select {
 
     this._resetTimeout = setTimeout(async () => {
       this.search = '';
-      this.updatedOriginalOptions = Array.from(this.originalOptions);
-      this.currentOptions = Array.from(this.originalOptions);
+      this.updatedOriginalOptions = deepCopy(this.originalOptions);
+      this.currentOptions = deepCopy(this.originalOptions);
       await this._fillSuggestions();
       this.el.dispatchEvent(new Event('change'));
-      console.log(this.el.selectedIndex)
       this._setButtonText();
       if (this.multiple && this._options.showSelected) {
         this._updateSelectedList();
@@ -698,6 +697,7 @@ export class Select {
     const selectedOption = this.el.item(this.el.selectedIndex);
     /** @type {HTMLElement} */
     const child = this.button.firstElementChild;
+
     if (selectedOption && selectedOption.value) {
       this.button.classList.remove('select-a11y-button--no-selected-option');
     } else {

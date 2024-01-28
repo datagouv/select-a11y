@@ -260,7 +260,12 @@ export class Select {
      */
     setText(newText: object): void;
     _setButtonText(): void;
-    originalOptions: HTMLOptionElement[];
+    /**
+     * Select original options at initialization of the component.
+     * They are never modified and are used to handle reset.
+     * @type {Array<HTMLOptionElement>}
+     */
+    originalOptions: Array<HTMLOptionElement>;
     /**
      * Select original options at initialization of the component.
      * They are updated based on select / unselect of options but no options are added or removed to it.
