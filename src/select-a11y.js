@@ -35,7 +35,14 @@ const SILENTLY = false;
  * @returns {Array<T>}
  */
 function deepCopy (array) {
-  return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
+  let test = []
+  Array.from(array).forEach(option => {
+    let processedOption = option.cloneNode(DEEP_CLONE)
+    processedOption.node = option.parentNode
+    test.push(processedOption);
+  });
+  return test
+  //return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
 }
 
 export class Select {
@@ -118,10 +125,8 @@ export class Select {
      * They are never modified and are used to handle reset.
      * @type {Array<HTMLOptionElement>}
      */
-    console.log(Array.from(this.el.options).map(option => ({ value: option.value, parentNode: option.parentNode })));
-    this.originalOptions =  Array.from(this.el.options);
-    console.log(Array.from(this.originalOptions).map(option => ({ value: option.value, parentNode: option.parentNode })));
-
+    this.originalOptions =  deepCopy(this.el.options)
+    
     /**
      * Select original options at initialization of the component.
      * They are updated based on select / unselect of options but no options are added or removed to it.
@@ -290,9 +295,9 @@ export class Select {
    * @returns {Suggestion} - a suggestion
    */
   _mapToSuggestion(option) {
-    const parentOptgroup = option.closest('optgroup');
+    const parentOptgroup = option.closest('optgroup') || option.node;
     const groupLabel = parentOptgroup ? parentOptgroup.label : null;
-  
+
     return {
       hidden: option.hidden,
       disabled: option.disabled,
@@ -550,6 +555,7 @@ export class Select {
       this.currentOptions = Array.from(this.originalOptions);
       await this._fillSuggestions();
       this.el.dispatchEvent(new Event('change'));
+      console.log(this.el.selectedIndex)
       this._setButtonText();
       if (this.multiple && this._options.showSelected) {
         this._updateSelectedList();
@@ -692,7 +698,6 @@ export class Select {
     const selectedOption = this.el.item(this.el.selectedIndex);
     /** @type {HTMLElement} */
     const child = this.button.firstElementChild;
-
     if (selectedOption && selectedOption.value) {
       this.button.classList.remove('select-a11y-button--no-selected-option');
     } else {
