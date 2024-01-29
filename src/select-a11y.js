@@ -39,7 +39,7 @@ function deepCopy (array) {
 }
 
 function preserveOptgroupAsData (option) {
-  if (option.parentNode.tagName == 'OPTGROUP') {
+  if (option.parentNode.tagName === 'OPTGROUP') {
     option.dataset.group = option.parentNode.label
   }
   return option
@@ -125,10 +125,7 @@ export class Select {
      * They are never modified and are used to handle reset.
      * @type {Array<HTMLOptionElement>}
      */
-    //this.originalOptions = deepCopy(this.el.options);
-    this.originalOptions = Array.from(this.el.options).map(option =>
-      preserveOptgroupAsData(option)
-    );
+    this.originalOptions = Array.from(this.el.options).map(preserveOptgroupAsData);
 
     /**
      * Select original options at initialization of the component.
@@ -427,8 +424,7 @@ export class Select {
         }
         if (suggestion.helper) {
           const secondColumn = document.createElement('div');
-          secondColumn.classList.add('column');
-          secondColumn.style.textAlign = 'right';
+          secondColumn.classList.add('column--right');
           suggestionElement.appendChild(secondColumn);
 
           const helperElement = document.createElement('code');
