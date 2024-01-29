@@ -125,7 +125,7 @@ export class Select {
      * They are never modified and are used to handle reset.
      * @type {Array<HTMLOptionElement>}
      */
-    this.originalOptions = Array.from(this.el.options).map(preserveOptgroupAsData);
+    this.originalOptions = deepCopy(Array.from(this.el.options).map(preserveOptgroupAsData));
 
     /**
      * Select original options at initialization of the component.
@@ -378,7 +378,7 @@ export class Select {
     const search = this.search.toLowerCase();
 
     // loop over the
-    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions); 
+    const suggestions = await this._options.fillSuggestions(search, this.updatedOriginalOptions);
     this.currentOptions = suggestions.map(this._mapToOption);
     this.el.replaceChildren(...this._fillSelect(this.currentOptions));
 
@@ -442,7 +442,7 @@ export class Select {
         return { suggestionElement, group: suggestion.group };
       })
       .filter((suggestion) => !suggestion.suggestionElement.dataset.disabled && !suggestion.suggestionElement.dataset.hidden);
-    
+
     const noGroupedSuggestions = [];
     const groupedSuggestions = {};
 
@@ -475,7 +475,7 @@ export class Select {
         if (this.multiple) {
           listBox.setAttribute('aria-multiselectable', 'true');
         }
-        
+
         Object.values(noGroupedSuggestions).forEach((item) => {
           listBox.appendChild(item);
         });
@@ -778,6 +778,19 @@ export class Select {
       this.el.selectedIndex = optionIndex;
     }
     this.updatedOriginalOptions = this.updatedOriginalOptions.map(option => {
+      if(option.value === toggledOption?.value) {
+        if(toggledOption.hasAttribute('selected')) {
+          option.setAttribute('selected', 'selected');
+        } else {
+          option.removeAttribute('selected');
+        }
+      }
+      if(!this.multiple && option.value !== toggledOption?.value) {
+        option.removeAttribute('selected');
+      }
+      return option;
+    });
+    this.currentOptions = this.currentOptions.map(option => {
       if(option.value === toggledOption?.value) {
         if(toggledOption.hasAttribute('selected')) {
           option.setAttribute('selected', 'selected');
