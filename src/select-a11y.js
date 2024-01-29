@@ -35,14 +35,14 @@ const SILENTLY = false;
  * @returns {Array<T>}
  */
 function deepCopy (array) {
-  let copiedOptions = []
-  Array.from(array).forEach(option => {
-    let processedOption = option.cloneNode(DEEP_CLONE)
-    processedOption.node = option.parentNode || option.node
-    copiedOptions.push(processedOption);
-  });
-  return copiedOptions
-  //return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
+  return /** @type {Array<T>} */ (Array.from(array).map(option => option.cloneNode(DEEP_CLONE)));
+}
+
+function preserveOptgroupAsData (option) {
+  if (option.parentNode.tagName == 'OPTGROUP') {
+    option.dataset.group = option.parentNode.label
+  }
+  return option
 }
 
 export class Select {
@@ -125,7 +125,10 @@ export class Select {
      * They are never modified and are used to handle reset.
      * @type {Array<HTMLOptionElement>}
      */
-    this.originalOptions =  deepCopy(this.el.options);
+    //this.originalOptions = deepCopy(this.el.options);
+    this.originalOptions = Array.from(this.el.options).map(option =>
+      preserveOptgroupAsData(option)
+    );
 
     /**
      * Select original options at initialization of the component.
@@ -133,14 +136,14 @@ export class Select {
      * This is the set of options passed to {@link FillSuggestions} callback.
      * @type {Array<HTMLOptionElement>}
      */
-    this.updatedOriginalOptions = Array.from(this.el.options);
+    this.updatedOriginalOptions = deepCopy(this.originalOptions);
 
     /**
      * Select current options. These can be completely differents options than {@link originalOptions}
      * if the provided promise fetches some from an API.
      * @type {Array<HTMLOptionElement>}
      */
-    this.currentOptions = Array.from(this.el.options);
+    this.currentOptions = deepCopy(this.originalOptions);
 
     this._disable();
     this.button = this._createButton();
@@ -287,6 +290,7 @@ export class Select {
    * @property {string} [helper] - suggestion helper
    * @property {string} [description] - suggestion description
    * @property {boolean} [showIcon] - suggestion recommended
+   * @property {string} [group] - suggestion group
    */
 
   /**
@@ -295,8 +299,6 @@ export class Select {
    * @returns {Suggestion} - a suggestion
    */
   _mapToSuggestion(option) {
-    const parentOptgroup = option.closest('optgroup') || option.node;
-    const groupLabel = parentOptgroup ? parentOptgroup.label : null;
 
     return {
       hidden: option.hidden,
@@ -309,7 +311,7 @@ export class Select {
       helper: option.dataset.helper,
       description: option.dataset.description,
       showIcon: option.dataset.showIcon,
-      group: groupLabel
+      group: option.dataset.group
     };
   }
 

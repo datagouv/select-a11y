@@ -68,6 +68,10 @@ export class Select {
              * - suggestion recommended
              */
             showIcon?: boolean;
+            /**
+             * - suggestion group
+             */
+            group?: string;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -125,6 +129,10 @@ export class Select {
          * - suggestion recommended
          */
         showIcon?: boolean;
+        /**
+         * - suggestion group
+         */
+        group?: string;
     }[]>;
     _options: {
         text: {
@@ -186,6 +194,10 @@ export class Select {
              * - suggestion recommended
              */
             showIcon?: boolean;
+            /**
+             * - suggestion group
+             */
+            group?: string;
         }[]>;
         useLabelAsButton: boolean;
         clearable: boolean;
@@ -240,6 +252,10 @@ export class Select {
              * - suggestion recommended
              */
             showIcon?: boolean;
+            /**
+             * - suggestion group
+             */
+            group?: string;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -317,6 +333,7 @@ export class Select {
      * @property {string} [helper] - suggestion helper
      * @property {string} [description] - suggestion description
      * @property {boolean} [showIcon] - suggestion recommended
+     * @property {string} [group] - suggestion group
      */
     /**
      *
@@ -364,6 +381,10 @@ export class Select {
          * - suggestion recommended
          */
         showIcon?: boolean;
+        /**
+         * - suggestion group
+         */
+        group?: string;
     };
     /**
      *
@@ -411,6 +432,10 @@ export class Select {
          * - suggestion recommended
          */
         showIcon?: boolean;
+        /**
+         * - suggestion group
+         */
+        group?: string;
     }): HTMLOptionElement;
     /**
      *
@@ -457,6 +482,10 @@ export class Select {
          * - suggestion recommended
          */
         showIcon?: boolean;
+        /**
+         * - suggestion group
+         */
+        group?: string;
     }[]>;
     _fillSelect(options: any): any[];
     _focusTimeout: NodeJS.Timeout;
