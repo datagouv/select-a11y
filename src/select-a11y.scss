@@ -217,6 +217,9 @@ $select-a11y-suggestion-border:      $gray-3 !default;
   object-fit: cover;
   object-position: center;
   margin-right: 0.5rem;
+  & ~ .column .select-a11y-suggestion__label {
+    text-align: right;
+  }
 }
 
 .select-a11y-suggestion__description {
