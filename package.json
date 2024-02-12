@@ -10,7 +10,8 @@
   "exports": {
     ".": {
       "import": "./dist/select-a11y.js",
-      "require": "./dist/select-a11y.umd.cjs"
+      "require": "./dist/select-a11y.umd.cjs",
+      "types": "./types/select-a11y.d.ts"
     },
     "./dist/*.css": {
       "import": "./dist/*.css",
