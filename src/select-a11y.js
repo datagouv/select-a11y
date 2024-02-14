@@ -395,11 +395,9 @@ export class Select {
           suggestionElement.setAttribute('data-disabled', "disabled");
         }
         suggestionElement.classList.add('select-a11y-suggestion');
-        suggestionElement.style.display = 'flex';
-        suggestionElement.style.justifyContent = 'space-between';
 
         const firstColumn = document.createElement('div');
-        firstColumn.classList.add('column');
+        firstColumn.classList.add('select-a11y-column');
         suggestionElement.appendChild(firstColumn);
 
         const labelElement = document.createElement('div');

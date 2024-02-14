@@ -210,6 +210,15 @@ $select-a11y-suggestion-border:      $gray-3 !default;
   }
 }
 
+.select-a11y-suggestion__label {
+  word-break: break-word;
+}
+
+.select-a11y-column {
+  flex: 1;
+  min-width: 0;
+}
+
 
 .select-a11y-suggestion__image {
   width: 3rem;
