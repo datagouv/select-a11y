@@ -24,10 +24,10 @@ function u(o) {
     Array.from(o).map((e) => e.cloneNode(_))
   );
 }
-function y(o) {
+function x(o) {
   return o.parentNode.tagName === "OPTGROUP" && (o.dataset.group = o.parentNode.label), o;
 }
-class x {
+class y {
   /**
    * @param {HTMLSelectElement} el - Select HTML element
    * @param {object} [options] - options to control select-a11y behavior
@@ -63,7 +63,7 @@ class x {
         a.innerText = ((n = this.label) == null ? void 0 : n.innerText) ?? "", a.setAttribute("value", ""), a.setAttribute("selected", "selected"), a.setAttribute("disabled", "disabled"), a.setAttribute("hidden", "hidden"), this.el.options.add(a, 0);
       }
     }
-    this.originalOptions = u(Array.from(this.el.options).map(y)), this.updatedOriginalOptions = u(this.originalOptions), this.currentOptions = u(this.originalOptions), this._disable(), this.button = this._createButton(), this._setButtonText(), this.clearButton = this._createClearButton(), this.liveZone = this._createLiveZone(), this.overlay = this._createOverlay(), this.wrap = this._wrap(), this.multiple && this._options.showSelected && (this.selectedList = this._createSelectedList(), this._updateSelectedList(), this.selectedList.addEventListener("click", this._removeOption)), this.button.addEventListener("click", this._handleOpener), this.clearButton.addEventListener("click", this._handleClear), this.wrap.addEventListener("keydown", this._handleKeyboard), document.addEventListener("blur", this._handleFocus, !0), this.el.form && this.el.form.addEventListener("reset", this._handleReset);
+    this.originalOptions = u(Array.from(this.el.options).map(x)), this.updatedOriginalOptions = u(this.originalOptions), this.currentOptions = u(this.originalOptions), this._disable(), this.button = this._createButton(), this._setButtonText(), this.clearButton = this._createClearButton(), this.liveZone = this._createLiveZone(), this.overlay = this._createOverlay(), this.wrap = this._wrap(), this.multiple && this._options.showSelected && (this.selectedList = this._createSelectedList(), this._updateSelectedList(), this.selectedList.addEventListener("click", this._removeOption)), this.button.addEventListener("click", this._handleOpener), this.clearButton.addEventListener("click", this._handleClear), this.wrap.addEventListener("keydown", this._handleKeyboard), document.addEventListener("blur", this._handleFocus, !0), this.el.form && this.el.form.addEventListener("reset", this._handleReset);
   }
   /**
    * Update texts with new texts
@@ -189,9 +189,9 @@ class x {
     this.currentOptions = t.map(this._mapToOption), this.el.replaceChildren(...this._fillSelect(this.currentOptions));
     const i = t.map((l, a) => {
       const r = document.createElement("div");
-      r.setAttribute("role", "option"), r.setAttribute("tabindex", "0"), r.setAttribute("data-index", a.toString()), l.hidden && r.setAttribute("data-hidden", "hidden"), l.disabled && r.setAttribute("data-disabled", "disabled"), r.classList.add("select-a11y-suggestion"), r.style.display = "flex", r.style.justifyContent = "space-between";
+      r.setAttribute("role", "option"), r.setAttribute("tabindex", "0"), r.setAttribute("data-index", a.toString()), l.hidden && r.setAttribute("data-hidden", "hidden"), l.disabled && r.setAttribute("data-disabled", "disabled"), r.classList.add("select-a11y-suggestion");
       const h = document.createElement("div");
-      h.classList.add("column"), r.appendChild(h);
+      h.classList.add("select-a11y-column"), r.appendChild(h);
       const p = document.createElement("div");
       if (p.classList.add("select-a11y-suggestion__label"), p.innerText = l.label || l.value, h.appendChild(p), l.selected && r.setAttribute("aria-selected", "true"), l.description) {
         const d = document.createElement("div");
@@ -388,7 +388,7 @@ class x {
   }
 }
 export {
-  x as Select,
-  x as default
+  y as Select,
+  y as default
 };
 //# sourceMappingURL=select-a11y.js.map
