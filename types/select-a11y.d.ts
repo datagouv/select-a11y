@@ -72,6 +72,14 @@ export class Select {
              * - suggestion group
              */
             group?: string;
+            /**
+             * - suggestion link
+             */
+            link?: string;
+            /**
+             * - suggestion linkText
+             */
+            linkText?: string;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -133,6 +141,14 @@ export class Select {
          * - suggestion group
          */
         group?: string;
+        /**
+         * - suggestion link
+         */
+        link?: string;
+        /**
+         * - suggestion linkText
+         */
+        linkText?: string;
     }[]>;
     _options: {
         text: {
@@ -198,6 +214,14 @@ export class Select {
              * - suggestion group
              */
             group?: string;
+            /**
+             * - suggestion link
+             */
+            link?: string;
+            /**
+             * - suggestion linkText
+             */
+            linkText?: string;
         }[]>;
         useLabelAsButton: boolean;
         clearable: boolean;
@@ -256,6 +280,14 @@ export class Select {
              * - suggestion group
              */
             group?: string;
+            /**
+             * - suggestion link
+             */
+            link?: string;
+            /**
+             * - suggestion linkText
+             */
+            linkText?: string;
         }[]>;
         showSelected?: boolean;
         useLabelAsButton?: boolean;
@@ -334,6 +366,8 @@ export class Select {
      * @property {string} [description] - suggestion description
      * @property {boolean} [showIcon] - suggestion recommended
      * @property {string} [group] - suggestion group
+     * @property {string} [link] - suggestion link
+     * @property {string} [linkText] - suggestion linkText
      */
     /**
      *
@@ -385,6 +419,14 @@ export class Select {
          * - suggestion group
          */
         group?: string;
+        /**
+         * - suggestion link
+         */
+        link?: string;
+        /**
+         * - suggestion linkText
+         */
+        linkText?: string;
     };
     /**
      *
@@ -436,6 +478,14 @@ export class Select {
          * - suggestion group
          */
         group?: string;
+        /**
+         * - suggestion link
+         */
+        link?: string;
+        /**
+         * - suggestion linkText
+         */
+        linkText?: string;
     }): HTMLOptionElement;
     /**
      *
@@ -486,6 +536,14 @@ export class Select {
          * - suggestion group
          */
         group?: string;
+        /**
+         * - suggestion link
+         */
+        link?: string;
+        /**
+         * - suggestion linkText
+         */
+        linkText?: string;
     }[]>;
     _fillSelect(options: any): any[];
     _focusTimeout: NodeJS.Timeout;

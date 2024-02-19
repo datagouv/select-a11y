@@ -7,8 +7,8 @@ const f = {
   delete: "Supprimer",
   clear: "Vider"
 }, b = Element.prototype.matches;
-let c = Element.prototype.closest;
-c || (c = function(o) {
+let u = Element.prototype.closest;
+u || (u = function(o) {
   var e = this;
   do {
     if (b.call(e, o))
@@ -18,7 +18,7 @@ c || (c = function(o) {
   return null;
 });
 const _ = !0, v = !1;
-function u(o) {
+function p(o) {
   return (
     /** @type {Array<T>} */
     Array.from(o).map((e) => e.cloneNode(_))
@@ -49,21 +49,21 @@ class y {
   constructor(e, t) {
     var n;
     this.el = e, this.label = document.querySelector(`label[for=${e.id}]`), this.id = e.id, this.open = !1, this.multiple = this.el.multiple, this.search = "", this.suggestions = [], this.focusIndex = null;
-    const i = Object.assign({}, t), s = Object.assign({}, f, i.text);
-    if (delete i.text, this._defaultSearch = this._defaultSearch.bind(this), this._options = Object.assign({
+    const l = Object.assign({}, t), s = Object.assign({}, f, l.text);
+    if (delete l.text, this._defaultSearch = this._defaultSearch.bind(this), this._options = Object.assign({
       text: s,
       showSelected: !0,
       fillSuggestions: this._defaultSearch,
       useLabelAsButton: !1,
       clearable: !1
-    }, i), this._handleFocus = this._handleFocus.bind(this), this._handleInput = this._handleInput.bind(this), this._handleKeyboard = this._handleKeyboard.bind(this), this._handleOpener = this._handleOpener.bind(this), this._handleClear = this._handleClear.bind(this), this._handleReset = this._handleReset.bind(this), this._handleSuggestionClick = this._handleSuggestionClick.bind(this), this._positionCursor = this._positionCursor.bind(this), this._removeOption = this._removeOption.bind(this), this.setText = this.setText.bind(this), this._setButtonText = this._setButtonText.bind(this), !this.multiple) {
-      const l = Array.from(this.el.options).some((a) => a.selected);
-      if (this._options.useLabelAsButton && !l) {
+    }, l), this._handleFocus = this._handleFocus.bind(this), this._handleInput = this._handleInput.bind(this), this._handleKeyboard = this._handleKeyboard.bind(this), this._handleOpener = this._handleOpener.bind(this), this._handleClear = this._handleClear.bind(this), this._handleReset = this._handleReset.bind(this), this._handleSuggestionClick = this._handleSuggestionClick.bind(this), this._positionCursor = this._positionCursor.bind(this), this._removeOption = this._removeOption.bind(this), this.setText = this.setText.bind(this), this._setButtonText = this._setButtonText.bind(this), !this.multiple) {
+      const i = Array.from(this.el.options).some((a) => a.selected);
+      if (this._options.useLabelAsButton && !i) {
         const a = document.createElement("option");
         a.innerText = ((n = this.label) == null ? void 0 : n.innerText) ?? "", a.setAttribute("value", ""), a.setAttribute("selected", "selected"), a.setAttribute("disabled", "disabled"), a.setAttribute("hidden", "hidden"), this.el.options.add(a, 0);
       }
     }
-    this.originalOptions = u(Array.from(this.el.options).map(x)), this.updatedOriginalOptions = u(this.originalOptions), this.currentOptions = u(this.originalOptions), this._disable(), this.button = this._createButton(), this._setButtonText(), this.clearButton = this._createClearButton(), this.liveZone = this._createLiveZone(), this.overlay = this._createOverlay(), this.wrap = this._wrap(), this.multiple && this._options.showSelected && (this.selectedList = this._createSelectedList(), this._updateSelectedList(), this.selectedList.addEventListener("click", this._removeOption)), this.button.addEventListener("click", this._handleOpener), this.clearButton.addEventListener("click", this._handleClear), this.wrap.addEventListener("keydown", this._handleKeyboard), document.addEventListener("blur", this._handleFocus, !0), this.el.form && this.el.form.addEventListener("reset", this._handleReset);
+    this.originalOptions = p(Array.from(this.el.options).map(x)), this.updatedOriginalOptions = p(this.originalOptions), this.currentOptions = p(this.originalOptions), this._disable(), this.button = this._createButton(), this._setButtonText(), this.clearButton = this._createClearButton(), this.liveZone = this._createLiveZone(), this.overlay = this._createOverlay(), this.wrap = this._wrap(), this.multiple && this._options.showSelected && (this.selectedList = this._createSelectedList(), this._updateSelectedList(), this.selectedList.addEventListener("click", this._removeOption)), this.button.addEventListener("click", this._handleOpener), this.clearButton.addEventListener("click", this._handleClear), this.wrap.addEventListener("keydown", this._handleKeyboard), document.addEventListener("blur", this._handleFocus, !0), this.el.form && this.el.form.addEventListener("reset", this._handleReset);
   }
   /**
    * Update texts with new texts
@@ -77,11 +77,11 @@ class y {
    * @param {string} value option value
    */
   selectOption(e, t = !0) {
-    const i = this.currentOptions.findIndex((n) => n.value === e);
-    if (i === -1)
+    const l = this.currentOptions.findIndex((n) => n.value === e);
+    if (l === -1)
       return;
     const s = !this.multiple;
-    this._toggleSelection(i, s, t);
+    this._toggleSelection(l, s, t);
   }
   /**
    * Select new value without dispatching the change Event
@@ -91,11 +91,11 @@ class y {
     this.selectOption(e, v);
   }
   _createButton() {
-    var i;
+    var l;
     const e = document.createElement("button");
     e.setAttribute("type", "button"), e.setAttribute("aria-expanded", this.open ? "true" : "false"), e.className = "select-a11y-button";
     const t = document.createElement("span");
-    return t.className = "select-a11y-button__text", this.label && !this.label.id && (this.label.id = `${this.el.id}-label`), e.setAttribute("id", this.el.id + "-button"), e.setAttribute("aria-labelledby", ((i = this.label) == null ? void 0 : i.id) + " " + e.id), t.innerHTML = "&nbsp;", e.appendChild(t), e.insertAdjacentHTML("beforeend", '<span class="select-a11y-button__icon" aria-hidden="true"></span>'), e;
+    return t.className = "select-a11y-button__text", this.label && !this.label.id && (this.label.id = `${this.el.id}-label`), e.setAttribute("id", this.el.id + "-button"), e.setAttribute("aria-labelledby", ((l = this.label) == null ? void 0 : l.id) + " " + e.id), t.innerHTML = "&nbsp;", e.appendChild(t), e.insertAdjacentHTML("beforeend", '<span class="select-a11y-button__icon" aria-hidden="true"></span>'), e;
   }
   _createClearButton() {
     const e = document.createElement("button");
@@ -136,6 +136,8 @@ class y {
    * @property {string} [description] - suggestion description
    * @property {boolean} [showIcon] - suggestion recommended
    * @property {string} [group] - suggestion group
+   * @property {string} [link] - suggestion link
+   * @property {string} [linkText] - suggestion linkText
    */
   /**
    *
@@ -154,7 +156,9 @@ class y {
       helper: e.dataset.helper,
       description: e.dataset.description,
       showIcon: e.dataset.showIcon,
-      group: e.dataset.group
+      group: e.dataset.group,
+      link: e.dataset.link,
+      linkText: e.dataset.linkText
     };
   }
   /**
@@ -164,7 +168,7 @@ class y {
    */
   _mapToOption(e) {
     const t = document.createElement("option");
-    return t.label = e.label, t.value = e.value, e.hidden && t.setAttribute("hidden", "hidden"), e.disabled && t.setAttribute("disabled", "disabled"), e.selected && t.setAttribute("selected", "selected"), e.image && (t.dataset.image = e.image), e.alt && (t.dataset.alt = e.alt), e.description && (t.dataset.description = e.description), e.helper && (t.dataset.helper = e.helper), e.showIcon && (t.dataset.showIcon = e.showIcon), e.group && (t.dataset.group = e.group), t;
+    return t.label = e.label, t.value = e.value, e.hidden && t.setAttribute("hidden", "hidden"), e.disabled && t.setAttribute("disabled", "disabled"), e.selected && t.setAttribute("selected", "selected"), e.image && (t.dataset.image = e.image), e.alt && (t.dataset.alt = e.alt), e.description && (t.dataset.description = e.description), e.helper && (t.dataset.helper = e.helper), e.showIcon && (t.dataset.showIcon = e.showIcon), e.group && (t.dataset.group = e.group), e.link && (t.dataset.link = e.link), e.linkText && (t.dataset.linkText = e.linkText), t;
   }
   /**
    * @callback FillSuggestions
@@ -177,8 +181,8 @@ class y {
    * @type {FillSuggestions}
    */
   _defaultSearch(e, t) {
-    const i = t.filter((s) => (s.label || s.value).toLocaleLowerCase().indexOf(e) !== -1).map(this._mapToSuggestion);
-    return Promise.resolve(i);
+    const l = t.filter((s) => (s.label || s.value).toLocaleLowerCase().indexOf(e) !== -1).map(this._mapToSuggestion);
+    return Promise.resolve(l);
   }
   /**
    *
@@ -187,64 +191,69 @@ class y {
   async _fillSuggestions() {
     const e = this.search.toLowerCase(), t = await this._options.fillSuggestions(e, this.updatedOriginalOptions);
     this.currentOptions = t.map(this._mapToOption), this.el.replaceChildren(...this._fillSelect(this.currentOptions));
-    const i = t.map((l, a) => {
-      const r = document.createElement("div");
-      r.setAttribute("role", "option"), r.setAttribute("tabindex", "0"), r.setAttribute("data-index", a.toString()), l.hidden && r.setAttribute("data-hidden", "hidden"), l.disabled && r.setAttribute("data-disabled", "disabled"), r.classList.add("select-a11y-suggestion");
-      const h = document.createElement("div");
-      h.classList.add("select-a11y-column"), r.appendChild(h);
-      const p = document.createElement("div");
-      if (p.classList.add("select-a11y-suggestion__label"), p.innerText = l.label || l.value, h.appendChild(p), l.selected && r.setAttribute("aria-selected", "true"), l.description) {
-        const d = document.createElement("div");
-        d.classList.add("select-a11y-suggestion__description"), l.showIcon && d.setAttribute("data-show-icon", "true"), d.innerText = l.description, h.appendChild(d);
+    const l = t.map((i, a) => {
+      const d = document.createElement("div");
+      d.setAttribute("role", "option"), d.setAttribute("tabindex", "0"), d.setAttribute("data-index", a.toString()), i.hidden && d.setAttribute("data-hidden", "hidden"), i.disabled && d.setAttribute("data-disabled", "disabled"), d.classList.add("select-a11y-suggestion");
+      const c = document.createElement("div");
+      c.classList.add("select-a11y-column"), d.appendChild(c);
+      const m = document.createElement("div");
+      if (m.classList.add("select-a11y-suggestion__label"), m.innerText = i.label || i.value, c.appendChild(m), i.selected && d.setAttribute("aria-selected", "true"), i.description) {
+        const r = document.createElement("div");
+        r.classList.add("select-a11y-suggestion__description"), i.showIcon && r.setAttribute("data-show-icon", "true"), r.innerText = i.description, c.appendChild(r);
       }
-      if (l.helper) {
-        const d = document.createElement("div");
-        d.classList.add("column--right"), r.appendChild(d);
-        const m = document.createElement("code");
-        m.classList.add("select-a11y-suggestion__helper"), m.innerText = l.helper, d.appendChild(m);
+      if (i.helper) {
+        const r = document.createElement("div");
+        r.classList.add("column--right"), d.appendChild(r);
+        const h = document.createElement("code");
+        h.classList.add("select-a11y-suggestion__helper"), h.innerText = i.helper, r.appendChild(h);
+      } else if (i.link) {
+        const r = document.createElement("div");
+        r.classList.add("column--right"), d.appendChild(r);
+        const h = document.createElement("a");
+        h.target = "_blank", h.innerText = i.linkText, h.href = i.link, r.appendChild(h);
       }
-      if (l.image) {
-        const d = document.createElement("img");
-        d.setAttribute("src", l.image), d.setAttribute("alt", l.alt ? l.alt : ""), d.classList.add("select-a11y-suggestion__image"), r.prepend(d);
+      if (i.image) {
+        const r = document.createElement("img");
+        r.setAttribute("src", i.image), r.setAttribute("alt", i.alt ? i.alt : ""), r.classList.add("select-a11y-suggestion__image"), d.prepend(r);
       }
-      return { suggestionElement: r, group: l.group };
-    }).filter((l) => !l.suggestionElement.dataset.disabled && !l.suggestionElement.dataset.hidden), s = [], n = {};
-    if (i.forEach(({ suggestionElement: l, group: a }) => {
+      return { suggestionElement: d, group: i.group };
+    }).filter((i) => !i.suggestionElement.dataset.disabled && !i.suggestionElement.dataset.hidden), s = [], n = {};
+    if (l.forEach(({ suggestionElement: i, group: a }) => {
       if (a) {
         if (!n[a]) {
-          const r = document.createElement("div");
-          r.setAttribute("role", "group"), n[a] = r;
-          const h = document.createElement("div");
-          h.setAttribute("role", "presentation"), h.innerHTML = a, r.appendChild(h);
+          const d = document.createElement("div");
+          d.setAttribute("role", "group"), n[a] = d;
+          const c = document.createElement("div");
+          c.setAttribute("role", "presentation"), c.innerHTML = a, d.appendChild(c);
         }
-        n[a].appendChild(l);
+        n[a].appendChild(i);
       } else
-        s.push(l);
-    }), this.suggestions = i.map(({ suggestionElement: l }) => l), this.list)
+        s.push(i);
+    }), this.suggestions = l.map(({ suggestionElement: i }) => i), this.list)
       if (!this.suggestions.length)
         this.list.innerHTML = `<p class="select-a11y__no-suggestion">${this._options.text.noResult}</p>`;
       else {
-        const l = document.createElement("div");
-        l.setAttribute("role", "listbox"), this.multiple && l.setAttribute("aria-multiselectable", "true"), Object.values(s).forEach((a) => {
-          l.appendChild(a);
+        const i = document.createElement("div");
+        i.setAttribute("role", "listbox"), this.multiple && i.setAttribute("aria-multiselectable", "true"), Object.values(s).forEach((a) => {
+          i.appendChild(a);
         }), Object.values(n).forEach((a) => {
-          l.appendChild(a);
-        }), this.list.innerHTML = "", this.list.appendChild(l);
+          i.appendChild(a);
+        }), this.list.innerHTML = "", this.list.appendChild(i);
       }
     return this._setLiveZone(), t;
   }
   _fillSelect(e) {
     const t = [];
-    return e.forEach((i) => {
-      const s = i.dataset.group;
+    return e.forEach((l) => {
+      const s = l.dataset.group;
       if (s) {
-        if (!t.find((l) => l.tagName === "OPTGROUP" && l.label === s)) {
-          const l = document.createElement("optgroup");
-          l.label = s, t.push(l);
+        if (!t.find((i) => i.tagName === "OPTGROUP" && i.label === s)) {
+          const i = document.createElement("optgroup");
+          i.label = s, t.push(i);
         }
-        t[t.length - 1].appendChild(i);
+        t[t.length - 1].appendChild(l);
       } else
-        t.push(i);
+        t.push(l);
     }), t;
   }
   _handleOpener(e) {
@@ -270,27 +279,27 @@ class y {
   }
   _handleReset() {
     clearTimeout(this._resetTimeout), this._resetTimeout = setTimeout(async () => {
-      this.search = "", this.updatedOriginalOptions = u(this.originalOptions), this.currentOptions = u(this.originalOptions), await this._fillSuggestions(), this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList();
+      this.search = "", this.updatedOriginalOptions = p(this.originalOptions), this.currentOptions = p(this.originalOptions), await this._fillSuggestions(), this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList();
     }, 10);
   }
   _handleSuggestionClick(e) {
-    const t = c.call(e.target, '[role="option"]');
+    const t = u.call(e.target, '[role="option"]');
     if (!t)
       return;
-    const i = parseInt(t.getAttribute("data-index"), 10), s = !(this.multiple && e.metaKey);
-    this._toggleSelection(i, s);
+    const l = parseInt(t.getAttribute("data-index"), 10), s = !(this.multiple && e.metaKey);
+    this._toggleSelection(l, s);
   }
   _handleInput() {
     var e, t;
     this.search !== ((e = this.input) == null ? void 0 : e.value) && (this.search = ((t = this.input) == null ? void 0 : t.value) ?? "", this._fillSuggestions());
   }
   _handleKeyboard(e) {
-    const t = c.call(e.target, '[role="option"]'), i = c.call(e.target, "input");
+    const t = u.call(e.target, '[role="option"]'), l = u.call(e.target, "input");
     if (e.keyCode === 27) {
       this._toggleOverlay();
       return;
     }
-    if (i && e.keyCode === 13) {
+    if (l && e.keyCode === 13) {
       e.preventDefault();
       return;
     }
@@ -314,8 +323,8 @@ class y {
     if (this.focusIndex === null)
       this.focusIndex = 0;
     else {
-      const t = this.focusIndex + e, i = this.suggestions.length - 1;
-      t > i ? this.focusIndex = 0 : t < 0 ? this.focusIndex = i : this.focusIndex = t;
+      const t = this.focusIndex + e, l = this.suggestions.length - 1;
+      t > l ? this.focusIndex = 0 : t < 0 ? this.focusIndex = l : this.focusIndex = t;
     }
     this.suggestions[this.focusIndex].focus();
   }
@@ -328,21 +337,21 @@ class y {
     });
   }
   _removeOption(e) {
-    var l, a;
-    const t = c.call(e.target, "button");
+    var i, a;
+    const t = u.call(e.target, "button");
     if (!t)
       return;
-    const i = (l = this.selectedList) == null ? void 0 : l.querySelectorAll("button"), s = Array.prototype.indexOf.call(i, t) - 1, n = parseInt(t.getAttribute("data-index"), 10);
+    const l = (i = this.selectedList) == null ? void 0 : i.querySelectorAll("button"), s = Array.prototype.indexOf.call(l, t) - 1, n = parseInt(t.getAttribute("data-index"), 10);
     if (this._toggleSelection(n), (a = this.selectedList) != null && a.parentElement) {
-      const r = this.selectedList.querySelectorAll("button");
-      r[s] ? r[s].focus() : r[0].focus();
+      const d = this.selectedList.querySelectorAll("button");
+      d[s] ? d[s].focus() : d[0].focus();
     } else
       this.button.focus();
   }
   _setButtonText() {
-    var i;
+    var l;
     const e = this.el.item(this.el.selectedIndex), t = this.button.firstElementChild;
-    e && e.value ? this.button.classList.remove("select-a11y-button--no-selected-option") : this.button.classList.add("select-a11y-button--no-selected-option"), this.multiple ? this._options.useLabelAsButton ? t.innerText = ((i = this.label) == null ? void 0 : i.innerText) || "" : t.innerHTML = "&nbsp;" : e && (t.innerText = e.label || e.value);
+    e && e.value ? this.button.classList.remove("select-a11y-button--no-selected-option") : this.button.classList.add("select-a11y-button--no-selected-option"), this.multiple ? this._options.useLabelAsButton ? t.innerText = ((l = this.label) == null ? void 0 : l.innerText) || "" : t.innerHTML = "&nbsp;" : e && (t.innerText = e.label || e.value);
   }
   _setLiveZone() {
     const e = this.suggestions.length;
@@ -350,24 +359,24 @@ class y {
     this.open && (e ? t = this._options.text.results.replace("{x}", e) : t = this._options.text.noResult), this.liveZone.innerText = t;
   }
   _toggleOverlay(e, t) {
-    var i;
-    this.open = e !== void 0 ? e : !this.open, this.button.setAttribute("aria-expanded", this.open ? "true" : "false"), this.open ? (this._fillSuggestions(), this.button.insertAdjacentElement("afterend", this.overlay), (i = this.input) == null || i.focus()) : this.wrap.contains(this.overlay) && (this.wrap.removeChild(this.overlay), this.focusIndex = null, this.input && this._options.fillSuggestions === this._defaultSearch && (this.input.value = ""), this.search = "", this._setLiveZone(), (e === void 0 || t) && setTimeout(() => {
+    var l;
+    this.open = e !== void 0 ? e : !this.open, this.button.setAttribute("aria-expanded", this.open ? "true" : "false"), this.open ? (this._fillSuggestions(), this.button.insertAdjacentElement("afterend", this.overlay), (l = this.input) == null || l.focus()) : this.wrap.contains(this.overlay) && (this.wrap.removeChild(this.overlay), this.focusIndex = null, this.input && this._options.fillSuggestions === this._defaultSearch && (this.input.value = ""), this.search = "", this._setLiveZone(), (e === void 0 || t) && setTimeout(() => {
       this.button.focus();
     }));
   }
-  _toggleSelection(e, t = !0, i = !0) {
+  _toggleSelection(e, t = !0, l = !0) {
     const s = this.el.item(e);
     this.multiple ? s != null && s.hasAttribute("selected") ? s.removeAttribute("selected") : s == null || s.setAttribute("selected", "selected") : (s == null || s.setAttribute("selected", "selected"), this.el.selectedIndex = e), this.updatedOriginalOptions = this.updatedOriginalOptions.map((n) => (n.value === (s == null ? void 0 : s.value) && (s.hasAttribute("selected") ? n.setAttribute("selected", "selected") : n.removeAttribute("selected")), !this.multiple && n.value !== (s == null ? void 0 : s.value) && n.removeAttribute("selected"), n)), this.currentOptions = this.currentOptions.map((n) => (n.value === (s == null ? void 0 : s.value) && (s.hasAttribute("selected") ? n.setAttribute("selected", "selected") : n.removeAttribute("selected")), !this.multiple && n.value !== (s == null ? void 0 : s.value) && n.removeAttribute("selected"), n)), this.suggestions = this.suggestions.map((n) => {
-      const l = parseInt(n.getAttribute("data-index") ?? "", 10), a = this.el.item(l);
+      const i = parseInt(n.getAttribute("data-index") ?? "", 10), a = this.el.item(i);
       return a && a.selected ? n.setAttribute("aria-selected", "true") : n.removeAttribute("aria-selected"), n;
-    }), i && this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList(), t && this.open && this._toggleOverlay();
+    }), l && this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList(), t && this.open && this._toggleOverlay();
   }
   _updateSelectedList() {
     var t;
-    const e = this.currentOptions.map((i, s) => {
-      if (!i.selected || i.hidden)
+    const e = this.currentOptions.map((l, s) => {
+      if (!l.selected || l.hidden)
         return;
-      const n = i.label || i.value;
+      const n = l.label || l.value;
       return `
         <li class="select-a11y__selected-item">
           <span>${n}</span>
@@ -380,9 +389,9 @@ class y {
     this.selectedList && (this.selectedList.innerHTML = e.join(""), e.length ? (t = this.selectedList) != null && t.parentElement || this.wrap.appendChild(this.selectedList) : this.selectedList.parentElement && this.wrap.removeChild(this.selectedList));
   }
   _wrap() {
-    var i;
+    var l;
     const e = document.createElement("div");
-    e.classList.add("select-a11y"), (i = this.el.parentElement) == null || i.appendChild(e);
+    e.classList.add("select-a11y"), (l = this.el.parentElement) == null || l.appendChild(e);
     const t = document.createElement("div");
     return t.classList.add("select-a11y__hidden"), t.setAttribute("aria-hidden", "true"), this._options.useLabelAsButton && t.appendChild(this.label), t.appendChild(this.el), e.appendChild(t), e.appendChild(this.liveZone), e.appendChild(this.button), this._options.clearable && e.appendChild(this.clearButton), e;
   }

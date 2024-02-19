@@ -288,6 +288,8 @@ export class Select {
    * @property {string} [description] - suggestion description
    * @property {boolean} [showIcon] - suggestion recommended
    * @property {string} [group] - suggestion group
+   * @property {string} [link] - suggestion link
+   * @property {string} [linkText] - suggestion linkText
    */
 
   /**
@@ -308,7 +310,9 @@ export class Select {
       helper: option.dataset.helper,
       description: option.dataset.description,
       showIcon: option.dataset.showIcon,
-      group: option.dataset.group
+      group: option.dataset.group,
+      link: option.dataset.link,
+      linkText: option.dataset.linkText
     };
   }
 
@@ -347,6 +351,12 @@ export class Select {
     }
     if (suggestion.group) {
       option.dataset.group = suggestion.group
+    }
+    if (suggestion.link) {
+      option.dataset.link = suggestion.link
+    }
+    if (suggestion.linkText) {
+      option.dataset.linkText = suggestion.linkText
     }
     return option;
   }
@@ -429,6 +439,16 @@ export class Select {
           helperElement.classList.add('select-a11y-suggestion__helper');
           helperElement.innerText = suggestion.helper;
           secondColumn.appendChild(helperElement);
+        } else if (suggestion.link) {
+          const secondColumn = document.createElement('div');
+          secondColumn.classList.add('column--right');
+          suggestionElement.appendChild(secondColumn);
+
+          const linkElement = document.createElement('a');
+          linkElement.target = "_blank";
+          linkElement.innerText = suggestion.linkText;
+          linkElement.href = suggestion.link;
+          secondColumn.appendChild(linkElement);
         }
         if (suggestion.image) {
           const image = document.createElement('img');

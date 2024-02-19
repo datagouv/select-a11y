@@ -671,6 +671,50 @@ describe('select-a11y', async () => {
     expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
   });
 
+  test('Création de la liste lors de l’utilisation de links', async () => {
+    const { browser, page } = await goToPage();
+
+    await page.click('.links button');
+
+    const data = await page.evaluate(() => {
+      const wrapper = document.querySelector('.links .select-a11y');
+      const select = wrapper?.querySelector('select');
+      const container = document.querySelector('.links .select-a11y__overlay');
+      const label = container?.querySelector('label');
+      const input = container?.querySelector('input');
+      const options = container?.querySelectorAll('[role="option"]');
+      const listBox = container?.querySelector('[role="listbox"]');
+
+      return {
+        hasContainer: wrapper?.contains(container),
+        label: {
+          for: label?.getAttribute('for')
+        },
+        input: {
+          id: input?.id,
+          describedby: input?.getAttribute('aria-describedby')
+        },
+        list: {
+          length: options?.length,
+          lengthWithLink: Array.from(options ?? []).filter(option => option.querySelector('a')).length,
+        },
+        options: {
+          length: select?.options.length,
+          lengthWithLink: Array.from(select?.options ?? []).filter(option => option.dataset.link).length,
+        },
+        listBox: {
+          multiple: listBox?.hasAttribute('aria-multiselectable')
+        },
+      }
+    });
+    
+    expect(data.hasContainer, 'La liste est créée lors de l’activation du bouton').toBe(true);
+    expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
+    expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options?.length ?? 0);
+    expect(data.list.lengthWithLink, 'La liste crée contient des a si les options contiennent un data-link').toBe(data.options.lengthWithLink);
+    expect(data.listBox.multiple, 'La liste pour le select ne contient pas d’attribut « aria-multiselectable »').toBe(false);
+  });
+
   test('Gestion du champ de recherche', async () => {
     const { browser, page } = await goToPage();
 
