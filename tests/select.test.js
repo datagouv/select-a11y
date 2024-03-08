@@ -1348,8 +1348,6 @@ describe('select-a11y', async () => {
         reset,
       };
     });
-    console.log(singleSelect);
-    console.log(resetButton);
 
     await page.waitForTimeout(50);
 
