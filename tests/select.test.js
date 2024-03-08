@@ -20,7 +20,7 @@ describe('select-a11y', async () => {
 
   beforeAll(async () => {
     server = await preview({ preview: { port: 3000 } });
-    server.printUrls() 
+    server.printUrls()
     browser = await puppeteer.launch({ dumpio: true });
     page = await browser.newPage();
   });
@@ -663,7 +663,7 @@ describe('select-a11y', async () => {
         }
       }
     });
-    
+
     expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
     expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options.length);
     expect(data.list.optGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.groupsLength);
@@ -707,7 +707,7 @@ describe('select-a11y', async () => {
         },
       }
     });
-    
+
     expect(data.hasContainer, 'La liste est créée lors de l’activation du bouton').toBe(true);
     expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
     expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options?.length ?? 0);
@@ -1329,7 +1329,27 @@ describe('select-a11y', async () => {
 
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
-    await page.click('[type="reset"]');
+    const { singleSelect, resetButton, reset } = await page.evaluate(async () => {
+      const singleSelect = document.querySelector('.form-group select');
+      let reset = false;
+      if (singleSelect instanceof HTMLSelectElement) {
+        singleSelect.addEventListener('reset', () => reset = true);
+      }
+
+      /** @type {HTMLButtonElement | null} */
+      const resetButton = document.querySelector('[type="reset"]');
+      resetButton?.click();
+
+      await new Promise(r => setTimeout(r, 50));
+
+      return {
+        singleSelect: singleSelect instanceof HTMLSelectElement,
+        resetButton: resetButton instanceof HTMLButtonElement,
+        reset,
+      };
+    });
+    console.log(singleSelect);
+    console.log(resetButton);
 
     await page.waitForTimeout(50);
 
@@ -1357,6 +1377,7 @@ describe('select-a11y', async () => {
       }
       return { singleState, multipleState, groupState };
     });
+    expect(reset, 'Form reset triggers a reset event').toBe(true);
     expect(singleState.selectedOption, 'Le reset de formulaire change le texte du bouton d’ouverture').toBe(singleState.label);
     const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) => {
       return option === multipleState.selectedItems[index];

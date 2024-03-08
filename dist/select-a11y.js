@@ -279,7 +279,7 @@ class y {
   }
   _handleReset() {
     clearTimeout(this._resetTimeout), this._resetTimeout = setTimeout(async () => {
-      this.search = "", this.updatedOriginalOptions = p(this.originalOptions), this.currentOptions = p(this.originalOptions), await this._fillSuggestions(), this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList();
+      this.search = "", this.updatedOriginalOptions = p(this.originalOptions), this.currentOptions = p(this.originalOptions), this.el.dispatchEvent(new Event("reset")), await this._fillSuggestions(), this.el.dispatchEvent(new Event("change")), this._setButtonText(), this.multiple && this._options.showSelected && this._updateSelectedList();
     }, 10);
   }
   _handleSuggestionClick(e) {
