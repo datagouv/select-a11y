@@ -20,7 +20,6 @@ describe('select-a11y', async () => {
 
   beforeAll(async () => {
     server = await preview({ preview: { port: 3000 } });
-    server.printUrls()
     browser = await puppeteer.launch({ dumpio: true });
     page = await browser.newPage();
   });
