@@ -32,7 +32,7 @@
     "test:watch": "vite build -c vite.preview.js && vitest",
     "publish-version": "npm publish --access public"
   },
-  "author": "Nicolas KEMPF - conciergerie.dev",
+  "author": "DINUM",
   "license": "MIT",
   "devDependencies": {
     "puppeteer": "^21.3.8",
