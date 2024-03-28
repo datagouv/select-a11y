@@ -6,15 +6,26 @@ version: 2.1
 # See: https://circleci.com/docs/orb-intro/
 orbs:
   # See the Node orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
-  node: cimg/node:lts-browsers
+  node: circleci/node@5.2.0
+  browser-tools: circleci/browser-tools@1.1.0
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  buildAndPublish: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  buildAndPublish:
     jobs:
-      - node/run:
-          npm-run: build
-      - node/test:
-          test-results-path: junit.xml
+      build:
+        docker:
+          - image: cimg/node:lts
+        steps:
+          - checkout
+          - node/run:
+            npm-run: build
+      test:
+        docker:
+          - image: cimg/node:lts-browsers
+        steps:
+          - browser-tools/install-browser-tools
+          - checkout
+          - node/test:
+            test-results-path: junit.xml
