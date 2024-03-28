@@ -11,8 +11,7 @@ orbs:
 
 jobs:
   build:
-    docker:
-      - image: cimg/node:lts
+    executor: node/default # use the default executor specified by the orb
     steps:
       - checkout
       - node/run:
