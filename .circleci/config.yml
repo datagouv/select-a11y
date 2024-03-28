@@ -27,6 +27,6 @@ jobs:
 workflows:
   buildAndPublish:
     jobs:
-       - node/run:
+      - node/run:
           npm-run: build
       - test
