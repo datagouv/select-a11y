@@ -10,12 +10,6 @@ orbs:
   browser-tools: circleci/browser-tools@1.1.0
 
 jobs:
-  build:
-    executor: node/default # use the default executor specified by the orb
-    steps:
-      - checkout
-      - node/run:
-          npm-run: build
   test:
     docker:
       - image: cimg/node:lts-browsers
@@ -33,5 +27,6 @@ jobs:
 workflows:
   buildAndPublish:
     jobs:
-      - build
+       - node/run:
+          npm-run: build
       - test
