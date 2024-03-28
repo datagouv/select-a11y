@@ -16,6 +16,7 @@ jobs:
     steps:
       - browser-tools/install-browser-tools
       - checkout
+      - node/install-packages
       - run:
           name: Run tests
           command: npm run test
