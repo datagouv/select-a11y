@@ -22,8 +22,11 @@ jobs:
     steps:
       - browser-tools/install-browser-tools
       - checkout
-      - node/test:
-        test-results-path: junit.xml
+      - run:
+        name: Run tests
+        command: npm run test
+      - store_test_results:
+        path: junit.xml
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
