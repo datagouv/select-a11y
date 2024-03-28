@@ -15,7 +15,7 @@ jobs:
     steps:
       - checkout
       - node/run:
-        npm-run: build
+          npm-run: build
   test:
     docker:
       - image: cimg/node:lts-browsers
@@ -23,10 +23,10 @@ jobs:
       - browser-tools/install-browser-tools
       - checkout
       - run:
-        name: Run tests
-        command: npm run test
+          name: Run tests
+          command: npm run test
       - store_test_results:
-        path: junit.xml
+          path: junit.xml
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
