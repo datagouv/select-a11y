@@ -20,6 +20,8 @@ export default defineConfig({
     }
   },
   test: {
-    testTimeout: 30_000
+    testTimeout: 30_000,
+    reporters: ["junit"],
+    outputFile: "junit.xml"
   }
 });
