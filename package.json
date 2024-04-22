@@ -1,5 +1,5 @@
 {
-  "name": "@conciergerie.dev/select-a11y",
+  "name": "@datagouv/select-a11y",
   "version": "3.6.0",
   "description": "Combobox, single and multiple select component with a focus on accessibility. It includes a search bar with local and remote search.",
   "type": "module",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.sr.ht/~nicolaskempf57/select-a11y"
+    "url": "https://github.com/datagouv/select-a11y"
   },
   "scripts": {
     "start": "npm run dev",
@@ -29,24 +29,23 @@
     "build-types": "npx -p typescript tsc --declaration --allowJs --emitDeclarationOnly --outDir types",
     "preversion": "npm run test:build && npm run build",
     "test": "npm run test:build",
-    "test:build": "vite build -c vite.preview.js && vitest run",
-    "test:watch": "vite build -c vite.preview.js && vitest",
+    "test:build": "vite build -c vite.preview.js && vitest run -c vite.preview.js",
+    "test:watch": "vite build -c vite.preview.js && vitest -c vite.preview.js",
     "publish-version": "npm publish --access public"
   },
   "author": "DINUM",
   "license": "MIT",
   "devDependencies": {
-    "puppeteer": "^21.3.8",
+    "puppeteer": "^22.6.5",
     "sass": "^1.69.3",
     "typescript": "^5.2.2",
-    "vite": "^4.5.2",
-    "vitest": "^0.34.6"
+    "vite": "^5.2.10",
+    "vitest": "^1.5.0"
   },
   "bugs": {
-    "url": "https://todo.sr.ht/~nicolaskempf57/select-a11y",
-    "email": "~nicolaskempf57/select-a11y-discuss@lists.sr.ht"
+    "url": "https://github.com/datagouv/select-a11y/issues"
   },
-  "homepage": "https://git.sr.ht/~nicolaskempf57/select-a11y#readme",
+  "homepage": "https://github.com/datagouv/select-a11y",
   "directories": {
     "test": "tests"
   }
