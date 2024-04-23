@@ -569,6 +569,7 @@ export class Select {
       this.search = '';
       this.updatedOriginalOptions = deepCopy(this.originalOptions);
       this.currentOptions = deepCopy(this.originalOptions);
+      this.el.dispatchEvent(new Event('reset'));
       await this._fillSuggestions();
       this.el.dispatchEvent(new Event('change'));
       this._setButtonText();

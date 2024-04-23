@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { setTimeout as nodeSetTimeout} from "node:timers/promises";
 import { preview } from 'vite';
 import puppeteer from 'puppeteer';
 
@@ -20,7 +21,6 @@ describe('select-a11y', async () => {
 
   beforeAll(async () => {
     server = await preview({ preview: { port: 3000 } });
-    server.printUrls() 
     browser = await puppeteer.launch({ dumpio: true });
     page = await browser.newPage();
   });
@@ -663,7 +663,7 @@ describe('select-a11y', async () => {
         }
       }
     });
-    
+
     expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
     expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options.length);
     expect(data.list.optGroups, 'La liste crée contient le nombre de groupes attribués').toBe(data.options.groupsLength);
@@ -707,7 +707,7 @@ describe('select-a11y', async () => {
         },
       }
     });
-    
+
     expect(data.hasContainer, 'La liste est créée lors de l’activation du bouton').toBe(true);
     expect(data.label.for, 'Le label est lié au champ de recherche via l’attribut « for »').toBe(data.input.id);
     expect(data.list.length, 'La liste créée contient le même nombre d’options que le select').toBe(data.options?.length ?? 0);
@@ -727,7 +727,7 @@ describe('select-a11y', async () => {
     await page.keyboard.down('Shift');
     await page.keyboard.press('Tab');
     await page.keyboard.up('Shift');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const data = await page.evaluate(() => {
       const input = document.getElementById('a11y-select-element-js');
@@ -773,7 +773,7 @@ describe('select-a11y', async () => {
 
     await page.keyboard.press('Space');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const spacePressed = await page.evaluate(() => {
       const button = document.querySelector('.form-group button');
@@ -810,7 +810,7 @@ describe('select-a11y', async () => {
 
     await page.keyboard.press('Enter');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const enterPressed = await page.evaluate(() => {
       const button = document.querySelector('.form-group button');
@@ -847,7 +847,7 @@ describe('select-a11y', async () => {
     await page.keyboard.press('Enter');
     await page.keyboard.press('Tab');
     await page.keyboard.press('Space');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const spacePressed = await page.evaluate(() => {
       const button = document.querySelector('.multiple button');
@@ -873,7 +873,7 @@ describe('select-a11y', async () => {
 
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const enterPressed = await page.evaluate(() => {
       const button = document.querySelector('.multiple button');
@@ -913,7 +913,7 @@ describe('select-a11y', async () => {
 
     await page.keyboard.press('Space');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const spacePressed = await page.evaluate(() => {
       const button = document.querySelector('.group button');
@@ -950,7 +950,7 @@ describe('select-a11y', async () => {
 
     await page.keyboard.press('Enter');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const enterPressed = await page.evaluate(() => {
       const button = document.querySelector('.group button');
@@ -1044,7 +1044,7 @@ describe('select-a11y', async () => {
     await page.keyboard.down('Shift');
     await page.keyboard.press('Tab');
     await page.keyboard.up('Shift');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const buttonBlurTopExpanded = await page.evaluate(() => {
       const button = document.querySelector('.multiple button');
@@ -1062,7 +1062,7 @@ describe('select-a11y', async () => {
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const select = await page.evaluate(() => {
       const button = document.querySelector('.multiple button');
@@ -1077,9 +1077,9 @@ describe('select-a11y', async () => {
     expect(select.selectionFocused && select.expanded, 'La liste est fermée lorsque le focus est sur les boutons de la liste de sélection').toBe("false");
 
     await page.click('.multiple button');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
     await page.click('body')
-    await page.waitForTimeout(20);
+    await nodeSetTimeout(20);
 
     const focused = await page.evaluate(() => {
       const button = document.querySelector('.multiple button');
@@ -1103,7 +1103,7 @@ describe('select-a11y', async () => {
       return undefined;
     });
     await page.click('.form-group.with-hidden-disabled .select-a11y-suggestions [role="option"]:nth-child(4)');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const clickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
@@ -1136,7 +1136,7 @@ describe('select-a11y', async () => {
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
     await page.keyboard.up('Meta');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const metaClickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
@@ -1166,7 +1166,7 @@ describe('select-a11y', async () => {
       return undefined;
     });
     await page.click('.group .select-a11y-suggestions [role="option"]:nth-child(4)');
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const clickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
@@ -1199,7 +1199,7 @@ describe('select-a11y', async () => {
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
     await page.keyboard.up('Meta');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const metaClickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
@@ -1222,7 +1222,7 @@ describe('select-a11y', async () => {
 
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const clickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
@@ -1243,7 +1243,7 @@ describe('select-a11y', async () => {
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
     await page.keyboard.up('Meta');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     const metaClickStatus = await page.evaluate(() => {
       const activeElement = document.activeElement;
@@ -1317,21 +1317,37 @@ describe('select-a11y', async () => {
 
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     await page.click('.multiple button');
 
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
-    await page.waitForTimeout(10);
+    await nodeSetTimeout(10);
 
     await page.click('.form-group.group button');
 
     await page.click('.select-a11y-suggestions [role="option"]:nth-child(2)');
 
-    await page.click('[type="reset"]');
+    const { reset } = await page.evaluate(async () => {
+      const singleSelect = document.querySelector('.form-group select');
+      let reset = false;
+      if (singleSelect instanceof HTMLSelectElement) {
+        singleSelect.addEventListener('reset', () => reset = true);
+      }
 
-    await page.waitForTimeout(50);
+      /** @type {HTMLButtonElement | null} */
+      const resetButton = document.querySelector('[type="reset"]');
+      resetButton?.click();
+
+      await new Promise(r => setTimeout(r, 50));
+
+      return {
+        reset,
+      };
+    });
+
+    await nodeSetTimeout(50);
 
     const { singleState, multipleState, groupState } = await page.evaluate(() => {
       const singleSelect = document.querySelector('.form-group select');
@@ -1357,6 +1373,7 @@ describe('select-a11y', async () => {
       }
       return { singleState, multipleState, groupState };
     });
+    expect(reset, 'Form reset triggers a reset event').toBe(true);
     expect(singleState.selectedOption, 'Le reset de formulaire change le texte du bouton d’ouverture').toBe(singleState.label);
     const selectedOptionsMatches = multipleState.selectedOptions.every((option, index) => {
       return option === multipleState.selectedItems[index];
