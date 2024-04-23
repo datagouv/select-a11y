@@ -4,14 +4,12 @@
   "description": "Combobox, single and multiple select component with a focus on accessibility. It includes a search bar with local and remote search.",
   "type": "module",
   "types": "./types/select-a11y.d.ts",
-  "main": "./dist/select-a11y.umd.cjs",
   "module": "./dist/select-a11y.js",
   "css": "dist/style.css",
   "exports": {
     ".": {
-      "import": "./dist/select-a11y.js",
-      "require": "./dist/select-a11y.umd.cjs",
-      "types": "./types/select-a11y.d.ts"
+      "types": "./types/select-a11y.d.ts",
+      "import": "./dist/select-a11y.js"
     },
     "./dist/*.css": {
       "import": "./dist/*.css",
